@@ -1,0 +1,126 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply box-border list-none p-0 m-0 scroll-smooth;
+  }
+
+  body {
+    @apply bg-slate-50 dark:bg-slate-950 text-slate-950 dark:text-slate-50 min-h-screen font-inter;
+  }
+}
+
+@layer utilities {
+  /* TYPOGRAPHY */
+  .text-h1-bold {
+    @apply text-4xl font-bold tracking-tighter;
+  }
+
+  .text-h1-semibold {
+    @apply text-4xl font-semibold tracking-tighter;
+  }
+
+  .text-h2-bold {
+    @apply text-3xl font-bold tracking-tighter;
+  }
+
+  .text-h2-semibold {
+    @apply text-3xl font-semibold tracking-tighter;
+  }
+
+  .text-h3-bold {
+    @apply text-2xl font-bold tracking-tighter;
+  }
+
+  .text-h3-semibold {
+    @apply text-2xl font-semibold tracking-tighter;
+  }
+
+  .text-base-semibold {
+    @apply text-base font-semibold;
+  }
+
+  .text-base-medium {
+    @apply text-base font-medium;
+  }
+
+  .text-base-regular {
+    @apply text-base font-normal;
+  }
+
+  .text-lg-bold {
+    @apply text-lg font-bold;
+  }
+
+  .text-lg-medium {
+    @apply text-lg font-medium;
+  }
+
+  .small-semibold {
+    @apply text-sm font-semibold tracking-tighter;
+  }
+
+  .text-small-medium {
+    @apply text-sm font-medium;
+  }
+
+  .text-small-regular {
+    @apply text-sm font-normal;
+  }
+
+  .text-xs-semibold {
+    @apply text-xs font-semibold;
+  }
+
+  .text-tiny {
+    @apply text-[10px]
+  }
+
+  .text-tiny-medium {
+    @apply text-[10px] font-medium;
+  }
+
+  /* UTILITIES */
+  .invert-white {
+    @apply invert brightness-0 transition;
+  }
+
+  .flex-center {
+    @apply flex justify-center items-center;
+  }
+
+  .flex-between {
+    @apply flex justify-between items-center;
+  }
+
+  .flex-start {
+    @apply flex justify-start items-center;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 3px;
+    height: 3px;
+    border-radius: 2px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #09090a;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #5c5c7b;
+    border-radius: 50px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #7878a3;
+  }
+
+  .common-container {
+    @apply flex flex-col flex-1 items-center gap-10 overflow-scroll py-10 px-5 md:px-8 lg:p-14 custom-scrollbar;
+  }
+}
