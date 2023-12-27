@@ -39,7 +39,7 @@ module.exports = {
         "teal-1": "#EFFCF6"
       },
       fontFamily: {
-        inter: ['Inter', 'sans-serif']
+        rubik: ['Rubik', 'sans-serif']
       },
       keyframes: {
         "accordion-down": {

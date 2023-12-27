@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,11 +6,11 @@
 
 @layer base {
   * {
-    @apply box-border list-none p-0 m-0 scroll-smooth;
+    @apply box-border p-0 m-0 list-none scroll-smooth;
   }
 
   body {
-    @apply bg-slate-50 dark:bg-slate-950 text-slate-950 dark:text-slate-50 min-h-screen font-inter;
+    @apply min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-950 dark:text-slate-50 font-inter;
   }
 }
 
@@ -86,19 +86,19 @@
 
   /* UTILITIES */
   .invert-white {
-    @apply invert brightness-0 transition;
+    @apply transition invert brightness-0;
   }
 
   .flex-center {
-    @apply flex justify-center items-center;
+    @apply flex items-center justify-center;
   }
 
   .flex-between {
-    @apply flex justify-between items-center;
+    @apply flex items-center justify-between;
   }
 
   .flex-start {
-    @apply flex justify-start items-center;
+    @apply flex items-center justify-start;
   }
 
   .custom-scrollbar::-webkit-scrollbar {
@@ -121,6 +121,6 @@
   }
 
   .common-container {
-    @apply flex flex-col flex-1 items-center gap-10 overflow-scroll py-10 px-5 md:px-8 lg:p-14 custom-scrollbar;
+    @apply flex flex-col items-center flex-1 gap-10 px-5 py-10 overflow-scroll md:px-8 lg:p-14 custom-scrollbar;
   }
 }

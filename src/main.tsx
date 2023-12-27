@@ -4,16 +4,16 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 
 import { App } from "./App";
-import { AuthContextProvider } from "./context/authContext";
+import { AuthProvider } from "./context/AuthContext";
 import { QueryProvider } from "./lib/react-query/queryProvider";
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   // <React.StrictMode>
   <BrowserRouter>
     <QueryProvider>
-      <AuthContextProvider>
+      <AuthProvider>
         <App />
-      </AuthContextProvider>
+      </AuthProvider>
     </QueryProvider>
   </BrowserRouter>
   // </React.StrictMode>

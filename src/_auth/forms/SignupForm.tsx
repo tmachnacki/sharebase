@@ -20,19 +20,11 @@ import { SignupValidationSchema } from "@/lib/validation";
 
 import { Loader2 } from "lucide-react"
 import { Link, useNavigate } from "react-router-dom";
-import { createUserAccount, login } from "@/lib/appwrite/api";
 import { useToast } from "@/components/ui/use-toast";
-import { useCreateUserAccount, useLogin } from "@/lib/react-query/queriesAndMutations";
-import { title } from "process";
-import { useAuthContext } from "@/context/authContext";
 
 const SignupForm = () => {
   const { toast } = useToast();
-  const { checkAuthUser, isLoading } = useAuthContext();
   const navigate = useNavigate();
-
-  const { mutateAsync: createUserAccount, isPending: isCreatingUser } = useCreateUserAccount();
-  const { mutateAsync: login, isPending: isLoggingIn } = useLogin();
 
 
   // 1. Define your form.
@@ -46,31 +38,8 @@ const SignupForm = () => {
     },
   })
 
-  async function onSubmit(data: z.infer<typeof SignupValidationSchema>) {
-    const newUser = await createUserAccount(data);
-
-    if (!newUser) {
-      return toast({ title: 'Sign up failed. Please try again.' });
-    }
-
-    const session = await login({
-      email: data.email,
-      password: data.password
-    })
-
-    if (!session) {
-      return toast({ title: 'Log in failed. Please try again.' });
-    }
-
-    const isLoggedIn = await checkAuthUser();
-
-    if(isLoggedIn) {
-      form.reset();
-      navigate("/");
-
-    } else {
-      toast({ title: "Sign up failed. Please try again." });
-    }
+  async function onSubmit(userData: z.infer<typeof SignupValidationSchema>) {
+    console.log('data', userData)
   }
 
   return (
@@ -147,12 +116,12 @@ const SignupForm = () => {
             />
           </CardContent>
           <CardFooter className="flex-col gap-8">
-            <Button type="submit" variant={"primary-shadow"} className="w-full transition" disabled={isCreatingUser || isLoggingIn}>
-              {(isCreatingUser || isLoggingIn) && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-              {(isCreatingUser || isLoggingIn) ? `Please wait` : `Submit`}
+            <Button type="submit" variant={"primary-shadow-lg"} className="w-full transition" disabled={isCreatingAccount}>
+              {(isCreatingAccount) && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              {(isCreatingAccount) ? `Please wait` : `Submit`}
             </Button>
 
-            <p className="text-slate-400 text-sm">
+            <p className="text-sm text-slate-400">
               Already have an account? <Link to={"/login"} className="text-purple-6 dark:text-purple-4 hover:underline">Log in</Link>
             </p>
           </CardFooter>

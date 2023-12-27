@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
 
-const LoginForm = () => {
+const SigninForm = () => {
   return (
     <div><Button>click me</Button></div>
   )
 }
 
-export { LoginForm };
+export { SigninForm };

@@ -19,7 +19,8 @@ const buttonVariants = cva(
         ghost: "hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-slate-50",
         link: "text-slate-900 underline-offset-4 hover:underline dark:text-slate-50",
         primary: "bg-gradient-to-br from-purple-8 via-purple-6 to-teal-6 text-white hover:bg-gradient-to-br hover:from-purple-8 hover:to-purple-5",
-        "primary-shadow": "bg-gradient-to-br from-purple-8 via-purple-6 to-teal-6 text-white shadow-lg shadow-purple-6/50 hover:bg-gradient-to-br hover:from-purple-8 hover:to-purple-5 hover:shadow-xl hover:shadow-purple-6/50",
+        "primary-shadow": "bg-gradient-to-br from-purple-8 via-purple-6 to-teal-6 text-white shadow-md shadow-purple-6/50 hover:bg-gradient-to-br hover:from-purple-8 hover:to-purple-5 hover:shadow-lg hover:shadow-purple-6/50",
+        "primary-shadow-lg": "bg-gradient-to-br from-purple-8 via-purple-6 to-teal-6 text-white shadow-lg shadow-purple-6/50 hover:bg-gradient-to-br hover:from-purple-8 hover:to-purple-5 hover:shadow-xl hover:shadow-purple-6/50",
       },
       size: {
         default: "h-10 px-4 py-2",
