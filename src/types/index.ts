@@ -1,57 +1,32 @@
-export type IAuthContext = {
-  user: IUser,
-  isLoading: boolean,
-  isAuthenticated: boolean,
-  setUser: React.Dispatch<React.SetStateAction<IUser>>,
-  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>,
-  checkAuthUser: () => Promise<boolean>
+export type UserDocument = {
+  uid: string;
+  username: string;
+  email: string;
+  fullName: string;
+  profilePicUrl: string;
+  bio: string;
+  createdAt: Date;
+  followers: string[]; // User IDs
+  following: string[]; // User IDs
+  posts: string[]; // Post IDs
+  saves: string[]; // Post IDs
 }
 
-export type INavLink = {
-  imgURL: string;
-  route: string;
-  label: string;
-};
-
-export type IUpdateUser = {
-  userId: string;
-  name: string;
-  bio: string;
-  imageId: string;
-  imageUrl: URL | string;
-  file: File[];
-};
-
-export type INewPost = {
-  userId: string;
-  caption: string;
-  file: File[];
-  location?: string;
-  tags?: string;
-};
-
-export type IUpdatePost = {
-  postId: string;
-  caption: string;
-  imageId: string;
-  imageUrl: URL;
-  file: File[];
-  location?: string;
-  tags?: string;
-};
-
-export type IUser = {
+export type PostDocument = {
   id: string;
-  name: string;
-  username: string;
-  email: string;
-  imageUrl: string;
-  bio: string;
-};
+  caption: string;
+  imgUrl: string;
+  location: string;
+  likes: string[]; // User IDs
+  comments: CommentDocument[]; // Commments
+  tags: string[]; // User IDs
+  createdAt: Date;
+  createdBy: string; // User ID
+}
 
-export type INewUser = {
-  name: string;
-  email: string;
-  username: string;
-  password: string;
-};
+export type CommentDocument = {
+  comment: string;
+  createdBy: string; // User ID
+  postId: string; // Post ID
+  createdAt: Date;
+}

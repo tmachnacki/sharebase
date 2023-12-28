@@ -1,18 +1,21 @@
 import { Outlet, Navigate } from "react-router-dom";
 
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "@/lib/firebase";
+
 const AuthLayout = () => {
-  const isAuthenticated = false;
+  const [authUser] = useAuthState(auth);
   return (
     <>
-      {isAuthenticated ? (
+      {authUser ? (
         <Navigate to="/" />
       ) : (
         <>
-          <section className="flex flex-col flex-1 justify-center items-center">
+          <div className="flex flex-col items-center justify-center flex-1">
             <Outlet />
-          </section>
+          </div>
 
-          <img src="" alt="image palceholder" className="hidden xl:block w-1/2 object-cover bg-no-repeat " />
+          <img src="" alt="image palceholder" className="hidden object-cover w-1/2 bg-no-repeat xl:block " />
         </>
       )}
     </>

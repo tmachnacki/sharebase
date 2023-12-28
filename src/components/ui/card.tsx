@@ -4,11 +4,11 @@ import { cn } from "@/lib/utils"
 import { cva, VariantProps } from "class-variance-authority"
 
 const cardVariants = cva(
-  "rounded-lg text-slate-950 shadow-sm dark:text-slate-50",
+  "rounded-xl text-slate-950 shadow-sm dark:text-slate-50",
   {
     variants: {
       variant: {
-        solid: "bg-white dark:bg-slate-800",
+        solid: "bg-white border border-slate-200 dark:border-slate-800 dark:bg-slate-900",
         border: "bg-white border border-slate-200  dark:border-slate-800 dark:bg-slate-950 "
       }
     },
