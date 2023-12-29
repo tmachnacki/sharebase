@@ -1,4 +1,4 @@
-import { Post } from "@/components/shared/post";
+import { Post } from "@/components/post/post";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 

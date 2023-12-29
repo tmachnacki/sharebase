@@ -33,7 +33,7 @@ const navItems = [
 const Nav = () => {
   const { pathname } = useLocation();
   const { handleLogout, isLoggingOut, error } = useLogout();
-  
+
   return (
     <nav className="w-full h-full max-w-[16rem] border-r border-r-slate-200 dark:border-r-slate-800 py-6 px-4 text-slate-600 dark:text-slate-400 flex flex-col">
       <ul className="flex flex-col flex-1 w-full h-full gap-1 list-none">
@@ -65,14 +65,13 @@ const Nav = () => {
 
       <span
         role="button"
-        className="gap-4 p-2 transition-colors rounded-md hover:bg-slate-200 dark:hover:bg-slate-900 flex-start hover:text-slate-950 dark:hover:text-slate-50"
+        className={cn(
+          "gap-4 p-2 transition-colors rounded-md hover:bg-slate-200 dark:hover:bg-slate-900 flex-start hover:text-slate-950 dark:hover:text-slate-50",
+          isLoggingOut && "opacity-50 pointer-events-none"
+        )}
         onClick={handleLogout}
       >
-        {isLoggingOut ? (
-          <Loader2 className={cn("w-4 h-4 animate-spin")} />
-        ) : (
-          <LogOut className={cn(iconClassNames, "rotate-180")} />
-        )}
+        <LogOut className={cn(iconClassNames, "rotate-180")} />
         Logout
       </span>
     </nav>

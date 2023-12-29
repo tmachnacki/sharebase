@@ -41,6 +41,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
 
 import { UserDocument } from "@/types";
+import { GoogleAuth } from "./GoogleAuth";
 
 const SignupForm = () => {
   const [createUserWithEmailAndPassword, user, loading, error] =
@@ -220,9 +221,7 @@ const SignupForm = () => {
           </div>
 
           {/* GoogleAuth  */}
-          <Button variant={"secondary"} className="w-full">
-            Sign up with Google
-          </Button>
+          <GoogleAuth isSignIn={false} />
         </CardContent>
       </Card>
       <Card className="w-full h-12">

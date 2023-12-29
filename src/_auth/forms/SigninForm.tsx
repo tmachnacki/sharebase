@@ -22,9 +22,12 @@ import { Loader2 } from "lucide-react"
 import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 
-import { auth } from "@/lib/firebase";
+import { auth, firestore } from "@/lib/firebase";
 import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { useAuthStore, IAuthStore } from "@/store/authStore";
+import { AuthError } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import { GoogleAuth } from "./GoogleAuth";
 
 const SigninForm = () => {
   const [
@@ -36,7 +39,7 @@ const SigninForm = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // const logInUser = useAuthStore((state: IAuthStore) => state.login);
+  const logInUser = useAuthStore((state: IAuthStore) => state.login);
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof SigninValidationSchema>>({
@@ -50,24 +53,33 @@ const SigninForm = () => {
   async function onSubmit(userData: z.infer<typeof SigninValidationSchema>) {
     console.log("userdata", userData);
     try {
-      const isUser = await signInWithEmailAndPassword(
+      const userCredential = await signInWithEmailAndPassword(
         userData.email,
         userData.password
       );
-      if (!isUser) {
+      if (!userCredential) {
         if (error) {
           console.log(error);
           toast({ title: "Unable to log in", description: `${error.message}` });
         }
         return;
       }
-      if (isUser) {
-        toast({ title: "Logged in successfully" })
-        navigate("/");
+      if (userCredential) {
+
+        const userDocRef = doc(firestore, "users", userCredential.user.uid);
+        const userSnapShot = await getDoc(userDocRef);
+
+        if (userSnapShot.exists()) {
+          console.log(userSnapShot.data());
+          localStorage.setItem("user-info", JSON.stringify(userSnapShot.data()));
+          logInUser(userSnapShot.data());
+          toast({ title: "Logged in successfully" })
+          navigate("/");
+        }
       }
     } catch (error) {
       console.log(error);
-      toast({ title: "Unable to log in" });
+      toast({ title: "Unable to log in", description: `${error}` });
     }
   }
 
@@ -142,9 +154,7 @@ const SigninForm = () => {
           </div>
 
           {/* GoogleAuth  */}
-          <Button variant={"secondary"} className="w-full">
-            Log in with Google
-          </Button>
+          <GoogleAuth isSignIn={true} />
         </CardContent>
       </Card>
       <Card className="w-full h-12">
