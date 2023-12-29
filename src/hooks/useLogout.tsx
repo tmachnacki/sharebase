@@ -1,4 +1,4 @@
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { auth } from "@/lib/firebase";
 import { useSignOut } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
@@ -14,7 +14,7 @@ const useLogout = () => {
       const loggedOut = await signOut();
       if (error) {
         console.log(error);
-        toast({ title: "Unable to log out", description: `${error.message}` });
+        toast.error("Unable to log out", { description: `${error.message}` });
         return;
       }
       if (loggedOut) {
@@ -24,7 +24,7 @@ const useLogout = () => {
       } 
     } catch (error) {
       console.log(error);
-      toast({ title: "Unable to log out" });
+      toast.error("Unable to log out");
     }
   };
 

@@ -11,16 +11,23 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  useFormField
+  useFormField,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { SigninValidationSchema } from "@/lib/validation";
 
-import { Loader2 } from "lucide-react"
+import { Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 import { auth, firestore } from "@/lib/firebase";
 import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
@@ -30,13 +37,8 @@ import { doc, getDoc } from "firebase/firestore";
 import { GoogleAuth } from "./GoogleAuth";
 
 const SigninForm = () => {
-  const [
-    signInWithEmailAndPassword,
-    user,
-    loading,
-    error,
-  ] = useSignInWithEmailAndPassword(auth);
-  const { toast } = useToast();
+  const [signInWithEmailAndPassword, user, loading, error] =
+    useSignInWithEmailAndPassword(auth);
   const navigate = useNavigate();
 
   const logInUser = useAuthStore((state: IAuthStore) => state.login);
@@ -45,10 +47,10 @@ const SigninForm = () => {
   const form = useForm<z.infer<typeof SigninValidationSchema>>({
     resolver: zodResolver(SigninValidationSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
-  })
+  });
 
   async function onSubmit(userData: z.infer<typeof SigninValidationSchema>) {
     console.log("userdata", userData);
@@ -58,28 +60,37 @@ const SigninForm = () => {
         userData.password
       );
       if (!userCredential) {
+        console.log(error);
+        throw error;
         if (error) {
-          console.log(error);
-          toast({ title: "Unable to log in", description: `${error.message}` });
+          // toast.error("Unable to log in", { description: `${error.message}` });
         }
         return;
       }
       if (userCredential) {
-
         const userDocRef = doc(firestore, "users", userCredential.user.uid);
         const userSnapShot = await getDoc(userDocRef);
 
         if (userSnapShot.exists()) {
           console.log(userSnapShot.data());
-          localStorage.setItem("user-info", JSON.stringify(userSnapShot.data()));
+          localStorage.setItem(
+            "user-info",
+            JSON.stringify(userSnapShot.data())
+          );
           logInUser(userSnapShot.data());
-          toast({ title: "Logged in successfully" })
+          toast.success(
+            `Logged in ${
+              userSnapShot.data()?.username
+                ? userSnapShot.data().username
+                : "succesfully"
+            }`
+          );
           navigate("/");
         }
       }
     } catch (error) {
       console.log(error);
-      toast({ title: "Unable to log in", description: `${error}` });
+      toast.error("Unable to log in", {description: `${error}` });
     }
   }
 
@@ -94,9 +105,7 @@ const SigninForm = () => {
 
           <CardTitle className="">Log In</CardTitle>
 
-          <CardDescription>
-            Welcome back
-          </CardDescription>
+          <CardDescription>Welcome back</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <Form {...form}>
@@ -169,7 +178,7 @@ const SigninForm = () => {
         </p>
       </Card>
     </div>
-  )
-}
+  );
+};
 
 export { SigninForm };

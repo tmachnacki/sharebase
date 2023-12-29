@@ -37,7 +37,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
 import { UserDocument } from "@/types";
@@ -46,7 +46,6 @@ import { GoogleAuth } from "./GoogleAuth";
 const SignupForm = () => {
   const [createUserWithEmailAndPassword, user, loading, error] =
     useCreateUserWithEmailAndPassword(auth);
-  const { toast } = useToast();
   const navigate = useNavigate();
   const loginUser = useAuthStore((state) => state.login);
 
@@ -73,8 +72,7 @@ const SignupForm = () => {
     const usersSnapShot = await getDocs(usersQuery);
 
     if (!usersSnapShot.empty) {
-      toast({
-        title: "Unable to sign up",
+      toast.error("Unable to sign up", {
         description: `Username '${userData.username}' already exists`,
       });
       return;
@@ -88,10 +86,7 @@ const SignupForm = () => {
       if (!newUser) {
         if (error) {
           console.log(error);
-          toast({
-            title: "Unable to sign up",
-            description: `${error.message}`,
-          });
+          toast("Unable to sign up", { description: `${error.message}` });
         }
         return;
       }
@@ -112,12 +107,12 @@ const SignupForm = () => {
         await setDoc(doc(firestore, "users", newUser.user.uid), userDoc);
         localStorage.setItem("user-info", JSON.stringify(userDoc));
         loginUser(userDoc);
-        toast({ title: "Signed up successfully" });
+        toast.success("Signed up successfully");
         navigate("/");
       }
     } catch (error) {
       console.log(error);
-      toast({ title: "Unable to sign up" });
+      toast.error("Unable to sign up", { description: `${error}` });
     }
   }
 
