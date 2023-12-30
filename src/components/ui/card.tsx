@@ -8,7 +8,7 @@ const cardVariants = cva(
   {
     variants: {
       variant: {
-        solid: "bg-white border border-slate-200 dark:border-slate-800 dark:bg-slate-900",
+        solid: "bg-white border border-slate-200 dark:border-slate-800 dark:bg-slate-900 shadow-lg",
         border: "bg-white border border-slate-200  dark:border-slate-800 dark:bg-slate-950 "
       }
     },
