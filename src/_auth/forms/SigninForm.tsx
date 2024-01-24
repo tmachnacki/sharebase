@@ -59,14 +59,6 @@ const SigninForm = () => {
         userData.email,
         userData.password
       );
-      if (!userCredential) {
-        console.log(error);
-        throw error;
-        if (error) {
-          // toast.error("Unable to log in", { description: `${error.message}` });
-        }
-        return;
-      }
       if (userCredential) {
         const userDocRef = doc(firestore, "users", userCredential.user.uid);
         const userSnapShot = await getDoc(userDocRef);

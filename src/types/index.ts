@@ -3,7 +3,8 @@ export type UserDocument = {
   username: string;
   email: string;
   fullName: string;
-  profilePicUrl: string;
+  profilePicUrl: string; // avatar
+  profileBannerUrl: string; // banner backgorund
   bio: string;
   createdAt: Date;
   followers: string[]; // User IDs

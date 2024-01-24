@@ -98,6 +98,7 @@ const SignupForm = () => {
           fullName: userData.fullName,
           bio: "",
           profilePicUrl: "",
+          profileBannerUrl: "",
           followers: [],
           following: [],
           posts: [],

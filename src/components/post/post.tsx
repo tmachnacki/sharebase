@@ -30,6 +30,7 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { PostDocument } from "@/types";
 
 
 type PostProps = {
@@ -41,7 +42,7 @@ type PostProps = {
   tags: string[];
 };
 
-const Post = () => {
+const Post = ({ post }: { post?: PostDocument }) => {
   const [showComments, setShowComments] = useState(false);
 
   return (
@@ -52,12 +53,12 @@ const Post = () => {
           <Avatar>
             <AvatarFallback>JD</AvatarFallback>
           </Avatar>
-          <span>john_doe</span>
+          <Link to={`/machnackit`}>john_doe</Link>
         </div>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant={"ghost"} size={"iconSm"} className="data-[state=open]">
+            <Button variant={"ghost"} size={"iconSm"} className="data-[state=open]:bg-slate-100 data-[state=open]:dark:bg-slate-800">
               <MoreHorizontal className="w-4 h-4" />
             </Button>
           </DropdownMenuTrigger>

@@ -35,7 +35,7 @@ const Nav = () => {
   const { handleLogout, isLoggingOut, error } = useLogout();
 
   return (
-    <nav className="w-full h-full max-w-[16rem] border-r border-r-slate-200 dark:border-r-slate-800 py-6 px-4 text-slate-600 dark:text-slate-400 flex flex-col">
+    <nav className="w-full h-full max-w-[16rem] border-r border-r-slate-200 dark:border-r-slate-800 py-6 px-4 text-slate-600 dark:text-slate-400 hidden md:flex flex-col">
       <ul className="flex flex-col flex-1 w-full h-full gap-1 list-none">
         {navItems.map((navItem) => (
           <li className="relative" key={navItem.label}>

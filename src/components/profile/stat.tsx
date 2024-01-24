@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 const Stat = ({ number, label, className }: { number: number; label: string, className?: string; }) => {
   return (
     <div className={cn(
-        "flex flex-col items-start justify-start gap-1",
+        "flex flex-col items-center justify-center gap-1",
         className
       )}
     >
