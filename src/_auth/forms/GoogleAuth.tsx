@@ -3,7 +3,7 @@ import { toast } from "@/components/ui/use-toast";
 import { auth, firestore } from "@/lib/firebase";
 import { useAuthStore } from "@/store/authStore";
 import { UserDocument } from "@/types";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, DocumentData } from "firebase/firestore";
 import { useSignInWithGoogle } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
 
@@ -29,7 +29,7 @@ const GoogleAuth = ({ isSignIn }: { isSignIn: boolean }) => {
       const userRef = doc(firestore, "users", newUser.user.uid);
       const userSnapShot = await getDoc(userRef);
 
-      let userDoc;
+      let userDoc: UserDocument | DocumentData | null;
       if (userSnapShot.exists()) {
         userDoc = userSnapShot.data();
       } else {
@@ -40,6 +40,7 @@ const GoogleAuth = ({ isSignIn }: { isSignIn: boolean }) => {
           fullName: newUser.user?.displayName ?? "",
           bio: "",
           profilePicUrl: newUser.user?.photoURL ?? "",
+          profileBannerUrl: "",
           followers: [],
           following: [],
           posts: [],

@@ -1,5 +1,4 @@
-
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useAuthStore } from "@/store/authStore";
 import { useUserProfileStore } from "@/store/userProfileStore";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
@@ -31,7 +30,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
 import { CloseIcon } from "@/components/shared/close-icon";
 import { EditProfileValidationSchema } from "@/lib/validation";
 import { Textarea } from "../ui/textarea";
@@ -39,48 +38,55 @@ import { Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { UserDocument } from "@/types";
 import { toast } from "sonner";
+import { ButtonLoader } from "../shared/button-loader";
+import { Skeleton } from "../ui/skeleton";
 
 type EditProfileProps = {
   isOpen: boolean;
-  onOpenChange: React.Dispatch<React.SetStateAction<boolean>>
+  onOpenChange: React.Dispatch<React.SetStateAction<boolean>>;
   onClose: () => void;
-}
+};
 
 const EditProfile = ({ isOpen, onOpenChange, onClose }: EditProfileProps) => {
   const [isUpdating, setIsUpdating] = useState(false);
-  const [selectedImageFromFile, setSelectedImageFromFile] = useState<string | ArrayBuffer | null>(null);
+  const [selectedFile, setSelectedFile] = useState<string | ArrayBuffer | null>(null);
+  const [selectedFileError, setSelectedFileError] = useState("");
+  // const { selectedFile, handleImageChange, setSelectedFile } = usePreviewImage();
 
-  const authUser = useAuthStore(state => state.user);
+  const fileRef = useRef<HTMLInputElement | null>(null)
+
+
+
+  const authUser = useAuthStore((state) => state.user);
   const setAuthUser = useAuthStore((state) => state.setUser);
-	const setUserProfile = useUserProfileStore((state) => state.setUserProfile);
+  const setUserProfile = useUserProfileStore((state) => state.setUserProfile);
 
   const EditProfileFormSchema = EditProfileValidationSchema;
   const form = useForm<z.infer<typeof EditProfileFormSchema>>({
     resolver: zodResolver(EditProfileFormSchema),
     defaultValues: {
-      profilePic: undefined,
       fullName: authUser?.fullName ?? "",
       username: authUser?.username ?? "",
-      bio: authUser?.bio ?? ""
-    }
-  })
+      bio: authUser?.bio ?? "",
+    },
+  });
 
   async function onSubmit(userData: z.infer<typeof EditProfileFormSchema>) {
-    console.log(userData)
+    // console.log("data", userData, selectedFile);
 
-    if(isUpdating || !authUser) return;
+    if (isUpdating || !authUser || selectedFileError) return;
 
     setIsUpdating(true);
 
-		const storageRef = ref(storage, `profilePics/${authUser.uid}`);
-		const userDocRef = doc(firestore, "users", authUser.uid);
+    const storageRef = ref(storage, `profilePics/${authUser.uid}`);
+    const userDocRef = doc(firestore, "users", authUser.uid);
 
     let URL = "";
 
     try {
-      if(selectedImageFromFile) {
-        await uploadString(storageRef, selectedImageFromFile.toString(), "data_url");
-        URL = await getDownloadURL(ref(storage, `profilePics/${authUser.uid}`))
+      if (selectedFile) {
+        await uploadString(storageRef, selectedFile.toString(), "data_url");
+        URL = await getDownloadURL(ref(storage, `profilePics/${authUser.uid}`));
       }
 
       const updatedUser: UserDocument = {
@@ -96,7 +102,7 @@ const EditProfile = ({ isOpen, onOpenChange, onClose }: EditProfileProps) => {
         posts: authUser.posts,
         profileBannerUrl: authUser.profileBannerUrl,
         saves: authUser.saves,
-        uid: authUser.uid
+        uid: authUser.uid,
       };
 
       await updateDoc(userDocRef, updatedUser);
@@ -104,55 +110,64 @@ const EditProfile = ({ isOpen, onOpenChange, onClose }: EditProfileProps) => {
       setAuthUser(updatedUser);
       setUserProfile(updatedUser);
       onClose();
+      setIsUpdating(false);
       toast.success("Profile updated successfully");
     } catch (error) {
-      toast.error("Error", {description: `${error}`})
-    } finally {
       setIsUpdating(false);
+      toast.error("Error", { description: `${error}` });
     }
   }
 
-  const onImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const maxFileSizeInBytes = 5 * 1024 * 1024; // 5MB
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : null;
     if (file && file.type.startsWith("image/")) {
+      if (file.size > maxFileSizeInBytes) {
+        // toast.error("Error", { description: "File size must be less than 2MB" });
+        setSelectedFileError("File size must be less than 5MB")
+        setSelectedFile(null);
+        return;
+      }
       const reader = new FileReader();
+
       reader.onloadend = () => {
-        setSelectedImageFromFile(reader.result);
+        setSelectedFile(reader.result);
       };
 
       reader.readAsDataURL(file);
+      setSelectedFileError("");
     } else {
-      setSelectedImageFromFile(null);
+      // toast.error("Error", { description: "Please select an image file" });
+      setSelectedFileError("Please select an image file");
+      setSelectedFile(null);
     }
-  }
+  };
 
   return (
     <AlertDialog open={isOpen} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>
-            Edit Profile
-          </AlertDialogTitle>
+          <AlertDialogTitle>Edit Profile</AlertDialogTitle>
         </AlertDialogHeader>
 
         {/* form */}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
+            {/* <FormField
               control={form.control}
               name="profilePic"
               render={({ field }) => (
                 <FormItem>
                   <FormControl >
                     <div className="flex flex-row items-center gap-8">
-                      <Avatar className="h-24 w-24">
-                        <AvatarImage src={selectedImageFromFile || authUser?.profilePicUrl} className="h-full w-full object-cover" />
+                      <Avatar className="w-24 h-24">
+                        <AvatarImage src={selectedImageFromFile || authUser?.profilePicUrl} className="object-cover w-full h-full" />
                         <AvatarFallback>{authUser?.username}</AvatarFallback>
                       </Avatar>
 
                         <Input
                           type="file"
-                          className="cursor-pointer text-center file:hidden"
+                          className="text-center cursor-pointer file:hidden"
                           name={field.name}
                           ref={field.ref}
                           onBlur={field.onBlur}
@@ -168,22 +183,38 @@ const EditProfile = ({ isOpen, onOpenChange, onClose }: EditProfileProps) => {
                   <FormMessage />
                 </FormItem>
               )}
-            />
-
-            {/* <div className="flex flex-row items-center gap-4">
-                <Avatar className="h-24 w-24">
-                  <AvatarImage src={selectedFile || authUser?.profilePicUrl} className="h-full w-full object-cover" />
-                  <AvatarFallback>{authUser?.username}</AvatarFallback>
+            /> */}
+            <div className="space-y-2">
+              <div className="flex flex-row items-center gap-4">
+                <Avatar className="w-24 h-24">
+                  <AvatarImage
+                    src={selectedFile || authUser?.profilePicUrl}
+                    className="object-cover w-full h-full"
+                  />
+                  <AvatarFallback><Skeleton className="w-24 h-24 rounded-full" /></AvatarFallback>
                 </Avatar>
-                <Button variant={"secondary"} onClick={() => fileRef?.current ? fileRef?.current.click() : null}>Edit Profile Picture</Button>
-                <input 
+                <Button
+                  className="w-full"
+                  variant={"secondary"}
+                  type="button"
+                  onClick={(e: React.MouseEvent<HTMLButtonElement> | React.TouchEvent<HTMLButtonElement>) => {
+                    e.preventDefault();
+                    fileRef?.current ? fileRef?.current.click() : null
+                  }}
+                >
+                  Edit Profile Picture
+                </Button>
+                <input
                   type="file"
                   hidden
                   ref={fileRef}
                   onChange={handleImageChange}
                 />
-              </div> */}
-
+              </div>
+              <FormMessage>
+                {selectedFile && selectedFileError ? selectedFileError : null}
+              </FormMessage>
+            </div>
 
             <FormField
               control={form.control}
@@ -192,10 +223,7 @@ const EditProfile = ({ isOpen, onOpenChange, onClose }: EditProfileProps) => {
                 <FormItem>
                   <FormLabel>Full Name</FormLabel>
                   <FormControl>
-                    <Input
-                      type="text"
-                      {...field}
-                    />
+                    <Input type="text" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -208,10 +236,7 @@ const EditProfile = ({ isOpen, onOpenChange, onClose }: EditProfileProps) => {
                 <FormItem>
                   <FormLabel>Username</FormLabel>
                   <FormControl>
-                    <Input
-                      type="text"
-                      {...field}
-                    />
+                    <Input type="text" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -224,9 +249,7 @@ const EditProfile = ({ isOpen, onOpenChange, onClose }: EditProfileProps) => {
                 <FormItem>
                   <FormLabel>Bio</FormLabel>
                   <FormControl>
-                    <Textarea
-                      {...field}
-                    />
+                    <Textarea {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -234,16 +257,17 @@ const EditProfile = ({ isOpen, onOpenChange, onClose }: EditProfileProps) => {
             />
 
             <AlertDialogFooter>
-              <AlertDialogCancel 
+              <AlertDialogCancel
                 onClick={() => {
                   form.reset();
-                  setSelectedImageFromFile(null);
+                  setSelectedFileError("");
+                  setSelectedFile(null);
                 }}
               >
-                  Cancel
-                </AlertDialogCancel>
-              <Button type="submit" disabled={isUpdating} >
-                {isUpdating && <Loader2 className="w-4 h-4 mr-2" />}
+                Cancel
+              </AlertDialogCancel>
+              <Button type="submit" disabled={isUpdating}>
+                {isUpdating && <ButtonLoader />}
                 Submit
               </Button>
             </AlertDialogFooter>
@@ -252,7 +276,7 @@ const EditProfile = ({ isOpen, onOpenChange, onClose }: EditProfileProps) => {
         {/* end form */}
       </AlertDialogContent>
     </AlertDialog>
-  )
-}
+  );
+};
 
 export { EditProfile };

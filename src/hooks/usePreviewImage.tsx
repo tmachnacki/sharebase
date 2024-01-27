@@ -3,7 +3,7 @@ import { toast } from "sonner";
 
 const usePreviewImage = () => {
   const [selectedFile, setSelectedFile] = useState<string | ArrayBuffer | null>(null);
-  const maxFileSizeInBytes = 2 * 1024 * 1024; // 2MB
+  const maxFileSizeInBytes = 5 * 1024 * 1024; // 5MB
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : null;

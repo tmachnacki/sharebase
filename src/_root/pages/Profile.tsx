@@ -48,44 +48,44 @@ const Profile = () => {
 
   return (
     <ScrollArea className='w-full'>
-      <div className="container space-y-8 pt-8">
+      <div className="container pt-8 space-y-8">
         {/* header */}
         {isLoadingUser ? (
           <ProfileHeaderSkeleton />
         ) : (
           <div className="flex flex-row gap-8">
-            <div className="grid place-items-center grow-0 shrink-0 w-full max-w-xs">
+            <div className="grid w-full max-w-xs place-items-center grow-0 shrink-0">
               <Avatar className='w-48 h-48'>
                 <AvatarImage src={userProfile?.profilePicUrl} className='w-full h-full' />
-                <AvatarFallback>{userProfile?.fullName}</AvatarFallback>
+                <AvatarFallback><Skeleton className='w-48 h-48 rounded-full' /></AvatarFallback>
               </Avatar>
             </div>
 
-            <div className="grow-1 shrink-1 space-y-4">
-              <div className="flex gap-4 items-center">
-                <h1 className='font-thin text-2xl'>{userProfile?.username}</h1>
+            <div className="space-y-4 grow-1 shrink-1">
+              <div className="flex items-center gap-4">
+                <h1 className='text-2xl font-thin'>{userProfile?.username}</h1>
                 {isOwnProfileandAuth ? (
                   <Button variant={'outline'} className='grow sm:grow-0' onClick={() => setShowEditProfile(true)}>
                     Edit Profile
                   </Button>
                 ) : (
                   <Button variant={'primary'} className='grow sm:grow-0' disabled={followPending}>
-                    {followPending && <Loader2 className='m-4 w-4 mr-2' />}
+                    {followPending && <Loader2 className='w-4 m-4 mr-2' />}
                     Follow
                   </Button>
                 )}
               </div>
-              <div className="flex flex-row justify-start items-center">
-                <Button variant={"ghost"} className='pointer-events-none pl-0'>
-                  <span className='font-semibold mr-1'>{userProfile?.posts?.length}</span>
+              <div className="flex flex-row items-center justify-start">
+                <Button variant={"ghost"} className='pl-0 pointer-events-none'>
+                  <span className='mr-1 font-semibold'>{userProfile?.posts?.length}</span>
                   <span className='font-thin'>posts</span>
                 </Button>
                 <Button variant={"ghost"} className=''>
-                  <span className='font-semibold mr-1'>{userProfile?.followers?.length}</span>
+                  <span className='mr-1 font-semibold'>{userProfile?.followers?.length}</span>
                   <span className='font-thin'>followers</span>
                 </Button>
                 <Button variant={"ghost"} className=''>
-                  <span className='font-semibold mr-1'>{userProfile?.following?.length}</span>
+                  <span className='mr-1 font-semibold'>{userProfile?.following?.length}</span>
                   <span className='font-thin'>following</span>
                 </Button>
               </div>
@@ -101,7 +101,7 @@ const Profile = () => {
         {/* tabs */}
         <div className="w-full">
           <Tabs defaultValue='posts' className='space-y-8'>
-            <TabsList className='mx-auto grid grid-cols-2 w-96'>
+            <TabsList className='grid grid-cols-2 mx-auto w-96'>
               <TabsTrigger value='posts' className='w-full h-full'>
                 <Grid3X3 className='w-4 h-4 mr-2' />
                 Posts
@@ -116,7 +116,7 @@ const Profile = () => {
               <ProfilePostsSkeleton />
             ) : (
               <TabsContent value='posts' >
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 group/posts ">
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 group/posts ">
                   {/* {userProfile?.posts.map((post) => (
                     <ProfilePost post={post} />
                   ))} */}
@@ -140,9 +140,9 @@ const Profile = () => {
 }
 
 const UserNotFound = () => (
-  <div className='flex flex-col justify-center items-center mx-auto'>
+  <div className='flex flex-col items-center justify-center mx-auto'>
     <span className='text-2xl'>User Not Found</span>
-    <Link to={"/"} className='text-purple-500 w-max mx-auto hover:underline'>Go Home</Link>
+    <Link to={"/"} className='mx-auto text-purple-500 w-max hover:underline'>Go Home</Link>
   </div>
 )
 
