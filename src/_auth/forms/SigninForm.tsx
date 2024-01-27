@@ -71,7 +71,7 @@ const SigninForm = () => {
           );
           logInUser(userSnapShot.data());
           toast.success(
-            `Logged in ${
+            `Logged in as ${
               userSnapShot.data()?.username
                 ? userSnapShot.data().username
                 : "succesfully"
