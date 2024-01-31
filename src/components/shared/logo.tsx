@@ -1,11 +1,12 @@
 import { cn } from "@/lib/utils";
+import React from "react";
 
-type LogoProps = {
+type LogoProps = React.ComponentProps<"span"> & {
   className?: string;
 }
 
-const Logo = ({ className }: LogoProps) => (
-  <span className={cn("relative w-10 h-10 inline-block", className)} aria-hidden="true">
+const Logo = ({ className, ...props }: LogoProps) => (
+  <span className={cn("relative w-10 h-10 inline-block", className)} aria-hidden="true" role="img" {...props}>
     <span className="absolute bottom-0 left-0 bg-transparent rounded-full h-7 w-7 bg-gradient-to-tr from-purple-8 to-purple-5 flex-center">
       <span className="w-5 h-5 rounded-full bg-zinc-50 dark:bg-zinc-950"></span>
     </span>

@@ -9,6 +9,7 @@ import { toast } from "../ui/use-toast";
 
 import { useNavigate } from "react-router-dom";
 import { useLogout } from "@/hooks/useLogout";
+import { CreatePost } from "../shared/createPost";
 
 const iconClassNames = "w-6 h-6";
 
@@ -61,6 +62,9 @@ const Nav = () => {
             </Link>
           </li>
         ))}
+        <li>
+          <CreatePost />
+        </li>
       </ul>
 
       <span

@@ -103,6 +103,7 @@ const SignupForm = () => {
           following: [],
           posts: [],
           saves: [],
+          tagged: [],
           createdAt: new Date(Date.now()),
         };
         await setDoc(doc(firestore, "users", newUser.user.uid), userDoc);

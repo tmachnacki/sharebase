@@ -11,6 +11,7 @@ export type UserDocument = {
   following: string[]; // User IDs
   posts: string[]; // Post IDs
   saves: string[]; // Post IDs
+  tagged?: string[]; // post IDs
 }
 
 export type PostDocument = {
