@@ -1,7 +1,7 @@
 import { PostDocument } from "@/types";
 
 
-const ProfilePost = (post: PostDocument) => (
+const ProfilePost = ({post}: {post: PostDocument}) => (
   <div 
     className="w-full h-auto bg-center bg-cover aspect-square group-hover/posts:opacity-50 hover:!opacity-100 transition-opacity" 
     role="img" 

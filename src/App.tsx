@@ -29,7 +29,7 @@ const App = () => {
         {/* protected */}
         <Route element={authUser ? <RootLayout /> : <Navigate to={"/sign-in"} />}>
           <Route index element={<Home />} />
-          <Route path='/:username' element={<Profile />} />
+          <Route path='/users/:username' element={<Profile />} />
         </Route>
 
         {/* public */}

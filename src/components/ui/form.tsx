@@ -84,6 +84,16 @@ const FormItem = React.forwardRef<
 })
 FormItem.displayName = "FormItem"
 
+const FormItemPrimitive = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => {
+  return (
+    <div ref={ref} className={cn("space-y-2", className)} {...props} />
+  )
+})
+FormItemPrimitive.displayName = "FormItemPrimitive"
+
 const FormLabel = React.forwardRef<
   React.ElementRef<typeof LabelPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
@@ -100,6 +110,24 @@ const FormLabel = React.forwardRef<
   )
 })
 FormLabel.displayName = "FormLabel"
+
+const FormLabelPrimitive = React.forwardRef<
+  React.ElementRef<typeof LabelPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> & {
+    error?: boolean,
+    formItemId?: string
+  }
+>(({ error, formItemId, className, ...props }, ref) => {
+  return (
+    <Label
+      ref={ref}
+      className={cn(error && "text-red-500 dark:text-red-700", className)}
+      htmlFor={formItemId}
+      {...props}
+    />
+  )
+})
+FormLabelPrimitive.displayName = "FormLabelPrimitive"
 
 const FormControl = React.forwardRef<
   React.ElementRef<typeof Slot>,
@@ -140,6 +168,24 @@ const FormDescription = React.forwardRef<
 })
 FormDescription.displayName = "FormDescription"
 
+const FormDescriptionPrimitive = React.forwardRef<
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLParagraphElement> &  {
+    formDescriptionId?: string
+  }
+>(({ formDescriptionId, className, ...props }, ref) => {
+
+  return (
+    <p
+      ref={ref}
+      id={formDescriptionId}
+      className={cn("text-sm text-slate-500 dark:text-slate-400", className)}
+      {...props}
+    />
+  )
+})
+FormDescriptionPrimitive.displayName = "FormDescriptionPrimitive"
+
 const FormMessage = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
@@ -164,13 +210,43 @@ const FormMessage = React.forwardRef<
 })
 FormMessage.displayName = "FormMessage"
 
+const FormMessagePrimitive = React.forwardRef<
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLParagraphElement> & {
+    error?: string,
+    formMessageId?: string
+  }
+>(({ error, formMessageId, className, children, ...props }, ref) => {
+  const body = error ? error : children
+
+  if (!body) {
+    return null
+  }
+
+  return (
+    <p
+      ref={ref}
+      id={formMessageId}
+      className={cn("text-sm font-medium text-red-500 dark:text-red-700", className)}
+      {...props}
+    >
+      {body}
+    </p>
+  )
+})
+FormMessagePrimitive.displayName = "FormMessagePrimitive"
+
 export {
   useFormField,
   Form,
   FormItem,
+  FormItemPrimitive,
   FormLabel,
+  FormLabelPrimitive,
   FormControl,
   FormDescription,
+  FormDescriptionPrimitive,
   FormMessage,
+  FormMessagePrimitive,
   FormField,
 }

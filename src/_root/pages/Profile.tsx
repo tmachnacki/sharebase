@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useGetUserProfileByUsername } from '@/hooks/useGetProfileByUsername';
 import { useAuthStore } from '@/store/authStore';
@@ -6,45 +6,33 @@ import { useAuthStore } from '@/store/authStore';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { ProfileHeaderSkeleton, ProfilePostsSkeleton } from '@/components/profile/skeleton';
 import { Skeleton } from '@/components/ui/skeleton';
 
-import { Grid3X3, Bookmark, Loader2 } from 'lucide-react';
+import { Grid3X3, Bookmark} from 'lucide-react';
 import { ProfilePost } from '@/components/profile/profile-post';
 import { EditProfile } from '@/components/profile/edit';
+import { useFollowUser } from '@/hooks/useFollowUser';
+import { useUserProfileStore } from '@/store/userProfileStore';
+import { ButtonLoader } from '@/components/shared/button-loader';
+import { PostDocument } from '@/types';
 
 const Profile = () => {
   const { username } = useParams();
   const { isLoadingUser, userProfile } = useGetUserProfileByUsername(username);
-  const [followPending, setFollowPending] = useState(false);
+  // const { isLoadingUser, userProfile } = useGetUserProfileById(uid);
   const [showEditProfile, setShowEditProfile] = useState(false);
   const authUser = useAuthStore(state => state.user)
+  const currentUserProfile = useUserProfileStore(state => state.userProfile);
+
+  const { followPending, isFollowing, handleFollowUser } = useFollowUser(currentUserProfile?.uid);
 
   const isOwnProfileandAuth = authUser && authUser.username === userProfile?.username
   const userNotFound = !isLoadingUser && !userProfile
 
   if (userNotFound) return <UserNotFound />;
-
-  const onFollow = () => {
-
-  }
-
-  const onUnFollow = () => {
-
-  }
 
   return (
     <ScrollArea className='w-full'>
@@ -57,7 +45,7 @@ const Profile = () => {
             <div className="grid w-full max-w-xs place-items-center grow-0 shrink-0">
               <Avatar className='w-48 h-48'>
                 <AvatarImage src={userProfile?.profilePicUrl} className='w-full h-full' />
-                <AvatarFallback><Skeleton className='w-48 h-48 rounded-full' /></AvatarFallback>
+                <AvatarFallback>{userProfile?.fullName}</AvatarFallback>
               </Avatar>
             </div>
 
@@ -69,9 +57,14 @@ const Profile = () => {
                     Edit Profile
                   </Button>
                 ) : (
-                  <Button variant={'primary'} className='grow sm:grow-0' disabled={followPending}>
-                    {followPending && <Loader2 className='w-4 m-4 mr-2' />}
-                    Follow
+                  <Button 
+                    variant={isFollowing ? 'secondary' : 'default'} 
+                    className='grow sm:grow-0' 
+                    disabled={followPending}
+                    onClick={handleFollowUser}
+                  >
+                    {followPending && <ButtonLoader />}
+                    {isFollowing ? `Unfollow` : `Follow`}
                   </Button>
                 )}
               </div>
@@ -117,9 +110,9 @@ const Profile = () => {
             ) : (
               <TabsContent value='posts' >
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 group/posts ">
-                  {/* {userProfile?.posts.map((post) => (
+                  {userProfile?.posts.map((post: PostDocument) => (
                     <ProfilePost post={post} />
-                  ))} */}
+                  ))}
 
                   <div className="w-full h-auto bg-center bg-cover aspect-square group-hover/posts:opacity-50 hover:!opacity-100 transition-opacity" role="img" aria-description="" style={{ backgroundImage: `url('/img_post_1.png')` }} />
                   <div className="w-full h-auto bg-center bg-cover aspect-square group-hover/posts:opacity-50 hover:!opacity-100 transition-opacity" role="img" aria-description="" style={{ backgroundImage: `url('/img_post_1.png')` }} />

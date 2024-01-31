@@ -53,7 +53,7 @@ const Post = ({ post }: { post?: PostDocument }) => {
           <Avatar>
             <AvatarFallback>JD</AvatarFallback>
           </Avatar>
-          <Link to={`/machnackit`}>john_doe</Link>
+          <Link to={`/users/JDoe`}>john_doe</Link>
         </div>
 
         <DropdownMenu>
