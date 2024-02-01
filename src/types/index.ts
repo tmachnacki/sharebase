@@ -7,8 +7,8 @@ export type UserDocument = {
   profileBannerUrl: string; // banner backgorund
   bio: string;
   createdAt: Date;
-  followers: string[]; // User IDs
-  following: string[]; // User IDs
+  followers: string[]; // userIDs
+  following: string[]; // userIds
   posts: string[]; // Post IDs
   saves: string[]; // Post IDs
   tagged?: string[]; // post IDs

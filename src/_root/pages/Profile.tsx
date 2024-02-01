@@ -16,6 +16,7 @@ import { ProfilePost } from '@/components/profile/profile-post';
 import { EditProfile } from '@/components/profile/edit';
 import { useFollowUser } from '@/hooks/useFollowUser';
 import { useUserProfileStore } from '@/store/userProfileStore';
+import { FollowersFollowing } from '@/components/profile/followers-following';
 import { ButtonLoader } from '@/components/shared/button-loader';
 import { PostDocument } from '@/types';
 
@@ -24,10 +25,12 @@ const Profile = () => {
   const { isLoadingUser, userProfile } = useGetUserProfileByUsername(username);
   // const { isLoadingUser, userProfile } = useGetUserProfileById(uid);
   const [showEditProfile, setShowEditProfile] = useState(false);
+  const [showFollowers, setShowFollowers] = useState(false);
+  const [showFollowing, setShowFollowing] = useState(false);
   const authUser = useAuthStore(state => state.user)
   const currentUserProfile = useUserProfileStore(state => state.userProfile);
 
-  const { followPending, isFollowing, handleFollowUser } = useFollowUser(currentUserProfile?.uid);
+  const { followPending, isFollowing, handleFollowUser } = useFollowUser(userProfile?.uid);
 
   const isOwnProfileandAuth = authUser && authUser.username === userProfile?.username
   const userNotFound = !isLoadingUser && !userProfile
@@ -73,11 +76,11 @@ const Profile = () => {
                   <span className='mr-1 font-semibold'>{userProfile?.posts?.length}</span>
                   <span className='font-thin'>posts</span>
                 </Button>
-                <Button variant={"ghost"} className=''>
+                <Button variant={"ghost"} className='' onClick={() => setShowFollowers(true)}>
                   <span className='mr-1 font-semibold'>{userProfile?.followers?.length}</span>
                   <span className='font-thin'>followers</span>
                 </Button>
-                <Button variant={"ghost"} className=''>
+                <Button variant={"ghost"} className='' onClick={() => setShowFollowing(true)}>
                   <span className='mr-1 font-semibold'>{userProfile?.following?.length}</span>
                   <span className='font-thin'>following</span>
                 </Button>
@@ -126,8 +129,15 @@ const Profile = () => {
         {/* end tabs */}
       </div>
 
+      {/* dialogs */}
       {/* edit profile dialog */}
       <EditProfile isOpen={showEditProfile} onOpenChange={setShowEditProfile} onClose={() => setShowEditProfile(false)} />
+
+      {/* followers */}
+      <FollowersFollowing context='followers' open={showFollowers} setOpen={setShowFollowers} uids={userProfile?.followers} />
+
+      {/* following */}
+      <FollowersFollowing context='following' open={showFollowing} setOpen={setShowFollowing} uids={userProfile?.following} />
     </ScrollArea >
   )
 }

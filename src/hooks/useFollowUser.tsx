@@ -4,6 +4,7 @@ import { useUserProfileStore } from "@/store/userProfileStore";
 import { firestore } from "@/lib/firebase";
 import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
 import { toast } from "sonner";
+import { useParams } from "react-router-dom";
 
 const useFollowUser = (userId: string) => {
 	const [followPending, setFollowPending] = useState(false);
@@ -11,18 +12,23 @@ const useFollowUser = (userId: string) => {
 	const authUser = useAuthStore((state) => state.user);
 	const setAuthUser = useAuthStore((state) => state.setUser);
 	const { userProfile, setUserProfile } = useUserProfileStore();
+	const { username } = useParams();
+
+
 
 	const handleFollowUser = async () => {
     if(!authUser) return;
+		console.log(userProfile);
+		console.log(username);
 		setFollowPending(true);
 		try {
 			const currentUserRef = doc(firestore, "users", authUser.uid);
-			const userToFollowOrUnfollorRef = doc(firestore, "users", userId);
+			const userToFollowOrUnfollowRef = doc(firestore, "users", userId);
 			await updateDoc(currentUserRef, {
 				following: isFollowing ? arrayRemove(userId) : arrayUnion(userId),
 			});
 
-			await updateDoc(userToFollowOrUnfollorRef, {
+			await updateDoc(userToFollowOrUnfollowRef, {
 				followers: isFollowing ? arrayRemove(authUser.uid) : arrayUnion(authUser.uid),
 			});
 
@@ -32,7 +38,7 @@ const useFollowUser = (userId: string) => {
 					...authUser,
 					following: authUser.following.filter((uid: string) => uid !== userId),
 				});
-				if (userProfile)
+				if (userProfile && username && username === userProfile.username)
 					setUserProfile({
 						...userProfile,
 						followers: userProfile.followers.filter((uid: string) => uid !== authUser.uid),
@@ -53,7 +59,7 @@ const useFollowUser = (userId: string) => {
 					following: [...authUser.following, userId],
 				});
 
-				if (userProfile)
+				if (userProfile && username && username === userProfile.username)
 					setUserProfile({
 						...userProfile,
 						followers: [...userProfile.followers, authUser.uid],
