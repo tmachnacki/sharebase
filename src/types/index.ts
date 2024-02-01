@@ -32,3 +32,5 @@ export type CommentDocument = {
   postId: string; // Post ID
   createdAt: Date;
 }
+
+export type FollowerFollowing = Omit<UserDocument, "email" | "profileBannerUrl" | "bio" | "createdAt" | "followers" | "following" | "posts" | "saves" | "tagged">
