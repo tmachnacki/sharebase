@@ -21,57 +21,18 @@ import { Skeleton } from "../ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { collection, doc, getDoc, getDocs, limit, orderBy, query, where } from "firebase/firestore";
 import { FirebaseError } from "firebase/app";
-
+import { Loader2 } from "lucide-react";
 
 type FollowersProps = {
   context: "followers" | "following"
-  uids: string[];
+  users: FollowerFollowing[];
+  loadingUsers: boolean;
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-// array of uids that follow user or that user is following
-const FollowersFollowing = ({ context, uids, open, setOpen }: FollowersProps) => {
-  const [loadingUsers, setLoadingUsers] = useState(false);
-  const [usersData, setUsersData] = useState<Array<FollowerFollowing>>([]);
-  const [page, setPage] = useState(0);
-
-  const PAGE_SIZE = 20
-
-  useEffect(() => {
-    const getFollowersFollowingData = async () => {
-      if (!uids || uids.length === 0) return;
-      
-      setLoadingUsers(true);
-      try{
-        const newUsersData: FollowerFollowing[] = [];
-        const usersRef = collection(firestore, "users");
-        const q = query(usersRef, where("uid", "in", uids ), orderBy("uid"), limit(PAGE_SIZE));
-        const querySnapShot = await getDocs(q);
-
-        querySnapShot.forEach((userDoc) => {
-          const userDocSnapData = userDoc.data()
-          newUsersData.push({
-            uid: userDocSnapData.uid,
-            username: userDocSnapData.username,
-            fullName: userDocSnapData.fullName,
-            profilePicUrl: userDocSnapData.profilePicUrl
-          })
-        })
-
-        setUsersData(newUsersData);
-        setLoadingUsers(false)
-
-      } catch (error) {
-        toast.error("Error", {description: `${error}`})
-        setLoadingUsers(false);
-      }
-    };
-
-    getFollowersFollowingData();
-
-  }, [uids, context])
-
+// array of either followers or following
+const FollowersFollowing = ({ context, users, loadingUsers, open, setOpen }: FollowersProps) => {
   return(
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetContent>
@@ -85,14 +46,12 @@ const FollowersFollowing = ({ context, uids, open, setOpen }: FollowersProps) =>
         <ScrollArea id={`${context}ScrollArea`}>
           <ul className="flex flex-col py-4 divide-y divide-slate-200 dark:divide-slate-800" role="list" >
             {loadingUsers ? (
-              <>
-                <UsersSkeleton />
-                <UsersSkeleton />
-                <UsersSkeleton />
-                <UsersSkeleton />
-              </>
+              <div className="flex items-center justify-center w-full">
+                <Loader2 className="w-6 h-6 animate-spin" />
+                <span className="sr-only">loading</span>
+              </div>
             ) : (
-              usersData.map((user) => (
+              users.map((user) => (
                 <UserProfile user={user} key={user.uid}  />
               ))
             )}

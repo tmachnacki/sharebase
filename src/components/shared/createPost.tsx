@@ -20,7 +20,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer"
-import { Button } from "@/components/ui/button";
+import { Button, ButtonProps } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
@@ -29,6 +29,8 @@ import { FormItemPrimitive, FormDescriptionPrimitive, FormLabelPrimitive, FormMe
 import { PlusSquare } from "lucide-react";
 import { Input } from "../ui/input";
 import { ButtonLoader } from "./button-loader";
+
+import { CreatePostValidationSchema } from "@/lib/validation";
 
 
 type CreatePostProps = {
@@ -142,12 +144,22 @@ const CreatePost = ({ triggerClassName }: CreatePostProps) => {
   )
 }
 
-const CreatePostPanel = ({ isDesktop, open, setOpen, children }: { isDesktop: boolean; open: boolean; setOpen: React.Dispatch<React.SetStateAction<boolean>>; children?: React.ReactNode }) => {
+const CreatePostPanel = ({ 
+  isDesktop, 
+  open, 
+  setOpen, 
+  children 
+}: { 
+  isDesktop: boolean; 
+  open: boolean; 
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>; 
+  children?: React.ReactNode 
+}) => {
   return (
     isDesktop ? (
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button variant="primary-shadow">
+          <Button variant={"primary-shadow"} >
             <PlusSquare className="w-4 h-4 mr-2" />
             New Post
           </Button>
