@@ -32,7 +32,11 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { CloseIcon } from "@/components/shared/close-icon";
-import { EditProfileValidationSchema, ACCEPTED_IMAGE_TYPES, MAX_PROFILE_FILE_SIZE } from "@/lib/validation";
+import {
+  EditProfileValidationSchema,
+  ACCEPTED_IMAGE_TYPES,
+  MAX_PROFILE_FILE_SIZE,
+} from "@/lib/validation";
 import { Textarea } from "../ui/textarea";
 import { Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -41,9 +45,9 @@ import { toast } from "sonner";
 import { ButtonLoader } from "../shared/button-loader";
 import { Skeleton } from "../ui/skeleton";
 
-import { FileWithPath, useDropzone } from "react-dropzone"
+import { FileWithPath, useDropzone } from "react-dropzone";
 import { convertFileToUrl, toBase64 } from "@/lib/utils";
-import { ProfileUploader } from "./profile-uploader"; 
+import { ProfileUploader } from "./profile-uploader";
 
 type EditProfileProps = {
   isOpen: boolean;
@@ -61,7 +65,9 @@ function getImageData(event: React.ChangeEvent<HTMLInputElement>) {
   );
 
   const files = dataTransfer.files;
-  const displayUrl = event.target.files ? URL.createObjectURL(event.target.files![0]) : "";
+  const displayUrl = event.target.files
+    ? URL.createObjectURL(event.target.files![0])
+    : "";
 
   return { files, displayUrl };
 }
@@ -72,22 +78,23 @@ const EditProfile = ({ isOpen, onOpenChange, onClose }: EditProfileProps) => {
   const setUserProfile = useUserProfileStore((state) => state.setUserProfile);
 
   const [isUpdating, setIsUpdating] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<string | ArrayBuffer | null>(null);
+  const [selectedFile, setSelectedFile] = useState<string | ArrayBuffer | null>(
+    null
+  );
   const [selectedFileError, setSelectedFileError] = useState("");
   // const { selectedFile, handleImageChange, setSelectedFile } = usePreviewImage();
 
-  const [previewImageUrl, setPreviewImageURl] = useState("");
+  // const [previewImageUrl, setPreviewImageURl] = useState("");
 
-  const fileRef = useRef<HTMLInputElement | null>(null)
+  const fileRef = useRef<HTMLInputElement | null>(null);
 
-
-
+  const authUserProfileFile = authUser?.profilePicUrl;
 
   const EditProfileFormSchema = EditProfileValidationSchema;
   const form = useForm<z.infer<typeof EditProfileFormSchema>>({
     resolver: zodResolver(EditProfileFormSchema),
     defaultValues: {
-      profilePic: [],
+      // profilePic: [],
       fullName: authUser?.fullName ?? "",
       username: authUser?.username ?? "",
       bio: authUser?.bio ?? "",
@@ -99,18 +106,13 @@ const EditProfile = ({ isOpen, onOpenChange, onClose }: EditProfileProps) => {
 
     if (!authUser) return;
 
-    // setIsUpdating(true);
-
-    console.log("form data", userData);
-    console.log("imageUrl", previewImageUrl);
-
     const storageRef = ref(storage, `profilePics/${authUser.uid}`);
     const userDocRef = doc(firestore, "users", authUser.uid);
 
     let URL = "";
     try {
-      if (userData.profilePic && previewImageUrl) {
-        await uploadString(storageRef, previewImageUrl, "data_url");
+      if (selectedFile) {
+        await uploadString(storageRef, selectedFile.toString(), "data_url");
         URL = await getDownloadURL(ref(storage, `profilePics/${authUser.uid}`));
       }
 
@@ -135,26 +137,40 @@ const EditProfile = ({ isOpen, onOpenChange, onClose }: EditProfileProps) => {
       setAuthUser(updatedUser);
       setUserProfile(updatedUser);
       onClose();
-      // setIsUpdating(false);
       toast.success("Profile updated successfully");
     } catch (error) {
-      // setIsUpdating(false);
       toast.error("Error", { description: `${error}` });
     }
   }
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : null;
-    console.log(file)
-    if (file && ACCEPTED_IMAGE_TYPES.includes(file.type) && !(file.size > MAX_PROFILE_FILE_SIZE)) {
-      console.log(file);
 
-      const reader = new FileReader();      
-      reader.readAsDataURL(file);
-      reader.onloadend = () => {
-        setPreviewImageURl(reader.result?.toString() || "");
-      };
+    if (!file) {
+      return;
     }
+
+    if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+      setSelectedFileError(".jpg, .jpeg, .png and .webp files are accepted.");
+      setSelectedFile(null);
+      return;
+    }
+
+    if (file.size > MAX_PROFILE_FILE_SIZE) {
+      setSelectedFile("Image must be less than 5MB");
+      setSelectedFile(null);
+    }
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setSelectedFile(reader.result);
+      setSelectedFileError("");
+    };
+    reader.onerror = () => {
+      setSelectedFileError("Unable to load image file");
+      setSelectedFile(null);
+    };
   };
 
   return (
@@ -167,11 +183,12 @@ const EditProfile = ({ isOpen, onOpenChange, onClose }: EditProfileProps) => {
         {/* form */}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
+            {/* <FormField
               control={form.control}
               name="profilePic"
-              render={({ field: { onChange, ref, value, ...rest } }) => (
+              render={({ field: { onChange, value, ...rest } }) => (
                 <FormItem>
+                  <FormLabel className="sr-only">Profile Picture</FormLabel>
                   <FormControl >
                     <div className="flex flex-row items-center gap-8">
                       <Avatar className="w-24 h-24">
@@ -180,13 +197,12 @@ const EditProfile = ({ isOpen, onOpenChange, onClose }: EditProfileProps) => {
                       </Avatar>
                       <Input
                         type="file"
-                        className="text-center cursor-pointer file:hidden"
-                        ref={ref}
+                        className="block w-full h-auto p-0 align-middle border rounded-lg cursor-pointer disabled:opacity-50 disabled:pointer-events-none file:bg-slate-900 file:text-slate-50 file:hover:bg-slate-900/90 file:border-0 file:me-4 file:px-4 dark:file:bg-slate-50 dark:file:text-slate-900 dark:file:hover:bg-slate-50/90 file:py-2"
                         {...rest}
                         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                           if(!event.target.files) return;
-                          handleImageChange(event)
-                          onChange(event.target.files[0])
+                          onChange(event.target.files[0]);
+                          handleImageChange(event);
                         }}
                       />
                     </div>
@@ -194,9 +210,8 @@ const EditProfile = ({ isOpen, onOpenChange, onClose }: EditProfileProps) => {
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
 
-            {/* 
             <div className="space-y-2">
               <div className="flex flex-row items-center gap-4">
                 <Avatar className="w-24 h-24">
@@ -204,30 +219,42 @@ const EditProfile = ({ isOpen, onOpenChange, onClose }: EditProfileProps) => {
                     src={selectedFile || authUser?.profilePicUrl}
                     className="object-cover w-full h-full"
                   />
-                  <AvatarFallback><Skeleton className="w-24 h-24 rounded-full" /></AvatarFallback>
+                  <AvatarFallback>
+                    {selectedFile || authUser?.profilePicUrl ? (
+                      <Skeleton className="w-full h-full rounded-full" />
+                    ) : (
+                      authUser?.fullName
+                    )}
+                  </AvatarFallback>
                 </Avatar>
                 <Button
                   className="w-full"
-                  variant={"secondary"}
+                  variant={"outline"}
                   type="button"
-                  onClick={(e: React.MouseEvent<HTMLButtonElement> | React.TouchEvent<HTMLButtonElement>) => {
+                  onClick={(
+                    e:
+                      | React.MouseEvent<HTMLButtonElement>
+                      | React.TouchEvent<HTMLButtonElement>
+                  ) => {
                     e.preventDefault();
-                    fileRef?.current ? fileRef?.current.click() : null
+                    fileRef?.current ? fileRef?.current.click() : null;
                   }}
                 >
                   Edit Profile Picture
                 </Button>
-                <input
+
+                <Input
                   type="file"
+                  className="hidden"
                   hidden
                   ref={fileRef}
                   onChange={handleImageChange}
                 />
               </div>
               <FormMessage>
-                {selectedFile && selectedFileError ? selectedFileError : null}
+                {selectedFileError && selectedFileError}
               </FormMessage>
-            </div> */}
+            </div>
 
             <FormField
               control={form.control}
@@ -275,7 +302,6 @@ const EditProfile = ({ isOpen, onOpenChange, onClose }: EditProfileProps) => {
                 variant={"outline"}
                 onClick={() => {
                   onClose();
-                  setPreviewImageURl("");
                 }}
                 disabled={form.formState.isSubmitting}
               >
