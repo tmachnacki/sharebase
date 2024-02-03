@@ -7,7 +7,13 @@ import { useUserProfileStore } from "@/store/userProfileStore";
 
 import { useLocation } from "react-router-dom";
 import { PostDocument } from "@/types";
-import { addDoc, collection, doc, arrayUnion, updateDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  arrayUnion,
+  updateDoc,
+} from "firebase/firestore";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { firestore, storage } from "@/lib/firebase";
 
@@ -22,7 +28,12 @@ const useCreatePost = () => {
 
   const { pathname } = useLocation();
 
-  const handleCreatePost = async (selectedFile: string | ArrayBuffer | null, caption: string | undefined, tags: string[], location: string | undefined) => {
+  const handleCreatePost = async (
+    selectedFile: string | ArrayBuffer | null,
+    caption: string | undefined,
+    tags: string[],
+    location: string | undefined
+  ) => {
     if (isPending) return;
     if (!selectedFile) return;
 
@@ -35,8 +46,8 @@ const useCreatePost = () => {
       createdBy: authUser?.uid,
       location: location ?? "",
       tags: tags ?? [],
-      imgUrl: ""
-    }
+      imgUrl: "",
+    };
 
     try {
       const postDocRef = await addDoc(collection(firestore, "posts"), newPost);
@@ -51,19 +62,21 @@ const useCreatePost = () => {
 
       newPost.imgUrl = downloadURL;
 
-      if (userProfile?.uid === authUser?.uid) createPost({ ...newPost, id: postDocRef.id });
+      if (userProfile?.uid === authUser?.uid)
+        createPost({ ...newPost, id: postDocRef.id });
 
-      if (pathname !== "/" && userProfile?.uid === authUser?.uid) addPost({ ...newPost, id: postDocRef.id });
+      if (pathname !== "/" && userProfile?.uid === authUser?.uid)
+        addPost({ ...newPost, id: postDocRef.id });
 
       toast.success("Post created successfully");
       setIsPending(false);
     } catch (error) {
       toast.error("Error", { description: `${error}` });
-      setIsPending(false)
+      setIsPending(false);
     }
   };
 
-  return { isPending, handleCreatePost }
+  return { isPending, handleCreatePost };
 };
 
 export { useCreatePost };

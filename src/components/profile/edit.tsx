@@ -31,12 +31,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { CloseIcon } from "@/components/shared/close-icon";
-import {
-  EditProfileValidationSchema,
-  ACCEPTED_IMAGE_TYPES,
-  MAX_PROFILE_FILE_SIZE,
-} from "@/lib/validation";
+import { EditProfileValidationSchema } from "@/lib/validation";
 import { Textarea } from "../ui/textarea";
 import { Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -44,10 +39,16 @@ import { UserDocument } from "@/types";
 import { toast } from "sonner";
 import { ButtonLoader } from "../shared/button-loader";
 import { Skeleton } from "../ui/skeleton";
-
-import { FileWithPath, useDropzone } from "react-dropzone";
-import { convertFileToUrl, toBase64 } from "@/lib/utils";
-import { ProfileUploader } from "./profile-uploader";
+import { usePreviewImage } from "@/hooks/usePreviewImage";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "../ui/drawer";
+import { useIsDesktop } from "@/hooks/useIsDesktop";
 
 type EditProfileProps = {
   isOpen: boolean;
@@ -77,18 +78,17 @@ const EditProfile = ({ isOpen, onOpenChange, onClose }: EditProfileProps) => {
   const setAuthUser = useAuthStore((state) => state.setUser);
   const setUserProfile = useUserProfileStore((state) => state.setUserProfile);
 
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<string | ArrayBuffer | null>(
-    null
-  );
-  const [selectedFileError, setSelectedFileError] = useState("");
-  // const { selectedFile, handleImageChange, setSelectedFile } = usePreviewImage();
+  const { isDesktop } = useIsDesktop();
 
-  // const [previewImageUrl, setPreviewImageURl] = useState("");
+  const {
+    selectedFile,
+    setSelectedFile,
+    selectedFileError,
+    setSelectedFileError,
+    handleImageChange,
+  } = usePreviewImage();
 
   const fileRef = useRef<HTMLInputElement | null>(null);
-
-  const authUserProfileFile = authUser?.profilePicUrl;
 
   const EditProfileFormSchema = EditProfileValidationSchema;
   const form = useForm<z.infer<typeof EditProfileFormSchema>>({
@@ -102,8 +102,6 @@ const EditProfile = ({ isOpen, onOpenChange, onClose }: EditProfileProps) => {
   });
 
   async function onSubmit(userData: z.infer<typeof EditProfileFormSchema>) {
-    console.log("data", userData, selectedFile);
-
     if (!authUser) return;
 
     const storageRef = ref(storage, `profilePics/${authUser.uid}`);
@@ -143,47 +141,16 @@ const EditProfile = ({ isOpen, onOpenChange, onClose }: EditProfileProps) => {
     }
   }
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files ? e.target.files[0] : null;
-
-    if (!file) {
-      return;
-    }
-
-    if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
-      setSelectedFileError(".jpg, .jpeg, .png and .webp files are accepted.");
-      setSelectedFile(null);
-      return;
-    }
-
-    if (file.size > MAX_PROFILE_FILE_SIZE) {
-      setSelectedFile("Image must be less than 5MB");
-      setSelectedFile(null);
-    }
-
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      setSelectedFile(reader.result);
-      setSelectedFileError("");
-    };
-    reader.onerror = () => {
-      setSelectedFileError("Unable to load image file");
-      setSelectedFile(null);
-    };
-  };
-
   return (
-    <AlertDialog open={isOpen} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Edit Profile</AlertDialogTitle>
-        </AlertDialogHeader>
-
-        {/* form */}
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            {/* <FormField
+    <EditProfilePanel
+      isDesktop={isDesktop}
+      open={isOpen}
+      setOpen={onOpenChange}
+    >
+      {/* form */}
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className={`px-4 space-y-6 md:px-0`}>
+          {/* <FormField
               control={form.control}
               name="profilePic"
               render={({ field: { onChange, value, ...rest } }) => (
@@ -212,90 +179,89 @@ const EditProfile = ({ isOpen, onOpenChange, onClose }: EditProfileProps) => {
               )}
             /> */}
 
-            <div className="space-y-2">
-              <div className="flex flex-row items-center gap-4">
-                <Avatar className="w-24 h-24">
-                  <AvatarImage
-                    src={selectedFile || authUser?.profilePicUrl}
-                    className="object-cover w-full h-full"
-                  />
-                  <AvatarFallback>
-                    {selectedFile || authUser?.profilePicUrl ? (
-                      <Skeleton className="w-full h-full rounded-full" />
-                    ) : (
-                      authUser?.fullName
-                    )}
-                  </AvatarFallback>
-                </Avatar>
-                <Button
-                  className="w-full"
-                  variant={"outline"}
-                  type="button"
-                  onClick={(
-                    e:
-                      | React.MouseEvent<HTMLButtonElement>
-                      | React.TouchEvent<HTMLButtonElement>
-                  ) => {
-                    e.preventDefault();
-                    fileRef?.current ? fileRef?.current.click() : null;
-                  }}
-                >
-                  Edit Profile Picture
-                </Button>
-
-                <Input
-                  type="file"
-                  className="hidden"
-                  hidden
-                  ref={fileRef}
-                  onChange={handleImageChange}
+          <div className="space-y-2">
+            <div className="grid grid-cols-2 gap-6 place-items-center">
+              <Avatar className="w-full h-full">
+                <AvatarImage
+                  src={selectedFile || authUser?.profilePicUrl}
+                  className="object-cover w-full h-full"
                 />
-              </div>
-              <FormMessage>
-                {selectedFileError && selectedFileError}
-              </FormMessage>
+                <AvatarFallback>
+                  {selectedFile || authUser?.profilePicUrl ? (
+                    <Skeleton className="w-full h-full rounded-full" />
+                  ) : (
+                    authUser?.fullName
+                  )}
+                </AvatarFallback>
+              </Avatar>
+              <Button
+                className="w-full"
+                variant={"outline"}
+                type="button"
+                onClick={(
+                  e:
+                    | React.MouseEvent<HTMLButtonElement>
+                    | React.TouchEvent<HTMLButtonElement>
+                ) => {
+                  e.preventDefault();
+                  fileRef?.current ? fileRef?.current.click() : null;
+                }}
+              >
+                Edit Profile Picture
+              </Button>
+
+              <Input
+                type="file"
+                className="hidden"
+                hidden
+                ref={fileRef}
+                onChange={handleImageChange}
+              />
             </div>
+            <FormMessage>{selectedFileError && selectedFileError}</FormMessage>
+          </div>
 
-            <FormField
-              control={form.control}
-              name="fullName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Full Name</FormLabel>
-                  <FormControl>
-                    <Input type="text" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Username</FormLabel>
-                  <FormControl>
-                    <Input type="text" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="bio"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Bio</FormLabel>
-                  <FormControl>
-                    <Textarea {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <FormField
+            control={form.control}
+            name="fullName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Full Name</FormLabel>
+                <FormControl>
+                  <Input type="text" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Username</FormLabel>
+                <FormControl>
+                  <Input type="text" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="bio"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Bio</FormLabel>
+                <FormControl>
+                  <Textarea {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
+          {isDesktop ? (
             <AlertDialogFooter>
               <Button
                 type="button"
@@ -312,11 +278,66 @@ const EditProfile = ({ isOpen, onOpenChange, onClose }: EditProfileProps) => {
                 Submit
               </Button>
             </AlertDialogFooter>
-          </form>
-        </Form>
-        {/* end form */}
+          ) : (
+            <DrawerFooter className="px-0">
+              <Button
+                type="submit"
+                variant={"default"}
+                disabled={form.formState.isSubmitting}
+              >
+                {form.formState.isSubmitting && <ButtonLoader />}
+                Submit
+              </Button>
+              <Button
+                type="button"
+                variant={"outline"}
+                onClick={() => onClose()}
+                disabled={form.formState.isSubmitting}
+              >
+                Cancel
+              </Button>
+            </DrawerFooter>
+          )}
+        </form>
+      </Form>
+      {/* end form */}
+    </EditProfilePanel>
+  );
+};
+
+const EditProfilePanel = ({
+  isDesktop,
+  open,
+  setOpen,
+  children,
+}: {
+  isDesktop: boolean;
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  children?: React.ReactNode;
+}) => {
+  const title = "Edit Profile";
+  const description = "Update your public profile details";
+  return isDesktop ? (
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialogContent className="sm:max-w-md">
+        <AlertDialogHeader>
+          <AlertDialogTitle>{title}</AlertDialogTitle>
+          <AlertDialogDescription>{description}</AlertDialogDescription>
+        </AlertDialogHeader>
+        {children && children}
       </AlertDialogContent>
     </AlertDialog>
+  ) : (
+    <Drawer open={open} onOpenChange={setOpen}>
+      <DrawerContent>
+        <DrawerHeader className="text-left">
+          <DrawerTitle>{title}</DrawerTitle>
+          <DrawerDescription>{description}</DrawerDescription>
+        </DrawerHeader>
+        {children && children}
+      </DrawerContent>
+    </Drawer>
   );
 };
 

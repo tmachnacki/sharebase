@@ -12,7 +12,7 @@ export const SigninValidationSchema = z.object({
   password: z.string().min(8, { message: "Password must be at least 8 characters" })
 })
 
-export const MAX_PROFILE_FILE_SIZE =  1024 * 1024 * 5;
+export const MAX_IMAGE_FILE_SIZE =  1024 * 1024 * 5;
 export const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 export const EditProfileValidationSchema = z.object({
   // profilePic: z
@@ -38,7 +38,7 @@ export const EditProfileValidationSchema = z.object({
 
 export const CreatePostValidationSchema = z.object({
   // images
-  caption: z.string().max(2200, { message: "caption must be less than 2200 characters" }),
-  location: z.string().max(2200, { message: "location must be less than 2200 characters" }),
+  caption: z.string().max(2200, { message: "caption must be less than 2200 characters" }).optional(),
+  location: z.string().max(2200, { message: "location must be less than 2200 characters" }).optional(),
   tags: z.array(z.string()).optional()
 })

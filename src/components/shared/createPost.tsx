@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { SetStateAction, useRef, useState } from "react";
 import { useCreatePost } from "@/hooks/useCreatePost";
 import {
   Dialog,
@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   Drawer,
   DrawerClose,
@@ -19,181 +19,260 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/drawer"
+} from "@/components/ui/drawer";
 import { Button, ButtonProps } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
-import { FormItemPrimitive, FormDescriptionPrimitive, FormLabelPrimitive, FormMessagePrimitive } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  useFormField,
+} from "@/components/ui/form";
+import { useForm } from "react-hook-form";
 
 import { PlusSquare } from "lucide-react";
 import { Input } from "../ui/input";
 import { ButtonLoader } from "./button-loader";
 
 import { CreatePostValidationSchema } from "@/lib/validation";
-
-
-type CreatePostProps = {
-  triggerClassName?: string;
-}
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { usePreviewImage } from "@/hooks/usePreviewImage";
+import { useIsDesktop } from "@/hooks/useIsDesktop";
 
 type CreatePostFields = {
   selectedFile: string | ArrayBuffer | null;
   caption: string;
   tags: string[];
   location: string;
-}
+};
 
 const initialFieldState: CreatePostFields = {
   selectedFile: null,
   caption: "",
   tags: [],
-  location: ""
-}
+  location: "",
+};
 
 const intialFieldErrorsState = {
   selectedFile: "",
   caption: "",
   tags: "",
-  location: ""
-}
+  location: "",
+};
 
 // const hasError = (fieldError: string) => fieldError.length > 0
 
-const CreatePost = ({ triggerClassName }: CreatePostProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [fields, setFields] = useState<CreatePostFields>(initialFieldState);
-  const [fieldErrors, setFieldErrors] = useState(intialFieldErrorsState);
+type CreatePostProps = {
+  open: boolean;
+  setOpen: React.Dispatch<SetStateAction<boolean>>;
+};
+
+const CreatePost = ({ open, setOpen }: CreatePostProps) => {
+  // const [fields, setFields] = useState<CreatePostFields>(initialFieldState);
+  // const [fieldErrors, setFieldErrors] = useState(intialFieldErrorsState);
+
+  // const [selectedFile, setSelectedFile] = useState<string | ArrayBuffer | null>(
+  //   null
+  // );
+  const fileRef = useRef<HTMLInputElement>(null);
+  const {
+    selectedFile,
+    setSelectedFile,
+    selectedFileError,
+    setSelectedFileError,
+    handleImageChange,
+  } = usePreviewImage();
 
   const { isPending, handleCreatePost } = useCreatePost();
+  const { isDesktop } = useIsDesktop();
 
-  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const form = useForm<z.infer<typeof CreatePostValidationSchema>>({
+    resolver: zodResolver(CreatePostValidationSchema),
+    defaultValues: {
+      caption: "",
+      location: "",
+      tags: [],
+    },
+  });
 
-
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    console.log(fields)
-  }
+  const onSubmit = (postData: z.infer<typeof CreatePostValidationSchema>) => {
+    console.log("postData", postData);
+  };
 
   return (
-    <CreatePostPanel open={isOpen} setOpen={setIsOpen} isDesktop={isDesktop} >
-      <form className="space-y-4 px-4 md:px-0" onSubmit={handleSubmit}>
-        <FormItemPrimitive>
-          <FormLabelPrimitive formItemId="caption" error={fieldErrors.caption ? true : false}>
-            Caption
-          </FormLabelPrimitive>
-          <Input
-            type="text"
+    <CreatePostPanel open={open} setOpen={setOpen} isDesktop={isDesktop}>
+      <Form {...form}>
+        <form
+          className="px-4 space-y-6 md:px-0"
+          onSubmit={form.handleSubmit(onSubmit)}
+        >
+          <div className="w-full space-y-2">
+            <div className="grid w-full grid-cols-1 gap-4 place-items-center">
+              <div
+                className={`aspect-square rounded-lg w-full h-auto ${selectedFile ? "" : "border border-dashed "}`}
+              >
+                {selectedFile && (
+                  <img
+                    src={selectedFile?.toString()}
+                    className="object-cover w-full h-full rounded-lg"
+                    alt="post image"
+                  />
+                )}
+              </div>
+
+              <Button
+                variant={"outline"}
+                className="w-full"
+                type="button"
+                onClick={(
+                  e:
+                    | React.MouseEvent<HTMLButtonElement>
+                    | React.TouchEvent<HTMLButtonElement>
+                ) => {
+                  e.preventDefault();
+                  fileRef?.current ? fileRef?.current.click() : null;
+                }}
+              >
+                Choose Image
+              </Button>
+
+              <Input
+                className="hidden"
+                type="file"
+                hidden
+                ref={fileRef}
+                onChange={handleImageChange}
+              />
+            </div>
+            {selectedFileError && (
+              <FormMessage>{selectedFileError}</FormMessage>
+            )}
+          </div>
+          <FormField
+            control={form.control}
             name="caption"
-            id="caption"
-            value={fields.caption}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              e.preventDefault();
-              setFields((prevFields) => ({
-                ...prevFields,
-                caption: e.target.value
-              }))
-            }}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Caption</FormLabel>
+                <FormControl>
+                  <Input type="text" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-          <FormMessagePrimitive error={fieldErrors.caption} />
-        </FormItemPrimitive>
 
-        <FormItemPrimitive>
-          <FormLabelPrimitive formItemId="location" error={fieldErrors.location ? true : false}>
-            Location
-          </FormLabelPrimitive>
-          <Input
-            type="text"
+          <FormField
+            control={form.control}
             name="location"
-            id="location"
-            value={fields.location}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              e.preventDefault();
-              setFields((prevFields) => ({
-                ...prevFields,
-                location: e.target.value
-              }))
-            }}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Location</FormLabel>
+                <FormControl>
+                  <Input type="text" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-          <FormMessagePrimitive error={fieldErrors.location} />
-        </FormItemPrimitive>
 
-        {isDesktop ? (
-          <DialogFooter >
-            <DialogClose asChild>
-              <Button type="button" variant={"outline"}>
+          <FormField
+            control={form.control}
+            name="tags"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Tags</FormLabel>
+                <FormControl>
+                  <Input type="text" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {isDesktop ? (
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button type="button" variant={"outline"}>
+                  Cancel
+                </Button>
+              </DialogClose>
+              <Button
+                type="submit"
+                variant={"default"}
+                disabled={form.formState.isSubmitting}
+              >
+                {form.formState.isSubmitting && <ButtonLoader />}
+                Submit
+              </Button>
+            </DialogFooter>
+          ) : (
+            <DrawerFooter className="px-0 ">
+              <Button
+                type="submit"
+                variant={"default"}
+                disabled={form.formState.isSubmitting}
+              >
+                {form.formState.isSubmitting && <ButtonLoader />}
+                Submit
+              </Button>
+              <Button
+                type="button"
+                variant={"outline"}
+                onClick={() => setOpen(false)}
+                disabled={form.formState.isSubmitting}
+              >
                 Cancel
               </Button>
-            </DialogClose>
-            <Button type="submit" variant={"default"} disabled={isPending}>
-              {isPending && <ButtonLoader/>}
-              Submit
-            </Button>
-          </DialogFooter>
-        ) : (
-          <DrawerFooter className="px-0 ">
-            <Button type="submit" variant={"default"} disabled={isPending}>
-              {isPending && <ButtonLoader/>}
-              Submit
-            </Button>
-            <Button type="button" variant={"outline"} onClick={() => setIsOpen(false)}>Cancel</Button>
-          </DrawerFooter>
-        )}
-      </form>
+            </DrawerFooter>
+          )}
+        </form>
+      </Form>
     </CreatePostPanel>
-  )
-}
+  );
+};
 
-const CreatePostPanel = ({ 
-  isDesktop, 
-  open, 
-  setOpen, 
-  children 
-}: { 
-  isDesktop: boolean; 
-  open: boolean; 
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>; 
-  children?: React.ReactNode 
+const CreatePostPanel = ({
+  isDesktop,
+  open,
+  setOpen,
+  children,
+}: {
+  isDesktop: boolean;
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  children?: React.ReactNode;
 }) => {
-  return (
-    isDesktop ? (
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-          <Button variant={"primary-shadow"} >
-            <PlusSquare className="w-4 h-4 mr-2" />
-            New Post
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>New Post</DialogTitle>
-            <DialogDescription>
-              Let's share something new.
-            </DialogDescription>
-          </DialogHeader>
-          {children && children}
-        </DialogContent>
-      </Dialog>
-    ) : (
-      <Drawer open={open} onOpenChange={setOpen}>
-        <DrawerTrigger asChild>
-          <Button variant="primary-shadow">
-            <PlusSquare className="w-4 h-4 mr-2" />
-            New Post
-          </Button>
-        </DrawerTrigger>
-        <DrawerContent>
-          <DrawerHeader className="text-left">
-            <DrawerTitle>New Post</DrawerTitle>
-            <DrawerDescription>
-              Let's share something new.
-            </DrawerDescription>
-          </DrawerHeader>
-          {children && children}
-        </DrawerContent>
-      </Drawer>
-    )
-  )
-}
+  const title = "New Post";
+  const description = "Let's share something new";
+  return isDesktop ? (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
+        </DialogHeader>
+        {children && children}
+      </DialogContent>
+    </Dialog>
+  ) : (
+    <Drawer open={open} onOpenChange={setOpen}>
+      <DrawerContent>
+        <DrawerHeader className="text-left">
+          <DrawerTitle>{title}</DrawerTitle>
+          <DrawerDescription>{description}</DrawerDescription>
+        </DrawerHeader>
+        {children && children}
+      </DrawerContent>
+    </Drawer>
+  );
+};
 
 export { CreatePost };
