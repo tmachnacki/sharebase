@@ -1,167 +1,31 @@
-import React, { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useGetUserProfileByUsername } from '@/hooks/useGetProfileByUsername';
-import { useAuthStore } from '@/store/authStore';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Button } from '@/components/ui/button';
 import { ProfileHeaderSkeleton, ProfilePostsSkeleton } from '@/components/profile/skeleton';
+import { ProfileHeader } from '@/components/profile/header';
 import { Skeleton } from '@/components/ui/skeleton';
 
 import { Grid3X3, Bookmark} from 'lucide-react';
 import { ProfilePost } from '@/components/profile/profile-post';
-import { EditProfile } from '@/components/profile/edit';
-import { useFollowUser } from '@/hooks/useFollowUser';
-import { useUserProfileStore } from '@/store/userProfileStore';
-import { FollowersFollowing } from '@/components/profile/followers-following';
 import { ButtonLoader } from '@/components/shared/button-loader';
-import { FollowerFollowing, PostDocument } from '@/types';
-import { collection, query, where, orderBy, limit, getDocs } from 'firebase/firestore';
-import { firestore } from '@/lib/firebase';
-import { toast } from 'sonner';
+import { PostDocument } from '@/types';
+import ProfilePosts from '@/components/profile/profile-posts';
 
 const Profile = () => {
   const { username } = useParams();
-  const { isLoadingUser, userProfile } = useGetUserProfileByUsername(username);
-  // const { isLoadingUser, userProfile } = useGetUserProfileById(uid);
-  const [showEditProfile, setShowEditProfile] = useState(false);
-  const [showFollowers, setShowFollowers] = useState(false);
-  const [showFollowing, setShowFollowing] = useState(false);
-
-  const [loadingFollowers, setLoadingFollowers] = useState(false);
-  const [loadingFollowing, setLoadingFollowing] = useState(false);
-  
-  const [followersData, setFollowersData] = useState<Array<FollowerFollowing>>([]);
-  const [followingData, setFollowingData] = useState<Array<FollowerFollowing>>([]);
-
-  const authUser = useAuthStore(state => state.user)
-  const currentUserProfile = useUserProfileStore(state => state.userProfile);
-
-  const { followPending, isFollowing, handleFollowUser } = useFollowUser(userProfile?.uid);
-
-  const isOwnProfileandAuth = authUser && authUser.username === userProfile?.username
-  const userNotFound = !isLoadingUser && !userProfile
-
-  const PAGE_SIZE = 20;
-  useEffect(() => {
-    const getFollowersFollowingData = async (dataToGet: "followers" | "following") => {
-      if (!userProfile) return;
-      if (loadingFollowers || loadingFollowing) return;
-  
-      if (dataToGet === "followers" && !userProfile.followers.length) return;
-      if (dataToGet === "following" && !userProfile.following.length) return;
-  
-      dataToGet === "followers" 
-        ? setLoadingFollowers(true)
-        : setLoadingFollowing(true);
-      
-      try{
-        const newUsersData: FollowerFollowing[] = [];
-        const usersRef = collection(firestore, "users");
-        const q = dataToGet === "followers" 
-          ? query(usersRef, where("uid", "in", userProfile.followers), orderBy("uid"), limit(PAGE_SIZE))
-          : query(usersRef, where("uid", "in", userProfile.following), orderBy("uid"), limit(PAGE_SIZE))
-        const querySnapShot = await getDocs(q);
-  
-        querySnapShot.forEach((userDoc) => {
-          const userDocSnapData = userDoc.data()
-          newUsersData.push({
-            uid: userDocSnapData.uid,
-            username: userDocSnapData.username,
-            fullName: userDocSnapData.fullName,
-            profilePicUrl: userDocSnapData.profilePicUrl
-          })
-        })
-  
-        if(dataToGet === "followers") {
-          setFollowersData(newUsersData);
-          setLoadingFollowers(false);
-        } else {
-          setFollowingData(newUsersData);
-          setLoadingFollowing(false);
-        }
-      } catch (error) {
-        toast.error("Error", {description: `${error}`})
-        dataToGet === "followers" 
-          ? setLoadingFollowers(false)
-          : setLoadingFollowing(false)
-      }
-    };
-
-    getFollowersFollowingData("followers");
-    getFollowersFollowingData("following");
-  }, [userProfile])
+  const { isLoadingUser, userNotFound, userProfile,  } = useGetUserProfileByUsername(username);
 
   if (userNotFound) return <UserNotFound />;
   return (
     <ScrollArea className='w-full'>
       <div className="container pt-8 space-y-8">
         {/* header */}
-        {isLoadingUser ? (
-          <ProfileHeaderSkeleton />
-        ) : (
-          <div className="flex flex-row gap-8">
-            <div className="grid w-full max-w-xs place-items-center grow-0 shrink-0">
-              <Avatar className='w-48 h-48'>
-                <AvatarImage src={userProfile?.profilePicUrl} className='w-full h-full' />
-                <AvatarFallback>{userProfile?.fullName}</AvatarFallback>
-              </Avatar>
-            </div>
-
-            <div className="space-y-4 grow-1 shrink-1">
-              <div className="flex items-center gap-4">
-                <h1 className='text-2xl font-thin'>{userProfile?.username}</h1>
-                {isOwnProfileandAuth ? (
-                  <Button variant={'outline'} className='grow sm:grow-0' onClick={() => setShowEditProfile(true)}>
-                    Edit Profile
-                  </Button>
-                ) : (
-                  <Button 
-                    variant={isFollowing ? 'secondary' : 'default'} 
-                    className='grow sm:grow-0' 
-                    disabled={followPending}
-                    onClick={handleFollowUser}
-                  >
-                    {followPending && <ButtonLoader />}
-                    {isFollowing ? `Unfollow` : `Follow`}
-                  </Button>
-                )}
-              </div>
-              <div className="flex flex-row items-center justify-start">
-                <Button variant={"ghost"} className='pl-0 pointer-events-none'>
-                  <span className='mr-1 font-semibold'>{userProfile?.posts?.length}</span>
-                  <span className='font-thin'>posts</span>
-                </Button>
-                <Button 
-                  variant={"ghost"} 
-                  className='' 
-                  onClick={() => {
-                    setShowFollowers(true);
-                  }}
-                >
-                  <span className='mr-1 font-semibold'>{userProfile?.followers?.length}</span>
-                  <span className='font-thin'>followers</span>
-                </Button>
-                <Button 
-                  variant={"ghost"} 
-                  className='' 
-                  onClick={() => {
-                    setShowFollowing(true);
-                  }}
-                >
-                  <span className='mr-1 font-semibold'>{userProfile?.following?.length}</span>
-                  <span className='font-thin'>following</span>
-                </Button>
-              </div>
-              <div className='font-semibold'>{userProfile?.fullName}</div>
-              <div className="">{userProfile?.bio}</div>
-            </div>
-          </div>
-        )}
-        {/* end header */}
+        {!isLoadingUser && userProfile && <ProfileHeader />}
+        {isLoadingUser && <ProfileHeaderSkeleton />}
 
         <Separator />
 
@@ -179,37 +43,14 @@ const Profile = () => {
               </TabsTrigger>
             </TabsList>
 
-            {isLoadingUser ? (
-              <ProfilePostsSkeleton />
-            ) : (
-              <TabsContent value='posts' >
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 group/posts ">
-                  {userProfile?.posts.map((post: PostDocument) => (
-                    <ProfilePost post={post} />
-                  ))}
+            <TabsContent value='posts' >
+              <ProfilePosts />
+            </TabsContent>
 
-                  <ProfilePost />
-                  <ProfilePost />
-                  <ProfilePost />
-                  <ProfilePost />
-
-                </div>
-              </TabsContent>
-            )}
           </Tabs>
         </div>
         {/* end tabs */}
       </div>
-
-      {/* dialogs */}
-      {/* edit profile dialog */}
-      <EditProfile isOpen={showEditProfile} onOpenChange={setShowEditProfile} onClose={() => setShowEditProfile(false)} />
-
-      {/* followers */}
-      <FollowersFollowing context='followers' open={showFollowers} setOpen={setShowFollowers} users={followersData} loadingUsers={loadingFollowers} />
-
-      {/* following */}
-      <FollowersFollowing context='following' open={showFollowing} setOpen={setShowFollowing} users={followingData} loadingUsers={loadingFollowing} />
     </ScrollArea >
   )
 }

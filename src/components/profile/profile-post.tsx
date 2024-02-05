@@ -1,7 +1,8 @@
 import { PostDocument } from "@/types";
+import { DocumentData } from "firebase/firestore";
 import { Heart, MapPin, MessageCircle } from "lucide-react"; 
 
-const ProfilePost = ({post}: {post?: PostDocument}) => (
+const ProfilePost = ({post}: {post?: PostDocument | DocumentData}) => (
   <div 
     className="w-full h-auto bg-center bg-cover aspect-square group-hover/posts:opacity-75 hover:!opacity-100 transition group/post flex flex-col justify-end px-2 cursor-pointer " 
     role="img" 

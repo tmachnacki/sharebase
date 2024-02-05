@@ -6,19 +6,23 @@ import { useUserProfileStore } from "@/store/userProfileStore";
 
 const useGetUserProfileByUsername = (username: string | undefined) => {
   const [isLoadingUser, setIsLoadingUser] = useState(false);
+  const [userNotFound, setUserNotFound] = useState(false);
   const { userProfile, setUserProfile } = useUserProfileStore();
 
   useEffect(() => {
     if(!username) return;
     
     const getUserProfileByUsername = async() => {
+      console.log("fetch user");
       setIsLoadingUser(true);
       try {
         const q = query(collection(firestore, "users"), where("username", "==", username));
         const userSnapshot = await getDocs(q);
   
         if (userSnapshot.empty) {
-          return setUserProfile(null);
+          console.log('emp')
+          setUserProfile(null);
+          setUserNotFound(true);
         }
         
         let userDoc: DocumentData = {};
@@ -26,6 +30,7 @@ const useGetUserProfileByUsername = (username: string | undefined) => {
           userDoc = doc.data();
         });
         setUserProfile(userDoc);
+        setUserNotFound(false);
         
       } catch (error) {
         toast.error("Unable to get user profile", { description: `${error}` })
@@ -37,7 +42,7 @@ const useGetUserProfileByUsername = (username: string | undefined) => {
     getUserProfileByUsername();
   }, [setUserProfile, username])
 
-  return { isLoadingUser, userProfile };
+  return { isLoadingUser, userNotFound, userProfile };
 }
 
 export { useGetUserProfileByUsername };

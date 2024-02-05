@@ -188,7 +188,7 @@ const EditProfile = ({ isOpen, onOpenChange, onClose }: EditProfileProps) => {
                 />
                 <AvatarFallback>
                   {selectedFile || authUser?.profilePicUrl ? (
-                    <Skeleton className="w-full h-full rounded-full" />
+                    <Skeleton className="w-full h-full rounded-full aspect-square" />
                   ) : (
                     authUser?.fullName
                   )}
