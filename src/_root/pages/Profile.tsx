@@ -44,7 +44,7 @@ const Profile = () => {
             </TabsList>
 
             <TabsContent value='posts' >
-              <ProfilePosts />
+              <ProfilePosts userId={userProfile?.uid} />
             </TabsContent>
 
           </Tabs>

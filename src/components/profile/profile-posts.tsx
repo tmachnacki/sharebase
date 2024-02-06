@@ -9,22 +9,23 @@ import { toast } from "sonner";
 import { Skeleton } from "../ui/skeleton";
 import { ProfilePost } from "./profile-post";
 import { PostDocument } from "@/types";
+import { Loader2 } from "lucide-react";
 
-const ProfilePosts = () => {
+const ProfilePosts = ({ userId }: { userId?: string }) => {
   const [loadingPosts, setLoadingPosts] = useState(false)
   const { posts, setPosts } = usePostStore();
-  const userProfile = useUserProfileStore((state) => state.userProfile);
+  // const userProfile = useUserProfileStore((state) => state.userProfile);
 
-  const noPostsFound = !loadingPosts && userProfile && posts.length === 0;
+  const noPostsFound = !loadingPosts && userId && posts.length === 0;
 
   useEffect(() => {
     const getPosts = async () => {
-      if (!userProfile) return;
+      if (!userId) return;
       setLoadingPosts(true);
       setPosts([]);
 
       try {
-        const q = query(collection(firestore, "posts"), where("createdBy", "==", userProfile.uid));
+        const q = query(collection(firestore, "posts"), where("createdBy", "==", userId));
         const querySnapshot = await getDocs(q);
 
         const posts: DocumentData[] = [];
@@ -43,16 +44,19 @@ const ProfilePosts = () => {
     };
 
     getPosts();
-  }, []);
+  }, [userId, setPosts]);
 
   if (noPostsFound) return null;
   return (
     <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 group/posts ">
       {loadingPosts ? (
         <>
+          {/* <Skeleton className="w-full h-full aspect-square rounded-none" />
           <Skeleton className="w-full h-full aspect-square rounded-none" />
-          <Skeleton className="w-full h-full aspect-square rounded-none" />
-          <Skeleton className="w-full h-full aspect-square rounded-none" />
+          <Skeleton className="w-full h-full aspect-square rounded-none" /> */}
+          <div className="col-span-full w-full flex items-center justify-center ">
+            <Loader2 className="h-6 w-6 animate-spin" />
+          </div>
         </>
       ) : (
         posts.map((post: DocumentData) => (
