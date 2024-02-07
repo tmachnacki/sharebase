@@ -7,9 +7,11 @@ import { ButtonLoader } from '../shared/button-loader';
 import { useFollowUser } from '@/hooks/useFollowUser';
 import { FollowersFollowing } from './followers-following';
 import { EditProfile } from './edit';
+import { UserDocument } from '@/types';
+import { DocumentData } from 'firebase/firestore';
 
 const ProfileHeader = () => {
-  const { userProfile } = useUserProfileStore();
+  const userProfile = useUserProfileStore((state) => state.userProfile);
   const authUser = useAuthStore((state) => state.user);
 
   const { followPending, isFollowing, handleFollowUser } = useFollowUser(userProfile?.uid);

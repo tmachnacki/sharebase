@@ -5,7 +5,7 @@ import { firestore } from "@/lib/firebase";
 import { useUserProfileStore } from "@/store/userProfileStore";
 
 const useGetUserProfileByUsername = (username: string | undefined) => {
-  const [isLoadingUser, setIsLoadingUser] = useState(false);
+  const [isLoadingUser, setIsLoadingUser] = useState(true);
   const [userNotFound, setUserNotFound] = useState(false);
   const { userProfile, setUserProfile } = useUserProfileStore();
 
@@ -20,20 +20,20 @@ const useGetUserProfileByUsername = (username: string | undefined) => {
         const userSnapshot = await getDocs(q);
   
         if (userSnapshot.empty) {
-          console.log('emp')
-          setUserProfile(null);
           setUserNotFound(true);
+          setUserProfile(null);
         }
         
         let userDoc: DocumentData = {};
         userSnapshot.forEach((doc) => {
           userDoc = doc.data();
         });
-        setUserProfile(userDoc);
         setUserNotFound(false);
+        setUserProfile(userDoc);
         
       } catch (error) {
-        toast.error("Unable to get user profile", { description: `${error}` })
+        toast.error("Unable to get user profile", { description: `${error}` });
+
       } finally {
         setIsLoadingUser(false);
       }

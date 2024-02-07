@@ -17,7 +17,7 @@ import ProfilePosts from '@/components/profile/profile-posts';
 
 const Profile = () => {
   const { username } = useParams();
-  const { isLoadingUser, userNotFound, userProfile,  } = useGetUserProfileByUsername(username);
+  const { isLoadingUser, userNotFound, userProfile } = useGetUserProfileByUsername(username);
 
   if (userNotFound) return <UserNotFound />;
   return (
@@ -25,7 +25,7 @@ const Profile = () => {
       <div className="container pt-8 space-y-8">
         {/* header */}
         {!isLoadingUser && userProfile && <ProfileHeader />}
-        {isLoadingUser && <ProfileHeaderSkeleton />}
+        {isLoadingUser && <ProfileHeaderSkeleton />} 
 
         <Separator />
 
