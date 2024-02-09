@@ -11,11 +11,11 @@ const ProfilePost = ({post}: {post?: PostDocument | DocumentData}) => (
   >
     <ul className="flex flex-col gap-2 p-4 transition-all duration-300 ease-in-out translate-y-2 rounded-lg opacity-0 group-hover/post:bg-opacity-50 group-hover/post:opacity-100 group-hover/post:-translate-y-2 backdrop-blur-sm bg-slate-950 text-slate-50">
       <li className="flex flex-row items-center gap-2">
-        <Heart className="w-6 h-6 text-purple-400" aria-hidden="true" />
+        <Heart className="w-6 h-6 text-purple-5" aria-hidden="true" />
         <span>342 Likes</span>
       </li>
       <li className="flex flex-row items-center gap-2">
-        <MessageCircle className="w-6 h-6 text-purple-400" aria-hidden="true" />
+        <MessageCircle className="w-6 h-6 text-purple-5" aria-hidden="true" />
         <span>15 Comments</span>
       </li>
     </ul>

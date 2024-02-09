@@ -34,3 +34,5 @@ export type CommentDocument = {
 }
 
 export type FollowerFollowing = Omit<UserDocument, "email" | "profileBannerUrl" | "bio" | "createdAt" | "followers" | "following" | "posts" | "saves" | "tagged">
+
+export type AuthorProfile =  Omit<UserDocument, "email" | "profileBannerUrl" | "bio" | "createdAt" | "followers" | "following" | "posts" | "saves" | "tagged">

@@ -21,6 +21,7 @@ import { Skeleton } from "../ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { collection, getDocs, limit, orderBy, query, where } from "firebase/firestore";
 import { Loader2 } from "lucide-react";
+import { User } from "../shared/user";
 
 type FollowersProps = {
   context: "followers" | "following"
@@ -95,7 +96,7 @@ const FollowersFollowing = ({ context, open, setOpen }: FollowersProps) => {
               </div>
             ) : (
               users.map((user) => (
-                <UserProfile user={user} key={user.uid} />
+                <User fullName={user.fullName} username={user.username} profilePicUrl={user.profilePicUrl} key={user.uid}  className="first:pt-0 last:pb-0 py-4"/>
               ))
             )}
           </ul>

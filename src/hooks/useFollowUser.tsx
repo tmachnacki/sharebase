@@ -14,12 +14,8 @@ const useFollowUser = (userId: string) => {
 	const { userProfile, setUserProfile } = useUserProfileStore();
 	const { username } = useParams();
 
-
-
 	const handleFollowUser = async () => {
     if(!authUser) return;
-		console.log(userProfile);
-		console.log(username);
 		setFollowPending(true);
 		try {
 			const currentUserRef = doc(firestore, "users", authUser.uid);

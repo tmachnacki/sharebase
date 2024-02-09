@@ -1,4 +1,4 @@
-import { PostDocument } from "@/types";
+import { CommentDocument, PostDocument } from "@/types";
 import { DocumentData } from "firebase/firestore";
 import { create } from "zustand";
 
@@ -7,7 +7,7 @@ type IPostStore = {
   createPost: (post: PostDocument | DocumentData) => void;
   deletePost: (post: PostDocument | DocumentData) => void;
   setPosts: (posts: Array<PostDocument | DocumentData>) => void;
-  addComment: (postId: string, commentId: string) => void;
+  addComment: (postId: string, comment: CommentDocument) => void;
 }
 
 const usePostStore = create<IPostStore>((set) => ({

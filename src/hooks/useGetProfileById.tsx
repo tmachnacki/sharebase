@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { DocumentData, doc, getDoc } from "firebase/firestore";
 import { firestore } from "@/lib/firebase";
 import { toast } from "sonner";
+import { UserDocument } from "@/types";
 
 const useGetUserProfileById = (userId?: string) => {
 	const [isLoadingUser, setIsLoadingUser] = useState(true);
-	const [userProfile, setUserProfile] = useState<DocumentData | null>(null);
+	const [userProfile, setUserProfile] = useState<UserDocument | DocumentData | null>(null);
 
 	useEffect(() => {
 		const getUserProfile = async () => {
@@ -13,9 +14,9 @@ const useGetUserProfileById = (userId?: string) => {
 			setIsLoadingUser(true);
 			setUserProfile(null);
 			try {
-				const userRef = await getDoc(doc(firestore, "users", userId));
-				if (userRef.exists()) {
-					setUserProfile(userRef.data());
+				const userDoc = await getDoc(doc(firestore, "users", userId));
+				if (userDoc.exists()) {
+					setUserProfile(userDoc.data());
 				}
 			} catch (error) {
 				toast.error("Error", {description: `${error}`})

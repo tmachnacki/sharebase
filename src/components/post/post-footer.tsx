@@ -1,0 +1,5 @@
+const PostFooter = () => {
+
+};
+
+export { PostFooter };

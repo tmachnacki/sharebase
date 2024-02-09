@@ -53,7 +53,6 @@ const SigninForm = () => {
   });
 
   async function onSubmit(userData: z.infer<typeof SigninValidationSchema>) {
-    console.log("userdata", userData);
     try {
       const userCredential = await signInWithEmailAndPassword(
         userData.email,

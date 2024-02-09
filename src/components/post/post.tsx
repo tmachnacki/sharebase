@@ -3,14 +3,8 @@ import { Link } from "react-router-dom";
 
 import {
   Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { MoreHorizontal, UserRoundMinus, Link as LinkIcon, ExternalLink, Heart, MessageCircle, Bookmark } from "lucide-react";
+import { MoreHorizontal, UserRoundMinus, Link as LinkIcon, ExternalLink, Heart, MessageCircle, Bookmark, SkipBack } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -32,6 +26,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { PostDocument } from "@/types";
 
+import { useGetUserProfileById } from "@/hooks/useGetProfileById";
+import { Skeleton } from "../ui/skeleton";
+import { DocumentData } from "firebase/firestore";
+import { ProfileHeaderSkeleton } from "../profile/skeleton";
+import { ProfileHeader } from "../profile/header";
+import { PostHeader, PostHeaderSkeleton } from "./post-header";
+
 
 type PostProps = {
   authorId: string;
@@ -42,52 +43,23 @@ type PostProps = {
   tags: string[];
 };
 
-const Post = ({ post }: { post?: PostDocument }) => {
+const Post = ({ post }: { post: PostDocument | DocumentData },) => {
   const [showComments, setShowComments] = useState(false);
+
+  const { isLoadingUser, userProfile } = useGetUserProfileById(post?.createdBy);
 
   return (
     <Card className="w-full px-4 py-6 space-y-6" variant={"solid"}>
       {/* header */}
-      <div className="flex-between">
-        <div className="gap-4 flex-start">
-          <Avatar>
-            <AvatarFallback>JD</AvatarFallback>
-          </Avatar>
-          <Link to={`/users/J_Doe`}>john_doe</Link>
-        </div>
-
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant={"ghost"} size={"iconSm"} className="data-[state=open]:bg-slate-100 data-[state=open]:dark:bg-slate-800">
-              <MoreHorizontal className="w-4 h-4" />
-            </Button>
-          </DropdownMenuTrigger>
-
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem className="gap-2 flex-start">
-              <UserRoundMinus className="w-4 h-4" />
-              <span>Unfollow</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem className="gap-2 flex-start">
-              <LinkIcon className="w-4 h-4" />
-              <span>Copy link</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem className="gap-2 flex-start">
-              <ExternalLink className="w-4 h-4" />
-              <span>Go to post</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+      {isLoadingUser || !userProfile ? <PostHeaderSkeleton /> : <PostHeader post={post} authorProfile={userProfile} />}
 
       {/* post description by author */}
       <div className="text-sm text-slate-600 dark:text-slate-400">
-        <span>Check out this cool picture of the sunset on the coast</span>
+        <span>{post.caption}</span>
       </div>
 
       {/* image */}
-      <div className="w-full h-auto bg-center bg-cover rounded-2xl aspect-square" role="img" aria-description="image posted by john_doe" style={{ backgroundImage: `url('/img_post_1.png')`}}>
-      </div>
+      <div className="w-full h-auto bg-center bg-cover rounded-2xl aspect-square" role="img" aria-description="image posted by john_doe" style={{ backgroundImage: `url("${post.imgUrl}")` }} />
 
       {/* actions */}
       <div className="gap-4 flex-start text-purple-5">
