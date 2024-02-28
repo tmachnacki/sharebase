@@ -14,7 +14,6 @@ const useGetFeedPosts = () => {
   const PAGE_SIZE = 10
 	useEffect(() => {
 		const getFeedPosts = async () => {
-			console.log("run get posts effect");
 			setIsLoadingPosts(true);
 			if (authUser?.following.length === 0) {
 				setIsLoadingPosts(false);

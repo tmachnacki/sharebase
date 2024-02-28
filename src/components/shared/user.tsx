@@ -33,10 +33,10 @@ const User = ({ username, fullName, profilePicUrl, children, className }: UserPr
         </Link>
 
         <div className="flex flex-col gap-2">
-          <Link to={`/users/${username}`} className="text-sm leading-none text-slate-900 dark:text-slate-50 block truncate">
+          <Link to={`/users/${username}`} className="text-sm leading-none text-slate-900 dark:text-slate-50 block truncate hover:underline">
             {fullName}
           </Link>
-          <Link to={`/users/${username}`} className="text-slate-500 dark:text-slate-400 leading-none text-sm block truncate">
+          <Link to={`/users/${username}`} className="text-slate-500 dark:text-slate-400 leading-none text-sm block truncate hover:underline">
             @{username}
           </Link>
         </div>

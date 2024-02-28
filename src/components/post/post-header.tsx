@@ -29,7 +29,7 @@ const PostHeader = ({ post, authorProfile }: PostHeaderProps) => {
   return (
     <User fullName={authorProfile.fullName} username={authorProfile.username} profilePicUrl={authorProfile.profilePicUrl} >
       <div className="flex items-center gap-2">
-        <Button variant={isFollowing ? "secondary" : "default"} onClick={handleFollowUser} disabled={followPending} size={"sm"}>
+        <Button variant={isFollowing ? "outline" : "default"} onClick={handleFollowUser} disabled={followPending} size={"sm"}>
           {followPending && <ButtonLoader />}
           {isFollowing ? "Unfollow" : "Follow"}
         </Button>

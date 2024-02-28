@@ -11,12 +11,12 @@ const usePostComment = () => {
 	const authUser = useAuthStore((state) => state.user);
 	const addComment = usePostStore((state) => state.addComment);
 
-	const handlePostComment = async (postId: string, comment: string) => {
+	const handlePostComment = async (postId: string, commentContent: string) => {
 		if (!authUser || isCommenting) return;
 
 		setIsCommenting(true);
 		const newComment: CommentDocument = {
-			comment,
+			comment: commentContent,
 			createdAt: new Date(Date.now()),
 			createdBy: authUser.uid,
 			postId,
@@ -26,11 +26,11 @@ const usePostComment = () => {
 				comments: arrayUnion(newComment),
 			});
 			addComment(postId, newComment);
+			setIsCommenting(false);
 		} catch (error) {
       toast.error("Error posting comment", { description: `${error}` })
-		} finally {
 			setIsCommenting(false);
-		}
+		} 
 	};
 
 	return { isCommenting, handlePostComment };

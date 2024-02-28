@@ -42,3 +42,7 @@ export const CreatePostValidationSchema = z.object({
   location: z.string().max(2200, { message: "location must be less than 2200 characters" }).optional(),
   tags: z.array(z.string()).optional()
 })
+
+export const CommentValidationSchema = z.object({
+  comment: z.string().max(2200, { message: "Comment must not be longer than 2200 characters" })
+});

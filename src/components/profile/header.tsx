@@ -43,7 +43,7 @@ const ProfileHeader = () => {
               </Button>
             ) : (
               <Button
-                variant={isFollowing ? 'secondary' : 'default'}
+                variant={isFollowing ? 'outline' : 'default'}
                 className='grow sm:grow-0'
                 disabled={followPending}
                 onClick={handleFollowUser}

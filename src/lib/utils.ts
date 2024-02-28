@@ -1,4 +1,5 @@
 import { type ClassValue, clsx } from "clsx"
+import { Timestamp } from "firebase/firestore"
 import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
@@ -14,12 +15,14 @@ export const toBase64 = (file:File) => new Promise((resolve, reject) => {
   reader.onerror = reject;
 }) 
 
-export const toTimeAgo = (timestamp: Date) => {
+export const toTimeAgo = (timestamp: Timestamp | Date) => {
     const now = Date.now();
-    const secondsAgo = Math.floor((now - timestamp.getMilliseconds()) / 1000);
+    const secondsAgo = timestamp instanceof Timestamp
+      ? Math.floor((now - timestamp.toMillis()) / 1000)
+      : Math.floor((now - timestamp.getTime()) / 1000) 
   
     if (secondsAgo < 60) {
-      return `${secondsAgo}s ago`;
+      return secondsAgo < 10 ? 'just now' : `${secondsAgo}s ago`;
     } else if (secondsAgo < 3600) {
       const minutesAgo = Math.floor(secondsAgo / 60); // minute
       return `${minutesAgo}m ago`;
