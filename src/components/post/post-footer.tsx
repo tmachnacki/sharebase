@@ -15,6 +15,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { CommentsModal } from "./comments-modal";
+import { useSavePost } from "@/hooks/useSavePost";
 
 
 type PostFooterProps = {
@@ -27,53 +28,65 @@ const PostFooter = ({ post, authorProfile, className }: PostFooterProps) => {
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
   const authUser = useAuthStore((state) => state.user);
   const { handleLikePost, isLiked, likes } = useLikePost(post);
+  const { isSaved, isSaving, handleSavePost } = useSavePost(post.id);
 
   const timestamp: Timestamp = post.createdAt;
   const timeAgo = toTimeAgo(timestamp);
 
-  const isSaved = authUser ? post.id in authUser.saves : false;
+  const iconButtonClassName = "h-8 rounded-full";
+  const iconClassName = "h-4 w-4";
 
   return (
     <div className={cn("pt-2 space-y-6", className)}>
       <div className="flex items-center justify-between">
-        <div className="flex items-center">
+        <div className="flex items-center gap-1">
           {/* like */}
           <Button
-            variant={"ghost"}
+            variant={isLiked ? "primary" : "ghost"}
             size={"sm"}
             className={cn(
-              "rounded-full items-center",
-              isLiked && "text-purple-5 hover:text-purple-5 dark:hover:text-purple-5"
+              iconButtonClassName,
             )}
             onClick={handleLikePost}
           >
             <Heart
-              aria-label="like"
+              aria-label="like post"
               className={cn(
-                "h-5 w-5 mr-2",
+                iconClassName,
+                "mr-2",
                 isLiked && "fill-current"
               )}
             />
             {likes}
           </Button>
+          
+          {/* save */}
+          <Button 
+            variant={isSaved ? "primary" : "ghost"}
+            size={"sm"}
+            className={cn(
+              iconButtonClassName,
+            )}
+            onClick={handleSavePost}
+          >
+            <Bookmark
+              aria-label="save post"
+              className={cn(
+                iconClassName,
+                isSaved && "fill-current"
+              )}
+            />
+          </Button>
 
           {/* comments */}
           <Button variant={"ghost"} size={"sm"} className="rounded-full " onClick={() => setIsCommentsOpen(true)}>
             <MessageCircle
-              aria-label="comment"
-              className="h-5 w-5 mr-2"
+              aria-label="comment on post"
+              className={`${iconClassName} mr-2`}
             />
             {post.comments.length}
           </Button>
           <CommentsModal isOpen={isCommentsOpen} setIsOpen={setIsCommentsOpen} post={post} />
-
-          {/* save */}
-          <Button variant={"ghost"} size={"sm"} className="rounded-full">
-            <Bookmark
-              aria-label="save"
-              className="h-5 w-5"
-            />
-          </Button>
         </div>
 
         {/* timestamp */}

@@ -9,15 +9,20 @@ import { ProfileHeaderSkeleton, ProfilePostsSkeleton } from '@/components/profil
 import { ProfileHeader } from '@/components/profile/header';
 import { Skeleton } from '@/components/ui/skeleton';
 
-import { Grid3X3, Bookmark} from 'lucide-react';
+import { Grid3X3, UserSquare , Bookmark } from 'lucide-react';
 import { ProfilePost } from '@/components/profile/profile-post';
 import { ButtonLoader } from '@/components/shared/button-loader';
 import { PostDocument } from '@/types';
-import ProfilePosts from '@/components/profile/profile-posts';
+import { ProfilePosts } from '@/components/profile/profile-posts';
+import { ProfileSaves } from '@/components/profile/profile-saves';
+import { useAuthStore } from '@/store/authStore';
 
 const Profile = () => {
   const { username } = useParams();
   const { isLoadingUser, userNotFound, userProfile } = useGetUserProfileByUsername(username);
+  const authUser = useAuthStore((state) => state.user);
+
+  const isOwnPage = username === authUser?.username;
 
   if (userNotFound) return <UserNotFound />;
   return (
@@ -25,27 +30,46 @@ const Profile = () => {
       <div className="container pt-8 space-y-8">
         {/* header */}
         {!isLoadingUser && userProfile && <ProfileHeader />}
-        {isLoadingUser && <ProfileHeaderSkeleton />} 
+        {isLoadingUser && <ProfileHeaderSkeleton />}
 
         <Separator />
 
         {/* tabs */}
         <div className="w-full">
           <Tabs defaultValue='posts' className='space-y-8'>
-            <TabsList className='grid grid-cols-2 mx-auto w-96'>
+            <TabsList className={`grid ${isOwnPage ? 'grid-cols-3 w-96 ' : 'grid-cols-2 w-64'}  mx-auto`}>
               <TabsTrigger value='posts' className='w-full h-full'>
                 <Grid3X3 className='w-4 h-4 mr-2' />
                 Posts
               </TabsTrigger>
-              <TabsTrigger value='saved' disabled={isLoadingUser}>
-                <Bookmark className='w-4 h-4 mr-2' />
-                Saved
+
+              <TabsTrigger value='tagged' className='w-full h-full'>
+                <UserSquare className='w-4 h-4 mr-2' />
+                Tagged
               </TabsTrigger>
+
+              {isOwnPage && (
+                <TabsTrigger value='saved' disabled={isLoadingUser}>
+                  <Bookmark className='w-4 h-4 mr-2' />
+                  Saved
+                </TabsTrigger>
+              )}
+
             </TabsList>
 
             <TabsContent value='posts' >
               <ProfilePosts userId={userProfile?.uid} />
             </TabsContent>
+
+            <TabsContent value='tagged' >
+              Tagged In
+            </TabsContent>
+
+            {isOwnPage && (
+              <TabsContent value='saved' >
+                <ProfileSaves />
+              </TabsContent>
+            )}
 
           </Tabs>
         </div>

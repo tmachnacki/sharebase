@@ -13,7 +13,6 @@ const useGetUserProfileByUsername = (username: string | undefined) => {
     if(!username) return;
     
     const getUserProfileByUsername = async() => {
-      console.log("fetch user");
       setIsLoadingUser(true);
       try {
         const q = query(collection(firestore, "users"), where("username", "==", username));
@@ -30,14 +29,13 @@ const useGetUserProfileByUsername = (username: string | undefined) => {
         });
         setUserNotFound(false);
         setUserProfile(userDoc);
+        setIsLoadingUser(false);
         
       } catch (error) {
         toast.error("Unable to get user profile", { description: `${error}` });
-
-      } finally {
         setIsLoadingUser(false);
       }
-    }
+    } 
 
     getUserProfileByUsername();
   }, [setUserProfile, username])

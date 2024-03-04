@@ -4,7 +4,7 @@ import { AuthLayout } from './_auth/forms/AuthLayout';
 import { SigninForm } from './_auth/forms/SigninForm';
 import { SignupForm } from './_auth/forms/SignupForm';
 import { RootLayout } from './_root/RootLayout';
-import { Home, Profile } from './_root/pages';
+import { Explore, Home, Profile } from './_root/pages';
 
 import { Toaster } from '@/components/ui/sonner';
 import { useAuthStore } from './store/authStore';
@@ -30,6 +30,7 @@ const App = () => {
         <Route element={authUser ? <RootLayout /> : <Navigate to={"/sign-in"} />}>
           <Route index element={<Home />} />
           <Route path='/users/:username' element={<Profile />} />
+          <Route path='/explore' element={<Explore />} />
         </Route>
 
         {/* public */}

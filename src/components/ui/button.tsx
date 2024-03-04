@@ -21,6 +21,7 @@ const buttonVariants = cva(
         primary: "bg-gradient-to-br from-purple-8 via-purple-6 to-teal-6 text-white hover:bg-gradient-to-br hover:from-purple-8 hover:to-purple-5",
         "primary-shadow": "bg-gradient-to-br from-purple-8 via-purple-6 to-teal-6 text-white shadow-md shadow-purple-6/50 hover:bg-gradient-to-br hover:from-purple-8 hover:to-purple-5 hover:shadow-lg hover:shadow-purple-6/50",
         "primary-shadow-lg": "bg-gradient-to-br from-purple-8 via-purple-6 to-teal-6 text-white shadow-lg shadow-purple-6/50 hover:bg-gradient-to-br hover:from-purple-8 hover:to-purple-5 hover:shadow-xl hover:shadow-purple-6/50",
+        purple: "bg-purple-5 text-slate-50 hover:bg-purple-5/90"
       },
       size: {
         default: "h-10 px-4 py-2",

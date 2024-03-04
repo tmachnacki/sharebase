@@ -45,7 +45,6 @@ const FollowersFollowing = ({ context, open, setOpen }: FollowersProps) => {
       if (context === "following" && userProfile.following.length === 0) return;
 
       setLoadingusers(true);
-      console.log("fetch follow data");
 
       try {
         const newUsersData: FollowerFollowing[] = [];

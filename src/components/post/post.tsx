@@ -35,7 +35,7 @@ const Post = ({ post }: { post: PostDocument | DocumentData }) => {
       {isLoadingUser || !userProfile ? <PostHeaderSkeleton /> : <PostHeader post={post} authorProfile={userProfile} />}
 
       {/* post description by author */}
-      <div className="text-sm text-slate-600 dark:text-slate-400 py-6">
+      <div className="text-sm py-6">
         <span>{post.caption}</span>
       </div>
 

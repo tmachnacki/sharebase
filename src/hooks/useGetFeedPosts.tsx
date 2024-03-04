@@ -14,12 +14,12 @@ const useGetFeedPosts = () => {
   const PAGE_SIZE = 10
 	useEffect(() => {
 		const getFeedPosts = async () => {
-			setIsLoadingPosts(true);
 			if (authUser?.following.length === 0) {
-				setIsLoadingPosts(false);
 				setPosts([]);
 				return;
 			}
+      
+			setIsLoadingPosts(true);
 			const q = query(collection(firestore, "posts"), where("createdBy", "in", authUser?.following), orderBy("createdAt"), limit(PAGE_SIZE));
 
 			try {
@@ -27,16 +27,16 @@ const useGetFeedPosts = () => {
 				const feedPosts: DocumentData[] = [];
 
 				querySnapshot.forEach((postDoc) => {
-					feedPosts.push({ id: postDoc.id, ...postDoc.data() });
+					feedPosts.push({ ...postDoc.data(), id: postDoc.id});
 				});
 
 				feedPosts.sort((a, b) => b.createdAt - a.createdAt);
 				setPosts(feedPosts);
+				setIsLoadingPosts(false);
 			} catch (error) {
         toast.error("Error loading posts", { description: `${error}` });
-			} finally {
 				setIsLoadingPosts(false);
-			}
+			} 
 		};
 
 		if (authUser) getFeedPosts();

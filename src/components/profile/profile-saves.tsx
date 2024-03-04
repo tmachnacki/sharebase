@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { DocumentData, collection, getDocs, query, where } from "firebase/firestore";
+import { DocumentData, collection, documentId, getDocs, query, where } from "firebase/firestore";
 import { firestore } from "@/lib/firebase";
 
 
@@ -10,21 +10,21 @@ import { Skeleton } from "../ui/skeleton";
 import { ProfilePost } from "./profile-post";
 import { PostDocument } from "@/types";
 import { Loader2 } from "lucide-react";
+import { useAuthStore } from "@/store/authStore";
 
-const ProfilePosts = ({ userId }: { userId?: string }) => {
-  const [loadingPosts, setLoadingPosts] = useState(false)
-  const { posts, setPosts } = usePostStore();
-
-  const noPostsFound = !loadingPosts && userId && posts.length === 0;
+const ProfileSaves = () => {
+  const [loadingSaves, setLoadingSaves] = useState(false);
+  const [savedPosts, setSavedPosts] = useState<Array<PostDocument | DocumentData>>([]);
+  const authUser = useAuthStore((state) => state.user);
 
   useEffect(() => {
     const getPosts = async () => {
-      if (!userId) return;
-      setLoadingPosts(true);
-      setPosts([]);
-
+      if (!authUser) return;
+      if (authUser?.saves.length === 0 || !authUser.saves) return;
+      
       try {
-        const q = query(collection(firestore, "posts"), where("createdBy", "==", userId));
+        setLoadingSaves(true);
+        const q = query(collection(firestore, "posts"), where(documentId(), "in", authUser.saves));
         const querySnapshot = await getDocs(q);
 
         const posts: DocumentData[] = [];
@@ -32,23 +32,24 @@ const ProfilePosts = ({ userId }: { userId?: string }) => {
           posts.push({ ...doc.data(), id: doc.id });
         });
 
-        posts.sort((a, b) => b.createdAt - a.createdAt);
-        setPosts(posts);
-        setLoadingPosts(false);
+        posts.sort((a, b) => b.id - a.id);
+
+        console.log(posts);
+        setSavedPosts(posts);
+        setLoadingSaves(false);
       } catch (error) {
         toast.error("Error loading posts", { description: `${error}` });
-        setPosts([]);
-        setLoadingPosts(false);
-      } 
+        setSavedPosts([]);
+        setLoadingSaves(false);
+      }
     };
 
     getPosts();
-  }, [userId, setPosts]);
+  }, [authUser]);
 
-  if (noPostsFound) return null;
   return (
     <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 group/posts ">
-      {loadingPosts ? (
+      {loadingSaves ? (
         <>
           {/* <Skeleton className="w-full h-full aspect-square rounded-none" />
           <Skeleton className="w-full h-full aspect-square rounded-none" />
@@ -58,7 +59,7 @@ const ProfilePosts = ({ userId }: { userId?: string }) => {
           </div>
         </>
       ) : (
-        posts.map((post: DocumentData) => (
+        savedPosts.map((post: DocumentData) => (
           <ProfilePost post={post} key={post.id} />
         ))
       )}
@@ -67,4 +68,4 @@ const ProfilePosts = ({ userId }: { userId?: string }) => {
   )
 }
 
-export { ProfilePosts };
+export { ProfileSaves };

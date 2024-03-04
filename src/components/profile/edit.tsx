@@ -94,7 +94,6 @@ const EditProfile = ({ isOpen, onOpenChange, onClose }: EditProfileProps) => {
   const form = useForm<z.infer<typeof EditProfileFormSchema>>({
     resolver: zodResolver(EditProfileFormSchema),
     defaultValues: {
-      // profilePic: [],
       fullName: authUser?.fullName ?? "",
       username: authUser?.username ?? "",
       bio: authUser?.bio ?? "",
@@ -150,35 +149,6 @@ const EditProfile = ({ isOpen, onOpenChange, onClose }: EditProfileProps) => {
       {/* form */}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className={`px-4 space-y-6 md:px-0`}>
-          {/* <FormField
-              control={form.control}
-              name="profilePic"
-              render={({ field: { onChange, value, ...rest } }) => (
-                <FormItem>
-                  <FormLabel className="sr-only">Profile Picture</FormLabel>
-                  <FormControl >
-                    <div className="flex flex-row items-center gap-8">
-                      <Avatar className="w-24 h-24">
-                        <AvatarImage src={previewImageUrl || authUser?.profilePicUrl} className="object-cover w-full h-full" />
-                        <AvatarFallback>{authUser?.username}</AvatarFallback>
-                      </Avatar>
-                      <Input
-                        type="file"
-                        className="block w-full h-auto p-0 align-middle border rounded-lg cursor-pointer disabled:opacity-50 disabled:pointer-events-none file:bg-slate-900 file:text-slate-50 file:hover:bg-slate-900/90 file:border-0 file:me-4 file:px-4 dark:file:bg-slate-50 dark:file:text-slate-900 dark:file:hover:bg-slate-50/90 file:py-2"
-                        {...rest}
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                          if(!event.target.files) return;
-                          onChange(event.target.files[0]);
-                          handleImageChange(event);
-                        }}
-                      />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            /> */}
-
           <div className="space-y-2">
             <div className="grid grid-cols-2 gap-6 place-items-center">
               <Avatar className="w-full h-full">

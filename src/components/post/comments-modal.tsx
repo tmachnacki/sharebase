@@ -25,7 +25,7 @@ const CommentsModal = ({ isOpen, setIsOpen, post }: CommentsModalProps) => {
   const [comment, setComment] = useState("");
   const { isCommenting, handlePostComment } = usePostComment();
 
-  const commentsRef = useRef<HTMLDivElement>(null);
+  const endOfCommentsRef = useRef<HTMLDivElement>(null);
 
   const handleSubmitComment = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,8 +35,8 @@ const CommentsModal = ({ isOpen, setIsOpen, post }: CommentsModalProps) => {
 
   useEffect(() => {
     const scrollToBottom = () => {
-      if (!commentsRef.current || !commentsRef) return;
-			commentsRef.current.scrollTop = commentsRef.current.scrollHeight;
+      if (!endOfCommentsRef.current || !endOfCommentsRef) return;
+			endOfCommentsRef.current.scrollIntoView({ behavior: "smooth", block: "end", inline: "start" })
 		};
 		if (isOpen) {
 			setTimeout(() => {
@@ -59,10 +59,11 @@ const CommentsModal = ({ isOpen, setIsOpen, post }: CommentsModalProps) => {
         </DialogHeader>
 
         <ScrollArea className="h-72">
-          <div className="flex flex-col gap-4" ref={commentsRef}>
+          <div className="flex flex-col gap-4">
             {post.comments.map((comment: CommentDocument) => (
               <Comment comment={comment} key={`${comment.createdAt}-${comment.createdBy}`} />
             ))}
+            <div className="" ref={endOfCommentsRef}></div>
           </div>
         </ScrollArea>
 

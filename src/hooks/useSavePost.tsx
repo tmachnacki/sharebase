@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { useAuthStore } from "@/store/authStore";
-import { DocumentData, arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
+import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
 import { firestore } from "@/lib/firebase";
-import { PostDocument } from "@/types";
 import { toast } from "sonner";
 
-const useSavePost = (post: PostDocument | DocumentData) => {
+const useSavePost = (postId: string) => {
 	const [isSaving, setIsSaving] = useState(false);
-	const authUser = useAuthStore((state) => state.user);
-	const [isSaved, setIsSaved] = useState<boolean>(authUser?.saves.includes(post.id));
+  const authUser  = useAuthStore((state) => state.user);
+  const setUser  = useAuthStore((state) => state.setUser);
+	const isSaved = authUser?.saves.includes(postId);
 
-	const handleLikePost = async () => {
+	const handleSavePost = async () => {
 		if (isSaving) return;
 		if (!authUser) return toast.error("Error", { description: "you must be logged in to save a post" });
 		setIsSaving(true);
@@ -20,26 +20,22 @@ const useSavePost = (post: PostDocument | DocumentData) => {
       const authUserRef = doc(firestore, "users", authUser.uid);
       // update auth user doc saves
       await updateDoc(authUserRef, {
-        saves: 
+        saves: isSaved ? arrayRemove(postId) : arrayUnion(postId)
       })
+
       // update zustand auth user state
-
-
-			const postRef = doc(firestore, "posts", post.id);
-			await updateDoc(postRef, {
-				likes: isLiked ? arrayRemove(authUser.uid) : arrayUnion(authUser.uid),
-			});
-
-			setIsLiked(!isLiked);
-			isLiked ? setLikes(likes - 1) : setLikes(likes + 1);
+      setUser({
+        ...authUser,
+        saves: isSaved ? authUser.saves.filter((id: string) => id !== postId) : [...authUser.saves, postId]
+      })
+      setIsSaving(false);
 		} catch (error) {
-			toast.error("Error", { description: `${error}` });
-		} finally {
-			setIsUpdating(false);
-		}
+      toast.error("Error", { description: `${error}` });
+      setIsSaving(false);
+		} 
 	};
 
-	return { isLiked, likes, handleLikePost, isUpdating };
+	return { isSaving, isSaved, handleSavePost };
 };
 
 export { useSavePost };

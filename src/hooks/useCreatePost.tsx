@@ -21,8 +21,10 @@ type NewPost = Omit<PostDocument, "id">;
 
 const useCreatePost = () => {
   const [isPending, setIsPending] = useState(false);
+  const [ isError, setIsError] = useState(false);
   const authUser = useAuthStore((state) => state.user);
   const createPost = usePostStore((state) => state.createPost);
+  const posts = usePostStore((state) => state.posts);
   const addPost = useUserProfileStore((state) => state.addPost);
   const userProfile = useUserProfileStore((state) => state.userProfile);
 
@@ -38,6 +40,7 @@ const useCreatePost = () => {
     if (!selectedFile) return;
 
     setIsPending(true);
+    setIsError(false);
     const newPost: NewPost = {
       caption: caption ?? "",
       likes: [],
@@ -58,7 +61,7 @@ const useCreatePost = () => {
       await uploadString(imageRef, selectedFile.toString(), "data_url");
       const downloadURL = await getDownloadURL(imageRef);
 
-      await updateDoc(postDocRef, { imgURL: downloadURL });
+      await updateDoc(postDocRef, { imgUrl: downloadURL });
 
       newPost.imgUrl = downloadURL;
 
@@ -73,10 +76,11 @@ const useCreatePost = () => {
     } catch (error) {
       toast.error("Error", { description: `${error}` });
       setIsPending(false);
+      setIsError(true);
     }
   };
 
-  return { isPending, handleCreatePost };
+  return { isPending, handleCreatePost, isError };
 };
 
 export { useCreatePost };

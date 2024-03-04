@@ -8,13 +8,14 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "../ui/skeleton";
-import { MoreHorizontal, UserRoundMinus, Link as LinkIcon, ExternalLink, UserRoundPlus } from "lucide-react";
+import { MoreHorizontal, UserRoundMinus, Link as LinkIcon, ExternalLink, UserRoundPlus, Pencil } from "lucide-react";
 import { Button } from "../ui/button";
 import { AuthorProfile, PostDocument, UserDocument } from "@/types";
 import { DocumentData } from "firebase/firestore";
 import { useFollowUser } from "@/hooks/useFollowUser";
 import { ButtonLoader } from "../shared/button-loader";
 import { User } from "../shared/user";
+import { useAuthStore } from "@/store/authStore";
 
 
 type PostHeaderProps = {
@@ -24,6 +25,8 @@ type PostHeaderProps = {
 
 const PostHeader = ({ post, authorProfile }: PostHeaderProps) => {
   const { handleFollowUser, isFollowing, followPending } = useFollowUser(post?.createdBy);
+  const authUser = useAuthStore((state) => state.user);
+  const isOwnPost = authUser?.uid === post.createdBy
 
 
   return (
@@ -55,6 +58,14 @@ const PostHeader = ({ post, authorProfile }: PostHeaderProps) => {
                 </>
               )}
             </DropdownMenuItem> */}
+
+            {isOwnPost && (
+              <DropdownMenuItem className="gap-2 flex-start">
+                <Pencil className="w-4 h-4" />
+                <span>Edit Post</span>
+              </DropdownMenuItem>
+            )}
+
             <DropdownMenuItem className="gap-2 flex-start">
               <LinkIcon className="w-4 h-4" />
               <span>Copy link</span>

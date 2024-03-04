@@ -20,9 +20,8 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Button, ButtonProps } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 import {
   Form,
@@ -46,41 +45,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { usePreviewImage } from "@/hooks/usePreviewImage";
 import { useIsDesktop } from "@/hooks/useIsDesktop";
 
-type CreatePostFields = {
-  selectedFile: string | ArrayBuffer | null;
-  caption: string;
-  tags: string[];
-  location: string;
-};
-
-const initialFieldState: CreatePostFields = {
-  selectedFile: null,
-  caption: "",
-  tags: [],
-  location: "",
-};
-
-const intialFieldErrorsState = {
-  selectedFile: "",
-  caption: "",
-  tags: "",
-  location: "",
-};
-
-// const hasError = (fieldError: string) => fieldError.length > 0
-
 type CreatePostProps = {
   open: boolean;
   setOpen: React.Dispatch<SetStateAction<boolean>>;
 };
 
 const CreatePost = ({ open, setOpen }: CreatePostProps) => {
-  // const [fields, setFields] = useState<CreatePostFields>(initialFieldState);
-  // const [fieldErrors, setFieldErrors] = useState(intialFieldErrorsState);
-
-  // const [selectedFile, setSelectedFile] = useState<string | ArrayBuffer | null>(
-  //   null
-  // );
   const fileRef = useRef<HTMLInputElement>(null);
   const {
     selectedFile,
@@ -90,7 +60,7 @@ const CreatePost = ({ open, setOpen }: CreatePostProps) => {
     handleImageChange,
   } = usePreviewImage();
 
-  const { isPending, handleCreatePost } = useCreatePost();
+  const { isPending, handleCreatePost, isError } = useCreatePost();
   const { isDesktop } = useIsDesktop();
 
   const form = useForm<z.infer<typeof CreatePostValidationSchema>>({
@@ -102,12 +72,22 @@ const CreatePost = ({ open, setOpen }: CreatePostProps) => {
     },
   });
 
-  const onSubmit = (postData: z.infer<typeof CreatePostValidationSchema>) => {
-    console.log("postData", postData);
+  const onSubmit = async (postData: z.infer<typeof CreatePostValidationSchema>) => {
+    const { caption, tags, location } = postData;
+    await handleCreatePost(selectedFile, caption, tags ?? [], location)
+    if(!isError) handleCloseDialog();
   };
 
+  const handleCloseDialog = () => {
+    setOpen(false);
+    setTimeout(() => {
+      form.reset();
+      setSelectedFile(null);
+    }, 0)
+  }
+
   return (
-    <CreatePostPanel open={open} setOpen={setOpen} isDesktop={isDesktop}>
+    <CreatePostPanel open={open} setOpen={setOpen} isDesktop={isDesktop} handleOpenChange={handleCloseDialog}>
       <Form {...form}>
         <form
           className="px-4 space-y-6 md:px-0"
@@ -199,17 +179,15 @@ const CreatePost = ({ open, setOpen }: CreatePostProps) => {
 
           {isDesktop ? (
             <DialogFooter>
-              <DialogClose asChild>
-                <Button type="button" variant={"outline"}>
-                  Cancel
-                </Button>
-              </DialogClose>
+              <Button type="button" variant={"outline"} onClick={handleCloseDialog}>
+                Cancel
+              </Button>
               <Button
                 type="submit"
                 variant={"default"}
-                disabled={form.formState.isSubmitting}
+                disabled={isPending}
               >
-                {form.formState.isSubmitting && <ButtonLoader />}
+                {isPending && <ButtonLoader />}
                 Submit
               </Button>
             </DialogFooter>
@@ -218,16 +196,16 @@ const CreatePost = ({ open, setOpen }: CreatePostProps) => {
               <Button
                 type="submit"
                 variant={"default"}
-                disabled={form.formState.isSubmitting}
+                disabled={isPending}
               >
-                {form.formState.isSubmitting && <ButtonLoader />}
+                {isPending && <ButtonLoader />}
                 Submit
               </Button>
               <Button
                 type="button"
                 variant={"outline"}
-                onClick={() => setOpen(false)}
-                disabled={form.formState.isSubmitting}
+                onClick={handleCloseDialog}
+                disabled={isPending}
               >
                 Cancel
               </Button>
@@ -243,17 +221,19 @@ const CreatePostPanel = ({
   isDesktop,
   open,
   setOpen,
+  handleOpenChange,
   children,
 }: {
   isDesktop: boolean;
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  handleOpenChange: () => void;
   children?: React.ReactNode;
 }) => {
   const title = "New Post";
   const description = "Let's share something new";
   return isDesktop ? (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={open ? () => handleOpenChange() : () => setOpen(true)} >
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
@@ -263,7 +243,7 @@ const CreatePostPanel = ({
       </DialogContent>
     </Dialog>
   ) : (
-    <Drawer open={open} onOpenChange={setOpen}>
+    <Drawer open={open} onOpenChange={open ? () => handleOpenChange() : () => setOpen(true)}>
       <DrawerContent>
         <DrawerHeader className="text-left">
           <DrawerTitle>{title}</DrawerTitle>
