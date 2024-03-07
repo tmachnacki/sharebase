@@ -1,20 +1,14 @@
-import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useGetUserProfileByUsername } from '@/hooks/useGetProfileByUsername';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { ProfileHeaderSkeleton, ProfilePostsSkeleton } from '@/components/profile/skeleton';
+import { ProfileHeaderSkeleton } from '@/components/profile/skeleton';
 import { ProfileHeader } from '@/components/profile/header';
-import { Skeleton } from '@/components/ui/skeleton';
 
-import { Grid3X3, UserSquare , Bookmark } from 'lucide-react';
-import { ProfilePost } from '@/components/profile/profile-post';
-import { ButtonLoader } from '@/components/shared/button-loader';
-import { PostDocument } from '@/types';
+import { Grid3X3, UserSquare  } from 'lucide-react';
 import { ProfilePosts } from '@/components/profile/profile-posts';
-import { ProfileSaves } from '@/components/profile/profile-saves';
 import { useAuthStore } from '@/store/authStore';
 
 const Profile = () => {
@@ -37,7 +31,7 @@ const Profile = () => {
         {/* tabs */}
         <div className="w-full">
           <Tabs defaultValue='posts' className='space-y-8'>
-            <TabsList className={`grid ${isOwnPage ? 'grid-cols-3 w-96 ' : 'grid-cols-2 w-64'}  mx-auto`}>
+            <TabsList className={`grid grid-cols-2 w-64 mx-auto`}>
               <TabsTrigger value='posts' className='w-full h-full'>
                 <Grid3X3 className='w-4 h-4 mr-2' />
                 Posts
@@ -47,14 +41,6 @@ const Profile = () => {
                 <UserSquare className='w-4 h-4 mr-2' />
                 Tagged
               </TabsTrigger>
-
-              {isOwnPage && (
-                <TabsTrigger value='saved' disabled={isLoadingUser}>
-                  <Bookmark className='w-4 h-4 mr-2' />
-                  Saved
-                </TabsTrigger>
-              )}
-
             </TabsList>
 
             <TabsContent value='posts' >
@@ -64,13 +50,6 @@ const Profile = () => {
             <TabsContent value='tagged' >
               Tagged In
             </TabsContent>
-
-            {isOwnPage && (
-              <TabsContent value='saved' >
-                <ProfileSaves />
-              </TabsContent>
-            )}
-
           </Tabs>
         </div>
         {/* end tabs */}

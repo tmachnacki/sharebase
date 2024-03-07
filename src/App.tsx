@@ -4,21 +4,15 @@ import { AuthLayout } from './_auth/forms/AuthLayout';
 import { SigninForm } from './_auth/forms/SigninForm';
 import { SignupForm } from './_auth/forms/SignupForm';
 import { RootLayout } from './_root/RootLayout';
-import { Explore, Home, Profile } from './_root/pages';
+import { Explore, Home, Profile, Saves } from './_root/pages';
 
 import { Toaster } from '@/components/ui/sonner';
 import { useAuthStore } from './store/authStore';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from './lib/firebase';
 
 import { Loader2 } from 'lucide-react';
 
 const App = () => {
-  // const [authUser, authLoading] = useAuthState(auth);
-  // const isCheckingAuth = !authUser && authLoading;
   const authUser = useAuthStore((state) => state.user)
-
-
 
   return (
     <main className={`flex h-screen max-h-screen bg-slate-50 dark:bg-slate-950`}>
@@ -29,7 +23,8 @@ const App = () => {
         {/* protected */}
         <Route element={authUser ? <RootLayout /> : <Navigate to={"/sign-in"} />}>
           <Route index element={<Home />} />
-          <Route path='/users/:username' element={<Profile />} />
+          <Route path='/users/:username' element={<Profile/>} />
+          <Route path='/saved' element={<Saves />} />
           <Route path='/explore' element={<Explore />} />
         </Route>
 

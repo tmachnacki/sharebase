@@ -1,30 +1,13 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-
 import {
   Card,
 } from "@/components/ui/card";
 
-import { Button } from "@/components/ui/button";
 import { PostDocument } from "@/types";
 
 import { useGetUserProfileById } from "@/hooks/useGetProfileById";
-import { Skeleton } from "../ui/skeleton";
 import { DocumentData } from "firebase/firestore";
-import { ProfileHeaderSkeleton } from "../profile/skeleton";
-import { ProfileHeader } from "../profile/header";
 import { PostHeader, PostHeaderSkeleton } from "./post-header";
 import { PostFooter } from "./post-footer";
-
-
-type PostProps = {
-  authorId: string;
-  authorUrl: string;
-  authorProfilePicUrl: string;
-  authorUsername: string;
-  location: string;
-  tags: string[];
-};
 
 const Post = ({ post }: { post: PostDocument | DocumentData }) => {
   const { isLoadingUser, userProfile } = useGetUserProfileById(post?.createdBy);

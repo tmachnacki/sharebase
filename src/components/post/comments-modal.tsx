@@ -63,7 +63,7 @@ const CommentsModal = ({ isOpen, setIsOpen, post }: CommentsModalProps) => {
             {post.comments.map((comment: CommentDocument) => (
               <Comment comment={comment} key={`${comment.createdAt}-${comment.createdBy}`} />
             ))}
-            <div className="" ref={endOfCommentsRef}></div>
+            <div className="" ref={endOfCommentsRef} aria-hidden="true"></div>
           </div>
         </ScrollArea>
 
