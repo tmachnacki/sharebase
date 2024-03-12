@@ -5,7 +5,7 @@ const Posts = () => {
   const { isLoadingPosts, posts } = useGetFeedPosts();
 
   return (
-    <div className="flex flex-col items-center gap-12 grow">
+    <div className="flex flex-col items-center gap-12 grow max-w-lg ">
       {posts.map((post) => (
         <Post post={post} key={post.id} />
       ))}

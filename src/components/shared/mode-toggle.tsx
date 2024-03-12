@@ -29,14 +29,15 @@ export function ModeToggle({ className }: { className?: string }) {
 						<ChevronRight className="w-4 h-4 absolute top-1/2 right-2 -translate-y-[50%] opacity-0 group-hover:opacity-100 transition-opacity group-data-[state=open]:opacity-100" />
 					</Button>
 				) : (
-					<div className={cn("", className)}>
+					<Button role="button" className={cn("h-6 w-6 p-0 bg-transparent dark:bg-transparent hover:bg-transparent", className)}>
 						<Sun className="h-6 w-6 rotate-0 scale-100 transition-transform dark:-rotate-90 dark:scale-0" />
 						<Moon className="absolute h-6 w-6 rotate-90 scale-0 transition-transform dark:rotate-0 dark:scale-100" />
 						<span className="sr-only">Toggle theme</span>
-					</div>
+					</Button>
 				)}
+
 			</DropdownMenuTrigger>
-			<DropdownMenuContent align="end" side="right">
+			<DropdownMenuContent align={isDesktop ? "end" : "end"} side={isDesktop ? "right" : "left"}>
 				<DropdownMenuItem onClick={() => setTheme("light")}>
 					Light
 				</DropdownMenuItem>
