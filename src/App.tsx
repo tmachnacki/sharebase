@@ -26,6 +26,7 @@ const App = () => {
           <Route path='/users/:username' element={<Profile/>} />
           <Route path='/saved' element={<Saves />} />
           <Route path='/explore' element={<Explore />} />
+          <Route path='/posts/:postid' element={<></>} />
         </Route>
 
         {/* public */}

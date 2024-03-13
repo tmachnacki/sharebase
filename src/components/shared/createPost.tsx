@@ -46,14 +46,18 @@ import { usePreviewImage } from "@/hooks/usePreviewImage";
 import { useIsDesktop } from "@/hooks/useIsDesktop";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
+import { PostDocument } from "@/types";
+import { DocumentData } from "firebase/firestore";
 
 type CreatePostProps = {
 	open: boolean;
 	setOpen: React.Dispatch<SetStateAction<boolean>>;
 	isDesktop: boolean;
+	action?: "create" | "edit";
+	post?: PostDocument | DocumentData;
 };
 
-const CreatePost = ({ open, setOpen, isDesktop }: CreatePostProps) => {
+const CreatePost = ({ open, setOpen, isDesktop, action = "create", post }: CreatePostProps) => {
 	const fileRef = useRef<HTMLInputElement>(null);
 	const {
 		selectedFile,
@@ -63,22 +67,30 @@ const CreatePost = ({ open, setOpen, isDesktop }: CreatePostProps) => {
 		handleImageChange,
 	} = usePreviewImage();
 
-	const { isPending, handleCreatePost, isError } = useCreatePost();
+	const { isPending, handleCreatePost, createPostError } = useCreatePost();
 	// const isDesktop = useMediaQuery("(min-width: 768px)");
 
-	const form = useForm<z.infer<typeof CreatePostValidationSchema>>({
-		resolver: zodResolver(CreatePostValidationSchema),
-		defaultValues: {
+	const initialFormFields = action === "create" 
+		? {
 			caption: "",
 			location: "",
 			tags: [],
-		},
+		}
+		: {
+			caption: post?.caption ? post.caption : "",
+			location: post?.location ? post.location : "",
+			tags: post?.tags ? post.tags : []
+		}
+
+	const form = useForm<z.infer<typeof CreatePostValidationSchema>>({
+		resolver: zodResolver(CreatePostValidationSchema),
+		defaultValues: initialFormFields
 	});
 
 	const onSubmit = async (postData: z.infer<typeof CreatePostValidationSchema>) => {
 		const { caption, tags, location } = postData;
-		await handleCreatePost(selectedFile, caption, tags ?? [], location)
-		if (!isError) handleCloseDialog();
+		await handleCreatePost(caption, tags ?? [], location, "create")
+		if (!createPostError) handleCloseDialog();
 	};
 
 	const handleCloseDialog = () => {

@@ -12,6 +12,7 @@ import {
 import useSearchUser from "@/hooks/useSearchUser";
 import { User } from "./user";
 import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
 type SearchProps = {
 	open: boolean;
@@ -27,20 +28,21 @@ const Search = ({ open, setOpen }: SearchProps) => {
 		e.preventDefault();
 		if (isLoading) return;
 		await getUserProfile(userInput);
-
 	}
 
 	return (
 		<CommandDialog open={open} onOpenChange={setOpen}>
-			<form onSubmit={handleSubmitUser}>
-				<CommandInput placeholder="Search users..." value={userInput} onValueChange={setUserInput}   />
-			</form>
+				<CommandInput placeholder="Enter a username..." value={userInput} onValueChange={setUserInput} onSubmit={handleSubmitUser}   />
 			<CommandList>
-				{user ? (
+				{isLoading && (
+					<Loader2 className="w-6 h-6" />
+				)}
+				{user && userInput && (
 					<CommandItem>
 						<User fullName={user?.fullName} profilePicUrl={user?.profilePicUrl} username={user?.username} />
 					</CommandItem>
-				) : (
+				)}
+				{!user && (
 					<CommandEmpty>No users found.</CommandEmpty>
 				)}
 			</CommandList>
