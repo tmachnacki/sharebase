@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { usePostStore } from "@/store/postStore";
 import { useAuthStore } from "@/store/authStore";
 import { useUserProfileStore } from "@/store/userProfileStore";
-import { DocumentData, collection, doc, getDoc, getDocs, limit, orderBy, query, where } from "firebase/firestore";
+import { DocumentData, collection, doc, getDoc, getDocs, limit, or, orderBy, query, where } from "firebase/firestore";
 import { firestore } from "@/lib/firebase";
 import { toast } from "sonner"; 
 
@@ -11,18 +11,23 @@ const useGetFeedPosts = () => {
 	const { posts, setPosts } = usePostStore();
 	const authUser = useAuthStore((state) => state.user);
 
+	const noFollowing = authUser?.following.length === 0;
+	const noPosts = authUser?.posts.length === 0;
+	
   const PAGE_SIZE = 10
 	useEffect(() => {
 		const getFeedPosts = async () => {
-			if (authUser?.following.length === 0) {
+			if (noFollowing && noPosts) {
+				setIsLoadingPosts(false);
 				setPosts([]);
 				return;
 			}
-      
-			setIsLoadingPosts(true);
-			const q = query(collection(firestore, "posts"), where("createdBy", "in", authUser?.following), orderBy("createdAt"), limit(PAGE_SIZE));
-
+			
 			try {
+				setIsLoadingPosts(true);
+				const q = noFollowing 
+					? query(collection(firestore, "posts"), where("createdBy", "==", authUser?.uid), orderBy("createdAt"), limit(PAGE_SIZE))
+					: query(collection(firestore, "posts"), or(where("createdBy", "in", authUser?.following), where("createdBy", "==", authUser?.uid)), orderBy("createdAt"), limit(PAGE_SIZE));
 				const querySnapshot = await getDocs(q);
 				const feedPosts: DocumentData[] = [];
 
@@ -40,7 +45,7 @@ const useGetFeedPosts = () => {
 		};
 
 		if (authUser) getFeedPosts();
-	}, [authUser, setPosts]);
+	}, [authUser?.following, authUser?.posts]);
 
 	return { isLoadingPosts, posts };
 };

@@ -9,7 +9,6 @@ import { useState } from "react";
 import { Button } from "../ui/button";
 import { ModeToggle } from "../shared/mode-toggle";
 import { Logo } from "../shared/logo";
-import { useIsDesktop } from "@/hooks/useIsDesktop";
 import { useAuthStore } from "@/store/authStore";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import Search from "../shared/search";
@@ -74,7 +73,7 @@ const Nav = () => {
 								{isCurrentPage(navItem.link) && (
 									<span
 										aria-hidden="true"
-										className="absolute w-4 h-6 rounded-md -left-6 top-1/2 -translate-y-[50%] bg-purple-5"
+										className="absolute w-4 h-6 rounded -left-7 top-1/2 -translate-y-[50%] bg-purple-5"
 									>
 										{" "}
 									</span>
@@ -143,7 +142,7 @@ const Nav = () => {
 							{isCurrentPage(navItems[0].link) && (
 								<span
 									aria-hidden="true"
-									className="absolute w-10 h-1.5 rounded-b -top-3.5 -left-[9px] bg-purple-5"
+									className="absolute w-8 h-1.5 rounded-b -top-3.5 left-1/2 -translate-x-[50%] bg-purple-5"
 								>
 									{" "}
 								</span>
@@ -209,7 +208,7 @@ const Nav = () => {
 			)}
 
 			{/* create post modal */}
-			<CreatePost open={openCreatePost} setOpen={setOpenCreatePost} isDesktop={isDesktop} />
+			<CreatePost open={openCreatePost} setOpen={setOpenCreatePost} />
 
 			{/* search modal */}
 			<Search open={openSearch} setOpen={setOpenSearch} />

@@ -10,22 +10,21 @@ import { auth } from "@/lib/firebase";
 import { useAuthStore } from "@/store/authStore";
 import { Posts } from "@/components/post/posts";
 import { Link } from "react-router-dom";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useLogout } from "@/hooks/useLogout";
 import { User } from "@/components/shared/user"; 
 
 
 const Home = () => {
   const authUser = useAuthStore((state) => state.user)
-  const { handleLogout, isLoggingOut, error } = useLogout();
-
+  const { handleLogout, isLoggingOut } = useLogout();
+	const scrollableTargetId = "feed"
 
   return (
-    <ScrollArea className="w-full h-full">
-      <div className="flex justify-center flex-1 w-full h-full max-w-4xl gap-8 xl:gap-16 py-8 mx-auto relative">
+    <ScrollArea className="w-full h-full" id={scrollableTargetId}>
+      <div className="flex justify-center flex-1 w-full h-full max-w-4xl gap-8 xl:gap-16 pt-8 pb-20 md:py-8 mx-auto relative">
 
         {/* posts */}
-        <Posts />
+        <Posts scrollableTargetId={scrollableTargetId}  />
 
         <div className="flex-col items-center  hidden w-full max-w-xs lg:flex sticky">
           {authUser && (

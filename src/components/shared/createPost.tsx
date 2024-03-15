@@ -1,15 +1,15 @@
 import { SetStateAction, useRef, useState } from "react";
 import { useCreatePost } from "@/hooks/useCreatePost";
 import {
-	Dialog,
-	DialogClose,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@/components/ui/dialog";
+	AlertDialog,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogAction,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import {
 	Drawer,
 	DrawerClose,
@@ -43,34 +43,31 @@ import { CreatePostValidationSchema } from "@/lib/validation";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { usePreviewImage } from "@/hooks/usePreviewImage";
-import { useIsDesktop } from "@/hooks/useIsDesktop";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { PostDocument } from "@/types";
 import { DocumentData } from "firebase/firestore";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 type CreatePostProps = {
 	open: boolean;
 	setOpen: React.Dispatch<SetStateAction<boolean>>;
-	isDesktop: boolean;
 	action?: "create" | "edit";
 	post?: PostDocument | DocumentData;
 };
 
-const CreatePost = ({ open, setOpen, isDesktop, action = "create", post }: CreatePostProps) => {
+const CreatePost = ({ open, setOpen, action = "create", post }: CreatePostProps) => {
 	const fileRef = useRef<HTMLInputElement>(null);
 	const {
 		selectedFile,
 		setSelectedFile,
 		selectedFileError,
-		setSelectedFileError,
 		handleImageChange,
 	} = usePreviewImage();
 
 	const { isPending, handleCreatePost, createPostError } = useCreatePost();
-	// const isDesktop = useMediaQuery("(min-width: 768px)");
+	const isDesktop = useMediaQuery("(min-width: 768px)");
 
-	const initialFormFields = action === "create" 
+	const initialFormFields = action === "create"
 		? {
 			caption: "",
 			location: "",
@@ -89,7 +86,15 @@ const CreatePost = ({ open, setOpen, isDesktop, action = "create", post }: Creat
 
 	const onSubmit = async (postData: z.infer<typeof CreatePostValidationSchema>) => {
 		const { caption, tags, location } = postData;
-		await handleCreatePost(caption, tags ?? [], location, "create")
+
+		await handleCreatePost({
+			caption: caption,
+			tags: tags ? tags : [],
+			location: location, 
+			selectedFile: selectedFile,
+			action: action,
+			post: post
+		})
 		if (!createPostError) handleCloseDialog();
 	};
 
@@ -105,51 +110,54 @@ const CreatePost = ({ open, setOpen, isDesktop, action = "create", post }: Creat
 		<CreatePostPanel open={open} setOpen={setOpen} isDesktop={isDesktop} handleOpenChange={handleCloseDialog}>
 			<Form {...form}>
 				<form
-					className="px-4 space-y-6 md:px-0 "
+					className="px-4 space-y-6 md:px-0 md:overflow-visible overflow-y-auto "
 					onSubmit={form.handleSubmit(onSubmit)}
 				>
-					<div className="w-full space-y-2">
-						<div className="grid w-full grid-cols-1 gap-4 place-items-center">
-							<div
-								className={`aspect-square rounded-lg w-full h-auto ${selectedFile ? "" : "border border-dashed "}`}
-							>
-								{selectedFile && (
-									<img
-										src={selectedFile?.toString()}
-										className="object-cover w-full h-full rounded-lg"
-										alt="post image"
-									/>
-								)}
+					{action === "create" && (
+						<div className="w-full space-y-2">
+							<div className="grid w-full grid-cols-1 gap-4 place-items-center">
+								<div
+									className={`aspect-square rounded-lg w-full h-auto md:max-w-full max-w-sm ${selectedFile ? "" : "border border-dashed "}`}
+									onClick={!selectedFile ? () => fileRef?.current && fileRef?.current.click() : () => null}
+								>
+									{selectedFile && (
+										<img
+											src={selectedFile?.toString()}
+											className="object-cover w-full h-full rounded-lg"
+											alt="post image"
+										/>
+									)}
+								</div>
+
+								<Button
+									variant={"outline"}
+									className="w-full"
+									type="button"
+									onClick={(
+										e:
+											| React.MouseEvent<HTMLButtonElement>
+											| React.TouchEvent<HTMLButtonElement>
+									) => {
+										e.preventDefault();
+										fileRef?.current ? fileRef?.current.click() : null;
+									}}
+								>
+									Choose Image
+								</Button>
+
+								<Input
+									className="hidden"
+									type="file"
+									hidden
+									ref={fileRef}
+									onChange={handleImageChange}
+								/>
 							</div>
-
-							<Button
-								variant={"outline"}
-								className="w-full"
-								type="button"
-								onClick={(
-									e:
-										| React.MouseEvent<HTMLButtonElement>
-										| React.TouchEvent<HTMLButtonElement>
-								) => {
-									e.preventDefault();
-									fileRef?.current ? fileRef?.current.click() : null;
-								}}
-							>
-								Choose Image
-							</Button>
-
-							<Input
-								className="hidden"
-								type="file"
-								hidden
-								ref={fileRef}
-								onChange={handleImageChange}
-							/>
+							{selectedFileError && (
+								<FormMessage>{selectedFileError}</FormMessage>
+							)}
 						</div>
-						{selectedFileError && (
-							<FormMessage>{selectedFileError}</FormMessage>
-						)}
-					</div>
+					)}
 					<FormField
 						control={form.control}
 						name="caption"
@@ -193,7 +201,7 @@ const CreatePost = ({ open, setOpen, isDesktop, action = "create", post }: Creat
 					/>
 
 					{isDesktop ? (
-						<DialogFooter>
+						<AlertDialogFooter>
 							<Button type="button" variant={"outline"} onClick={handleCloseDialog}>
 								Cancel
 							</Button>
@@ -205,7 +213,7 @@ const CreatePost = ({ open, setOpen, isDesktop, action = "create", post }: Creat
 								{isPending && <ButtonLoader />}
 								Submit
 							</Button>
-						</DialogFooter>
+						</AlertDialogFooter>
 					) : (
 						<DrawerFooter className="px-0 ">
 							<Button
@@ -238,35 +246,35 @@ const CreatePostPanel = ({
 	setOpen,
 	handleOpenChange,
 	children,
+	action
 }: {
 	isDesktop: boolean;
 	open: boolean;
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 	handleOpenChange: () => void;
 	children?: React.ReactNode;
+	action?: "edit" | "create"
 }) => {
-	const title = "New Post";
-	const description = "Let's share something new";
+	const title = action === "create" ? "New Post" : "Edit Post";
+	const description = action === "create" ? "Let's share something new" : "Let's update some details";
 	return isDesktop ? (
-		<Dialog open={open} onOpenChange={open ? handleOpenChange : setOpen}>
-			<DialogContent className="sm:max-w-md ">
-				<DialogHeader>
-					<DialogTitle>{title}</DialogTitle>
-					<DialogDescription>{description}</DialogDescription>
-				</DialogHeader>
+		<AlertDialog open={open} onOpenChange={open ? handleOpenChange : setOpen}>
+			<AlertDialogContent className="">
+				<AlertDialogHeader>
+					<AlertDialogTitle>{title}</AlertDialogTitle>
+					<AlertDialogDescription>{description}</AlertDialogDescription>
+				</AlertDialogHeader>
 				{children && children}
-			</DialogContent>
-		</Dialog>
+			</AlertDialogContent>
+		</AlertDialog>
 	) : (
-		<Drawer open={open} onOpenChange={setOpen} onClose={handleOpenChange}  >
+		<Drawer open={open} onClose={handleOpenChange} dismissible={false}>
 			<DrawerContent className="">
-				<ScrollArea>
-					<DrawerHeader className="text-left">
-						<DrawerTitle>{title}</DrawerTitle>
-						<DrawerDescription>{description}</DrawerDescription>
-					</DrawerHeader>
-					{children && children}
-				</ScrollArea>
+				<DrawerHeader className="text-left">
+					<DrawerTitle>{title}</DrawerTitle>
+					<DrawerDescription>{description}</DrawerDescription>
+				</DrawerHeader>
+				{children && children}
 			</DrawerContent>
 		</Drawer >
 	);

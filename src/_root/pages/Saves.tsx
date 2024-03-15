@@ -30,7 +30,6 @@ const Saves = () => {
 
 				posts.sort((a, b) => b.id - a.id);
 
-				console.log(posts);
 				setSavedPosts(posts);
 				setLoadingSaves(false);
 			} catch (error) {
@@ -44,8 +43,8 @@ const Saves = () => {
 	}, [authUser]);
 
 	return (
-		<div className="container pt-8 space-y-8">
-			<h1 className="text-lg">Saved posts</h1>
+		<div className="container pt-8 pb-20 md:py-8 space-y-8">
+			{/* <h1 className="text-lg">Saved posts</h1> */}
 			<PostsGrid loading={loadingSaves}>
 				{savedPosts.map((post: DocumentData) => (
 					<ProfilePost post={post} key={post.id} />
