@@ -43,7 +43,7 @@ const Saves = () => {
 	}, [authUser]);
 
 	return (
-		<div className="container pt-8 pb-20 md:py-8 space-y-8">
+		<div className="container p-content space-y-8">
 			{/* <h1 className="text-lg">Saved posts</h1> */}
 			<PostsGrid loading={loadingSaves}>
 				{savedPosts.map((post: DocumentData) => (

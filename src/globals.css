@@ -123,4 +123,8 @@
   .common-container {
     @apply flex flex-col items-center flex-1 gap-10 px-5 py-10 overflow-scroll md:px-8 lg:p-14 custom-scrollbar;
   }
+
+  .p-content {
+    @apply pt-8 pb-20 md:py-8
+  }
 }

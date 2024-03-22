@@ -7,8 +7,6 @@ import { ButtonLoader } from '../shared/button-loader';
 import { useFollowUser } from '@/hooks/useFollowUser';
 import { FollowersFollowing } from './followers-following';
 import { EditProfile } from './edit';
-import { UserDocument } from '@/types';
-import { DocumentData } from 'firebase/firestore';
 
 const ProfileHeader = () => {
   const userProfile = useUserProfileStore((state) => state.userProfile);
@@ -26,9 +24,9 @@ const ProfileHeader = () => {
 
   return (
     <>
-      <div className="flex flex-row gap-8">
-        <div className="grid w-full max-w-xs place-items-center grow-0 shrink-0">
-          <Avatar className='w-48 h-48'>
+      <div className="flex flex-col md:flex-row gap-8">
+        <div className="grid place-items-center self-center sm:self-auto w-fit flex-shrink-0">
+          <Avatar className='w-48 h-48 md:w-36 md:h-36 lg:w-48 lg:h-48 aspect-square'>
             <AvatarImage src={userProfile?.profilePicUrl} className='w-full h-full' />
             <AvatarFallback>{userProfile?.fullName}</AvatarFallback>
           </Avatar>
@@ -80,7 +78,7 @@ const ProfileHeader = () => {
             </Button>
           </div>
           <div className='font-semibold'>{userProfile?.fullName}</div>
-          <div className="">{userProfile?.bio}</div>
+          <div className="text-sm">{userProfile?.bio}</div>
         </div>
       </div>
 

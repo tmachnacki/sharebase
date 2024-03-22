@@ -21,7 +21,7 @@ const Profile = () => {
   if (userNotFound) return <UserNotFound />;
   return (
     <ScrollArea className='w-full'>
-      <div className="container pt-8 space-y-8">
+      <div className="container p-content space-y-8">
         {/* header */}
         {!isLoadingUser && userProfile && <ProfileHeader />}
         {isLoadingUser && <ProfileHeaderSkeleton />}

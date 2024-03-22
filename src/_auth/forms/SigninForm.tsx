@@ -63,7 +63,7 @@ const SigninForm = () => {
         const userSnapShot = await getDoc(userDocRef);
 
         if (userSnapShot.exists()) {
-          console.log(userSnapShot.data());
+          // console.log(userSnapShot.data());
           localStorage.setItem(
             "user-info",
             JSON.stringify(userSnapShot.data())

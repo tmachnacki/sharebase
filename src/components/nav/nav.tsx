@@ -57,7 +57,7 @@ const Nav = () => {
 				// {/* desktop */}
 				<nav
 					className={cn(
-						"w-full h-full max-w-[16rem]  py-6 px-4 text-slate-500 dark:text-slate-400 hidden md:flex flex-col gap-6 rounded-e-3xl relative",
+						"w-full h-full max-w-[16rem]  py-6 px-4 text-slate-500 dark:text-slate-400 hidden md:flex flex-col gap-8 rounded-e-3xl relative",
 						// "shadow-[10px_0px_60px_-15px] shadow-black dark:shadow-white",
 						"border-r dark:border-r-purple-5/40 border-r-purple-4/40 "
 					)}
