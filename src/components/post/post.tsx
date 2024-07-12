@@ -30,7 +30,7 @@ const Post = ({ post }: { post: PostDocument | DocumentData }) => {
 				loading="lazy"
 			/>
 
-			<PostFooter post={post} authorProfile={userProfile} />
+			<PostFooter post={post} />
 
 		</Card>
 	);

@@ -20,12 +20,11 @@ import { useSavePost } from "@/hooks/useSavePost";
 
 type PostFooterProps = {
   post: PostDocument | DocumentData;
-  authorProfile: UserDocument | DocumentData;
+  // authorProfile: UserDocument | DocumentData;
   className?: string;
 }
 
-const PostFooter = ({ post, authorProfile, className }: PostFooterProps) => {
-  console.log(post);
+const PostFooter = ({ post, className }: PostFooterProps) => {
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
   const authUser = useAuthStore((state) => state.user);
   const { handleLikePost, isLiked, likes } = useLikePost(post);

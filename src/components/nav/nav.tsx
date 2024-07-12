@@ -16,8 +16,6 @@ import Search from "../shared/search";
 
 const navItemClassName = "p-2 rounded-md relative hover:bg-slate-200 dark:hover:bg-slate-900 gap-4 flex-start transition-colors hover:text-slate-950 hover:dark:text-slate-50"
 
-
-
 const Nav = () => {
 	const { pathname } = useLocation();
 	const { handleLogout, isLoggingOut } = useLogout();
@@ -71,12 +69,7 @@ const Nav = () => {
 						{navItems.map((navItem) => (
 							<li className="relative" key={navItem.label}>
 								{isCurrentPage(navItem.link) && (
-									<span
-										aria-hidden="true"
-										className="absolute w-4 h-6 rounded -left-7 top-1/2 -translate-y-[50%] bg-purple-5"
-									>
-										{" "}
-									</span>
+									<NavIndicator />
 								)}
 
 								<Link
@@ -140,12 +133,7 @@ const Nav = () => {
 							aria-current={isCurrentPage(navItems[0].link) ? "page" : "false"}
 						>
 							{isCurrentPage(navItems[0].link) && (
-								<span
-									aria-hidden="true"
-									className="absolute w-8 h-1.5 rounded-b -top-3.5 left-1/2 -translate-x-[50%] bg-purple-5"
-								>
-									{" "}
-								</span>
+								<NavIndicator />
 							)}
 							{navItems[0].icon}
 						</Link>
@@ -159,12 +147,7 @@ const Nav = () => {
 							aria-current={isCurrentPage(navItems[1].link) ? "page" : "false"}
 						>
 							{isCurrentPage(navItems[1].link) && (
-								<span
-									aria-hidden="true"
-									className="absolute w-10 h-1.5 rounded-b -top-3.5 -left-[9px] bg-purple-5"
-								>
-									{" "}
-								</span>
+								<NavIndicator />
 							)}
 							{navItems[1].icon}
 						</Link>
@@ -182,24 +165,19 @@ const Nav = () => {
 							aria-current={isCurrentPage(navItems[2].link) ? "page" : "false"}
 						>
 							{isCurrentPage(navItems[2].link) && (
-								<span
-									aria-hidden="true"
-									className="absolute w-10 h-1.5 rounded-b -top-3.5 -left-[9px] bg-purple-5"
-								>
-									{" "}
-								</span>
+								<NavIndicator />
 							)}
 							{navItems[2].icon}
 						</Link>
 
-						<MoreHorizontal className={iconClassNames} />
+						<UserSearch className={iconClassNames + "cursor-pointer"} role="button" onClick={() => setOpenSearch(true)} tabIndex={0} />
 
 						{/* <ModeToggle  className={cn(" text-slate-950 dark:text-slate-50 ",)}  /> */}
 					</nav>
-					<Button 
-						className="absolute z-[50] bottom-0 left-1/2 -translate-x-[50%] rounded-full -translate-y-1/2 h-12 w-12" 
-						variant={"primary"} 
-						size={"icon"} 
+					<Button
+						className="absolute z-[50] bottom-0 left-1/2 -translate-x-[50%] rounded-full -translate-y-1/2 h-12 w-12 shadow-lg"
+						variant={"primary"}
+						size={"icon"}
 						onClick={() => setOpenCreatePost(true)}
 					>
 						<Plus className="w-5 h-5" />
@@ -216,4 +194,15 @@ const Nav = () => {
 	);
 };
 
-export { Nav };
+
+const NavIndicator = ({ className }: { className?: string }) => (
+	<span
+		aria-hidden="true"
+		className={cn(
+			"absolute w-10 md:w-4 h-1.5 md:h-6 rounded-b md:rounded -top-3.5 md:top-1/2 -left-[9px] md:-left-7 md:-translate-y-[50%] bg-purple-5 ",
+			className
+		)}
+	/>
+)
+
+export { Nav, NavIndicator };

@@ -2,7 +2,7 @@ import { ProfilePost } from "@/components/profile/profile-post";
 import { firestore } from "@/lib/firebase";
 import { useAuthStore } from "@/store/authStore";
 import { PostDocument } from "@/types";
-import { collection, query, where, limit, DocumentData, getDocs } from "firebase/firestore";
+import { collection, query, where, limit, DocumentData, getDocs, and } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { PostsGrid } from "@/components/shared/posts-grid";
@@ -20,8 +20,8 @@ const Explore = () => {
 			setIsLoading(true);
 			try {
 				const q = authUser?.following && authUser.following.length > 0
-					? query(collection(firestore, "posts"), where("createdBy", "not-in", authUser?.following), limit(PAGE_SIZE))
-					: query(collection(firestore, "posts"), limit(PAGE_SIZE))
+					? query(collection(firestore, "posts"), and(where("createdBy", "not-in", authUser?.following), where("createdBy", "!=", authUser?.uid)), limit(PAGE_SIZE))
+					: query(collection(firestore, "posts"), where("createdBy", "!=", authUser?.uid), limit(PAGE_SIZE))
 				const querySnapshot = await getDocs(q);
 				const fetchedPosts: DocumentData[] = [];
 

@@ -17,108 +17,63 @@ const Posts = ({ scrollableTargetId }: { scrollableTargetId?: string }) => {
 	const [isLoadingPosts, setIsLoadingPosts] = useState(true);
 	const [lastVisibleDoc, setLastVisibleDoc] = useState<DocumentData | null>(null);
 	const [firestoreQuery, setFirestoreQuery] = useState<Query | null>(null);
-	const [loadMore, setLoadMore] = useState(true);
+	// const [loadMore, setLoadMore] = useState(true);
 
-	const PAGE_SIZE = 10
-
-	useEffect(() => {
-		const onLoadMoreFeedPosts = async () => {
-			if (!authUser) return;
-			if (!loadMore) return;
-			const noFollowing = authUser?.following.length === 0;
-			const noPosts = authUser?.posts.length === 0;
-			if (noFollowing && noPosts) {
-				console.log("no posts");
-				setIsLoadingPosts(false);
-				setPosts([]);
-				setLoadMore(false);
-				return;
-			}
-	
-			try {
-				setIsLoadingPosts(true);
-				const q = noFollowing
-					? query(collection(firestore, "posts"), where("createdBy", "==", authUser?.uid), orderBy("createdAt", "desc"), startAfter(lastVisibleDoc), limit(PAGE_SIZE))
-					: query(collection(firestore, "posts"), or(where("createdBy", "in", authUser?.following), where("createdBy", "==", authUser?.uid)), orderBy("createdAt", "desc"), startAfter(lastVisibleDoc), limit(PAGE_SIZE));
-				const querySnapshot = await getDocs(q);
-				setLastVisibleDoc(querySnapshot.docs[querySnapshot.docs.length - 1]);
-				const feedPosts: DocumentData[] = [];
-	
-				querySnapshot.forEach((postDoc) => {
-					feedPosts.push({ ...postDoc.data(), id: postDoc.id });
-				});
-	
-				// feedPosts.sort((a, b) => b.createdAt - a.createdAt);
-				setPosts([...posts, feedPosts])
-				setIsLoadingPosts(false);
-				setLoadMore(false);
-			} catch (error) {
-				toast.error("Error loading posts", { description: `${error}` });
-				setIsLoadingPosts(false);
-				setLoadMore(false);
-			}
+	const PAGE_SIZE = 10;
+	const onLoadMoreFeedPosts = async () => {
+		if (!authUser) return;
+		// if (!loadMore) return;
+		const noFollowing = authUser?.following.length === 0;
+		const noPosts = authUser?.posts.length === 0;
+		if (noFollowing && noPosts) {
+			console.log("no posts");
+			setIsLoadingPosts(false);
+			setPosts([]);
+			// setLoadMore(false);
+			return;
 		}
 
-		onLoadMoreFeedPosts();
+		try {
+			setIsLoadingPosts(true);
+			const q = noFollowing
+				? lastVisibleDoc ? query(collection(firestore, "posts"), where("createdBy", "==", authUser?.uid), orderBy("createdAt", "desc"), startAfter(lastVisibleDoc), limit(PAGE_SIZE)) : query(collection(firestore, "posts"), where("createdBy", "==", authUser?.uid), orderBy("createdAt", "desc"), limit(PAGE_SIZE))
+				: lastVisibleDoc ? query(collection(firestore, "posts"), or(where("createdBy", "in", authUser?.following), where("createdBy", "==", authUser?.uid)), orderBy("createdAt", "desc"), startAfter(lastVisibleDoc), limit(PAGE_SIZE)) : query(collection(firestore, "posts"), or(where("createdBy", "in", authUser?.following), where("createdBy", "==", authUser?.uid)), orderBy("createdAt", "desc"), limit(PAGE_SIZE))
+			const querySnapshot = await getDocs(q);
+			// setLastVisibleDoc(querySnapshot.docs[querySnapshot.docs.length - 1]);
+			const feedPosts: DocumentData[] = [];
 
-	}, [loadMore])
+			querySnapshot.forEach((postDoc) => {
+				feedPosts.push({ ...postDoc.data(), id: postDoc.id });
+			});
+
+			// feedPosts.sort((a, b) => b.createdAt - a.createdAt);
+
+			setPosts(feedPosts);
+			setIsLoadingPosts(false);
+			// setLoadMore(false);
+		} catch (error) {
+			toast.error("Error loading posts", { description: `${error}` });
+			setIsLoadingPosts(false);
+			// setLoadMore(false);
+		}
+	}
+	useEffect(() => {
+		onLoadMoreFeedPosts();
+	}, [])
 
 	const loadMorePosts = () => {
-		setLoadMore(true);
+		// setLoadMore(true);
 	}
 
-	// useEffect(() => {
-	// 	const getFeedPosts = async () => {
-	// 		if(!authUser) return;
-	// 		const noFollowing = authUser?.following.length === 0;
-	// 		const noPosts = authUser?.posts.length === 0;
-	// 		if (noFollowing && noPosts) {
-	// 			setIsLoadingPosts(false);
-	// 			setPosts([]);
-	// 			return;
-	// 		}
-
-	// 		try {
-	// 			setIsLoadingPosts(true);
-	// 			const q = noFollowing
-	// 				? query(collection(firestore, "posts"), where("createdBy", "==", authUser?.uid), orderBy("createdAt", "desc"), startAfter(lastVisibleDoc), limit(PAGE_SIZE))
-	// 				: query(collection(firestore, "posts"), or(where("createdBy", "in", authUser?.following), where("createdBy", "==", authUser?.uid)), orderBy("createdAt", "desc"), startAfter(lastVisibleDoc), limit(PAGE_SIZE));
-	// 			const querySnapshot = await getDocs(q);
-	// 			setLastVisibleDoc(querySnapshot.docs[querySnapshot.docs.length - 1]);
-	// 			const feedPosts: DocumentData[] = [];
-
-	// 			querySnapshot.forEach((postDoc) => {
-	// 				feedPosts.push({ ...postDoc.data(), id: postDoc.id });
-	// 			});
-
-	// 			// feedPosts.sort((a, b) => b.createdAt - a.createdAt);
-	// 			if(!loadMore) {
-	// 				setPosts(feedPosts);
-	// 			} else {
-	// 				setPosts([ ...posts, feedPosts])
-	// 			}
-
-	// 			setPosts(feedPosts);
-	// 			if (loadMore) setLoadMore(false)
-	// 			setIsLoadingPosts(false);
-	// 		} catch (error) {
-	// 			toast.error("Error loading posts", { description: `${error}` });
-	// 			setIsLoadingPosts(false);
-	// 			setLoadMore(false)
-	// 		}
-	// 	};
-
-	// 	getFeedPosts();
-	// }, [authUser, loadMore]);
-
 	return (
-		<InfiniteScroll
-			dataLength={posts.length}
-			next={loadMorePosts}
-			hasMore={loadMore}
-			loader={<Loader2 className="h-6 w-6 animate-spin" />}
-			scrollableTarget={scrollableTargetId}
-		>
+		// <InfiniteScroll
+		// 	dataLength={posts.length}
+		// 	next={onLoadMoreFeedPosts}
+		// 	hasMore={true}
+		// 	loader={<Loader2 className="h-6 w-6 animate-spin" />}
+		// 	scrollableTarget={scrollableTargetId}
+
+		// >
 			<div className="flex flex-col items-center gap-8 md:gap-12 grow max-w-lg ">
 				{!!posts && (
 					posts.map((post, index) => (
@@ -126,7 +81,7 @@ const Posts = ({ scrollableTargetId }: { scrollableTargetId?: string }) => {
 					))
 				)}
 			</div>
-		</InfiniteScroll>
+		// </InfiniteScroll>
 	)
 }
 

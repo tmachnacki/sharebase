@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuthStore } from "@/store/authStore";
 import { DocumentData, arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
 import { firestore } from "@/lib/firebase";
@@ -9,7 +9,7 @@ import { toast } from "sonner";
 const useLikePost = (post: PostDocument | DocumentData) => {
 	const [isUpdating, setIsUpdating] = useState(false);
 	const authUser = useAuthStore((state) => state.user);
-	const [likes, setLikes] = useState<number>(post.likes.length);
+	const [likes, setLikes] = useState<number>(post?.likes?.length ?? 0);
 	const [isLiked, setIsLiked] = useState<boolean>(post.likes.includes(authUser?.uid));
 
 	const handleLikePost = async () => {
