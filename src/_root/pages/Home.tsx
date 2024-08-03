@@ -1,40 +1,46 @@
-import { Post } from "@/components/post/post";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Stat } from "@/components/profile/stat";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "@/lib/firebase";
 import { useAuthStore } from "@/store/authStore";
 import { Posts } from "@/components/post/posts";
-import { Link } from "react-router-dom";
 import { useLogout } from "@/hooks/useLogout";
-import { User } from "@/components/shared/user"; 
-
+import { User } from "@/components/shared/user";
+import { SuggestedUsers } from "@/components/home/suggested-users";
 
 const Home = () => {
-  const authUser = useAuthStore((state) => state.user)
+  const authUser = useAuthStore((state) => state.user);
   const { handleLogout, isLoggingOut } = useLogout();
-	const scrollableTargetId = "feed"
+  const scrollableTargetId = "feed";
 
   return (
-    <ScrollArea className="w-full h-full" id={scrollableTargetId}>
-      <div className="flex justify-center flex-1 w-full h-full max-w-4xl gap-8 xl:gap-16 pt-8 pb-20 md:py-8 mx-auto relative">
-
+    <ScrollArea className="h-full w-full" id={scrollableTargetId}>
+      <div className="relative mx-auto flex h-full w-full max-w-4xl flex-1 justify-center gap-8 px-4 pb-20 pt-8 md:px-6 md:py-8 xl:gap-16">
         {/* posts */}
-        <Posts scrollableTargetId={scrollableTargetId}  />
+        <Posts scrollableTargetId={scrollableTargetId} />
 
-        <div className="flex-col items-center  hidden w-full max-w-xs lg:flex sticky">
+        <section className="hidden w-full max-w-xs flex-col items-center lg:flex ">
           {authUser && (
-            <User fullName={authUser.fullName} username={authUser.username} profilePicUrl={authUser.profilePicUrl}>
-              <Button variant={"ghost"} size={"sm"} className="text-purple-5 hover:text-purple-6 dark:hover:text-purple-4" disabled={isLoggingOut} onClick={handleLogout}> 
-                Log out
-              </Button>
-            </User>
+            <div className="sticky flex w-full flex-col">
+              <User
+                fullName={authUser.fullName}
+                username={authUser.username}
+                profilePicUrl={authUser.profilePicUrl}
+              >
+                <Button
+                  variant={"ghost"}
+                  size={"sm"}
+                  className="text-purple-5 hover:bg-purple-1 hover:text-purple-6 dark:hover:text-purple-4"
+                  disabled={isLoggingOut}
+                  onClick={handleLogout}
+                >
+                  Log out
+                </Button>
+              </User>
+
+              <h4 className="pb-4 pt-12 ">Suggested Users</h4>
+              <SuggestedUsers />
+            </div>
           )}
-        </div>
+        </section>
       </div>
       <ScrollBar />
     </ScrollArea>

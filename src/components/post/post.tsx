@@ -1,6 +1,4 @@
-import {
-	Card,
-} from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 
 import { PostDocument } from "@/types";
 
@@ -10,30 +8,33 @@ import { PostHeader, PostHeaderSkeleton } from "./post-header";
 import { PostFooter } from "./post-footer";
 
 const Post = ({ post }: { post: PostDocument | DocumentData }) => {
-	const { isLoadingUser, userProfile } = useGetUserProfileById(post?.createdBy);
+  const { isLoadingUser, userProfile } = useGetUserProfileById(post?.createdBy);
 
-	return (
-		<Card className="w-full px-4 py-6" variant={"solid"}>
-			{/* header */}
-			{isLoadingUser || !userProfile ? <PostHeaderSkeleton /> : <PostHeader post={post} authorProfile={userProfile} />}
+  return (
+    <Card className="w-full px-4 py-6" variant={"solid"}>
+      {/* header */}
+      {isLoadingUser || !userProfile ? (
+        <PostHeaderSkeleton />
+      ) : (
+        <PostHeader post={post} authorProfile={userProfile} />
+      )}
 
-			{/* post description by author */}
-			<div className="text-sm py-6">
-				<span>{post.caption}</span>
-			</div>
+      {/* post description by author */}
+      <div className="py-6 text-sm">
+        <span>{post.caption}</span>
+      </div>
 
-			{/* image */}
-			<img 
-				className="w-full h-auto aspect-square rounded-2xl object-cover "
-				src={post.imgUrl}
-				alt={`post image`}
-				loading="lazy"
-			/>
+      {/* image */}
+      <img
+        className="h-auto w-full rounded-2xl object-center"
+        src={post.imgUrl}
+        alt={`post image`}
+        loading="lazy"
+      />
 
-			<PostFooter post={post} />
-
-		</Card>
-	);
+      <PostFooter post={post} />
+    </Card>
+  );
 };
 
 export { Post };

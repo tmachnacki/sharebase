@@ -5,10 +5,10 @@ import { Nav } from "@/components/nav/nav";
 const RootLayout = () => {
   return (
     <>
-      <div className="relative md:flex w-full max-h-screen">
+      <div className="relative block max-h-screen w-full md:flex">
         <Nav />
 
-        <section className="flex flex-1 w-full h-full max-h-screen px-4 md:px-6 overflow-hidden">
+        <section className="flex h-full max-h-screen w-full flex-1 overflow-hidden">
           <Outlet />
         </section>
       </div>

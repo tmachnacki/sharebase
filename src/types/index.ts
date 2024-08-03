@@ -1,3 +1,5 @@
+import { FieldValue } from "firebase/firestore";
+
 export type UserDocument = {
   uid: string;
   username: string;
@@ -12,7 +14,7 @@ export type UserDocument = {
   posts: string[]; // Post IDs
   saves: string[]; // Post IDs
   tagged?: string[]; // post IDs
-}
+};
 
 export type PostDocument = {
   id: string;
@@ -24,15 +26,63 @@ export type PostDocument = {
   tags: string[]; // User IDs
   createdAt: Date;
   createdBy: string; // User ID
-}
+};
 
 export type CommentDocument = {
   comment: string;
   createdBy: string; // User ID
   postId: string; // Post ID
   createdAt: Date;
-}
+};
 
-export type FollowerFollowing = Omit<UserDocument, "email" | "profileBannerUrl" | "bio" | "createdAt" | "followers" | "following" | "posts" | "saves" | "tagged">
+export type FollowerFollowing = Omit<
+  UserDocument,
+  | "email"
+  | "profileBannerUrl"
+  | "bio"
+  | "createdAt"
+  | "followers"
+  | "following"
+  | "posts"
+  | "saves"
+  | "tagged"
+>;
 
-export type AuthorProfile =  Omit<UserDocument, "email" | "profileBannerUrl" | "bio" | "createdAt" | "followers" | "following" | "posts" | "saves" | "tagged">
+export type AuthorProfile = Omit<
+  UserDocument,
+  | "email"
+  | "profileBannerUrl"
+  | "bio"
+  | "createdAt"
+  | "followers"
+  | "following"
+  | "posts"
+  | "saves"
+  | "tagged"
+>;
+
+export type MessageDocument = {
+  id: string;
+  createdBy: string;
+  text: string;
+  createdAt: FieldValue;
+};
+
+export type ChatDocument = {
+  id: string;
+  userOne: {
+    uid: string;
+    username: string;
+    fullName: string;
+    profilePicUrl: string;
+  };
+  userTwo: {
+    uid: string;
+    username: string;
+    fullName: string;
+    profilePicUrl: string;
+  };
+  messages: MessageDocument[];
+  createdAt: FieldValue;
+  lastUpdatedAt: FieldValue;
+};

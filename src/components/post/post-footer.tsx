@@ -13,21 +13,25 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
+} from "@/components/ui/popover";
 import { CommentsModal } from "./comments-modal";
 import { useSavePost } from "@/hooks/useSavePost";
-
 
 type PostFooterProps = {
   post: PostDocument | DocumentData;
   // authorProfile: UserDocument | DocumentData;
   className?: string;
-}
+  focusCommentInput?: () => void;
+};
 
-const PostFooter = ({ post, className }: PostFooterProps) => {
+const PostFooter = ({
+  post,
+  className,
+  focusCommentInput,
+}: PostFooterProps) => {
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
   const authUser = useAuthStore((state) => state.user);
-  const { handleLikePost, isLiked, likes } = useLikePost(post);
+  const { handleLikePost, isLiked, likes, isLiking } = useLikePost(post);
   const { isSaved, isSaving, handleSavePost } = useSavePost(post.id);
 
   const timestamp: Timestamp = post.createdAt;
@@ -37,65 +41,75 @@ const PostFooter = ({ post, className }: PostFooterProps) => {
   const iconClassName = "h-4 w-4";
 
   return (
-    <div className={cn("pt-2 space-y-6", className)}>
+    <div className={cn("space-y-6 pt-2", className)}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1">
           {/* like */}
           <Button
             variant={isLiked ? "primary" : "ghost"}
             size={"sm"}
-            className={cn(
-              iconButtonClassName,
-            )}
-            onClick={handleLikePost}
+            className={cn(iconButtonClassName)}
+            onClick={() => handleLikePost()}
+            disabled={isLiking}
           >
-            <Heart
-              aria-label="like post"
-              className={cn(
-                iconClassName,
-                "mr-2",
-                isLiked && "fill-current"
-              )}
-            />
+            {isLiking ? (
+              <ButtonLoader className="" />
+            ) : (
+              <Heart
+                aria-label="like post"
+                className={cn(iconClassName, "mr-2", isLiked && "fill-current")}
+              />
+            )}
             {likes}
           </Button>
-          
+
           {/* save */}
-          <Button 
+          <Button
             variant={isSaved ? "primary" : "ghost"}
             size={"sm"}
-            className={cn(
-              iconButtonClassName,
-            )}
-            onClick={handleSavePost}
+            className={cn(iconButtonClassName)}
+            onClick={() => handleSavePost()}
+            disabled={isSaving}
           >
-            <Bookmark
-              aria-label="save post"
-              className={cn(
-                iconClassName,
-                isSaved && "fill-current"
-              )}
-            />
+            {isSaving ? (
+              <ButtonLoader className="m-0" />
+            ) : (
+              <Bookmark
+                aria-label="save post"
+                className={cn(iconClassName, isSaved && "fill-current")}
+              />
+            )}
           </Button>
 
           {/* comments */}
-          <Button variant={"ghost"} size={"sm"} className="rounded-full " onClick={() => setIsCommentsOpen(true)}>
+          <Button
+            variant={"ghost"}
+            size={"sm"}
+            className="rounded-full "
+            onClick={
+              focusCommentInput
+                ? focusCommentInput
+                : () => setIsCommentsOpen(true)
+            }
+          >
             <MessageCircle
               aria-label="comment on post"
               className={`${iconClassName} mr-2`}
             />
             {post.comments.length}
           </Button>
-          <CommentsModal isOpen={isCommentsOpen} setIsOpen={setIsCommentsOpen} post={post} />
+          <CommentsModal
+            isOpen={isCommentsOpen}
+            setIsOpen={setIsCommentsOpen}
+            post={post}
+          />
         </div>
 
         {/* timestamp */}
-        <span className=" text-slate-500 text-sm">
-          {timeAgo}
-        </span>
+        <span className=" text-sm text-slate-500">{timeAgo}</span>
       </div>
     </div>
-  )
+  );
 };
 
 export { PostFooter };
