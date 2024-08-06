@@ -13,6 +13,7 @@ import useSearchUser from "@/hooks/useSearchUser";
 import { User } from "./user";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
+import { useGetOtherUsers } from "@/hooks/useGetOtherUsers";
 
 type SearchProps = {
   open: boolean;
@@ -20,15 +21,9 @@ type SearchProps = {
 };
 
 const Search = ({ open, setOpen }: SearchProps) => {
-  const { isLoading, getUserProfile, user, setUser } = useSearchUser();
-
+  // const { isLoading, getUserProfile, user, setUser } = useSearchUser();
   const [userInput, setUserInput] = useState("");
-
-  const handleSubmitUser = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (isLoading) return;
-    await getUserProfile(userInput);
-  };
+  const { isLoadingUsers, getOtherUsers, users } = useGetOtherUsers();
 
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
@@ -36,20 +31,23 @@ const Search = ({ open, setOpen }: SearchProps) => {
         placeholder="Enter a username..."
         value={userInput}
         onValueChange={setUserInput}
-        onSubmit={handleSubmitUser}
       />
       <CommandList>
-        {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-        {user && userInput && (
-          <CommandItem>
-            <User
-              fullName={user?.fullName}
-              profilePicUrl={user?.profilePicUrl}
-              username={user?.username}
-            />
-          </CommandItem>
+        {isLoadingUsers && <Loader2 className="h-4 w-4 animate-spin" />}
+        {!!users &&
+          userInput &&
+          users.map((user) => (
+            <CommandItem key={user.uid}>
+              <User
+                fullName={user?.fullName}
+                profilePicUrl={user?.profilePicUrl}
+                username={user?.username}
+              />
+            </CommandItem>
+          ))}
+        {!isLoadingUsers && !users && (
+          <CommandEmpty>No users found.</CommandEmpty>
         )}
-        {!isLoading && !user && <CommandEmpty>No users found.</CommandEmpty>}
       </CommandList>
     </CommandDialog>
   );

@@ -88,8 +88,9 @@ export const ChatsPage = () => {
                   return (
                     <li
                       className={cn(
-                        "block  w-full cursor-pointer overflow-x-hidden  border-b-[1px] border-slate-100 px-6 py-3 last:border-b-0 hover:bg-slate-100 dark:border-slate-900 dark:hover:bg-slate-900",
-                        chat.id === currentChatId && "",
+                        "block  w-full cursor-pointer overflow-x-hidden  border-b-[1px] border-slate-100 px-6 py-3 last:border-b-0 hover:bg-slate-200 dark:border-slate-900 dark:hover:bg-slate-900",
+                        chat.id === currentChatId &&
+                          "bg-slate-100 dark:bg-slate-900/50",
                         chat.id !== currentChatId && "",
                       )}
                       onClick={() => setCurrentChatId(chat.id)}

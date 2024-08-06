@@ -6,10 +6,13 @@ import {
   Bookmark,
   LogOut,
   Plus,
-  MoreHorizontal,
-  UserSearch,
   PlusSquare,
   Send,
+  UserRound,
+  Sun,
+  Moon,
+  Monitor,
+  SunMoon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -22,6 +25,18 @@ import { Logo } from "../shared/logo";
 import { useAuthStore } from "@/store/authStore";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import Search from "../shared/search";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuPortal,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { useTheme } from "next-themes";
 
 const navItemClassName =
   "p-2 rounded-md relative hover:bg-slate-200 dark:hover:bg-slate-900 gap-4 flex-start transition-colors hover:text-slate-950 hover:dark:text-slate-50";
@@ -32,6 +47,7 @@ const Nav = () => {
   const [openCreatePost, setOpenCreatePost] = useState(false);
   const [openSearch, setOpenSearch] = useState(false);
   const authUser = useAuthStore((state) => state.user);
+  const { setTheme } = useTheme();
 
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const iconClassNames = isDesktop ? "w-6 h-6" : "w-5 h-5";
@@ -104,15 +120,6 @@ const Nav = () => {
               </li>
             ))}
             <li>
-              <button
-                className={`${navItemClassName} w-full`}
-                onClick={() => setOpenSearch(true)}
-              >
-                <UserSearch className={iconClassNames} />
-                <span>Search</span>
-              </button>
-            </li>
-            <li>
               <Button
                 variant={"primary-shadow"}
                 className={cn(
@@ -172,17 +179,23 @@ const Nav = () => {
               {navItems[1].icon}
             </Link>
 
-            <Button
+            {/* <Button
               className="rounded-full shadow-lg md:hidden"
               variant={"primary"}
               size={"icon"}
               onClick={() => setOpenCreatePost(true)}
             >
               <Plus className="h-5 w-5" />
-            </Button>
+            </Button> */}
 
-            {/* dummy element for spacing */}
-            {/* <div className="" aria-hidden="true"></div> */}
+            <span
+              className={cn("relative cursor-pointer")}
+              onClick={() => setOpenCreatePost(true)}
+              role="button"
+            >
+              <PlusSquare className="h-5 w-5" />
+              <span className="sr-only">Create post</span>
+            </span>
 
             <Link
               to={navItems[2].link}
@@ -197,14 +210,63 @@ const Nav = () => {
               {navItems[2].icon}
             </Link>
 
-            <UserSearch
-              className={iconClassNames + "cursor-pointer"}
-              role="button"
-              onClick={() => setOpenSearch(true)}
-              tabIndex={0}
-            />
+            <Link
+              to={navItems[3].link}
+              className={cn(
+                "relative",
+                isCurrentPage(navItems[3].link) &&
+                  " text-slate-950 dark:text-slate-50 ",
+              )}
+              aria-current={isCurrentPage(navItems[2].link) ? "page" : "false"}
+            >
+              {isCurrentPage(navItems[3].link) && <NavIndicator />}
+              {navItems[3].icon}
+            </Link>
 
-            {/* <ModeToggle  className={cn(" text-slate-950 dark:text-slate-50 ",)}  /> */}
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <Avatar className="h-7 w-7">
+                  <AvatarImage src={authUser?.profilePicUrl} />
+                  <AvatarFallback />
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem asChild>
+                  <Link to={`/users/${authUser?.username}`} className="">
+                    <UserRound className="mr-2 h-4 w-4" />
+                    <span className="text-sm">Profile</span>
+                  </Link>
+                </DropdownMenuItem>
+
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>
+                    <SunMoon className="mr-2 h-4 w-4" />
+                    <span>Theme</span>
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuPortal>
+                    <DropdownMenuSubContent>
+                      <DropdownMenuItem onClick={() => setTheme("light")}>
+                        <Sun className="mr-2 h-4 w-4" />
+                        <span>Light</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setTheme("dark")}>
+                        <Moon className="mr-2 h-4 w-4" />
+                        <span>Dark</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setTheme("system")}>
+                        <Monitor className="mr-2 h-4 w-4" />
+                        <span>System</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuSubContent>
+                  </DropdownMenuPortal>
+                </DropdownMenuSub>
+
+                <DropdownMenuItem onClick={handleLogout}>
+                  <LogOut className="mr-2 h-4 w-4 rotate-180" />
+                  <span className="text-sm">Log out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </nav>
         </>
       )}

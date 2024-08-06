@@ -118,6 +118,16 @@ const Posts = ({ scrollableTargetId }: { scrollableTargetId?: string }) => {
     );
   }
 
+  if (!!posts && posts.length === 0) {
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <span className="text-slate-500 dark:text-slate-400">
+          Your feed is quiet...
+        </span>
+      </div>
+    );
+  }
+
   return (
     // <InfiniteScroll
     // 	dataLength={posts.length}

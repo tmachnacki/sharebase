@@ -14,6 +14,7 @@ import { ProfilePost } from "@/components/profile/profile-post";
 import { PostDocument } from "@/types";
 import { useAuthStore } from "@/store/authStore";
 import { PostsGrid } from "@/components/shared/posts-grid";
+import { Loader2 } from "lucide-react";
 
 const Saves = () => {
   const [loadingSaves, setLoadingSaves] = useState(false);
@@ -54,13 +55,36 @@ const Saves = () => {
     getPosts();
   }, [authUser]);
 
+  if (loadingSaves) {
+    return (
+      <div className="p-content container space-y-8 px-4 md:px-6">
+        <div className="flex h-full w-full items-center justify-center">
+          <Loader2 className="h-6 w-6 animate-spin" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!!savedPosts && savedPosts.length === 0) {
+    return (
+      <div className="p-content container space-y-8 px-4 md:px-6">
+        <div className="flex h-full w-full items-center justify-center">
+          <span className="text-slate-500 dark:text-slate-400">
+            You haven't saved any posts yet.
+          </span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-content container space-y-8 px-4 md:px-6">
-      {/* <h1 className="text-lg">Saved posts</h1> */}
       <PostsGrid loading={loadingSaves}>
-        {savedPosts.map((post: DocumentData) => (
-          <ProfilePost post={post} key={post.id} />
-        ))}
+        {
+          !!savedPosts.map((post: DocumentData) => (
+            <ProfilePost post={post} key={post.id} />
+          ))
+        }
       </PostsGrid>
     </div>
   );

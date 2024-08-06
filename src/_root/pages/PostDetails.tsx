@@ -138,20 +138,20 @@ export const PostDetails = () => {
                     />
                   </div>
 
-                  <div className="relative h-56 w-full overflow-auto py-1 lg:h-full">
-                    <div className="absolute h-full w-full">
+                  <div className="relative h-56 w-full overflow-auto lg:h-full lg:min-h-24">
+                    <div className="absolute h-full w-full ">
                       {/* <ScrollArea className="absolute h-auto min-h-48 w-full"> */}
                       {postData.comments.length === 0 ? (
-                        <div className=" flex h-full w-full flex-col items-center justify-center space-y-2 px-6 pt-6  text-sm text-slate-600 dark:text-slate-400  ">
+                        <div className=" flex h-full w-full flex-col items-center justify-center space-y-2 px-6  text-sm text-slate-500 dark:text-slate-400  ">
                           <span>It's quiet here...</span>
-                          <Button
+                          {/* <Button
                             variant={"ghost"}
                             size={"sm"}
                             className="text-purple-5"
                             onClick={handleCommentButtonClick}
                           >
                             Add a comment
-                          </Button>
+                          </Button> */}
                         </div>
                       ) : (
                         <div className="flex flex-col gap-4 p-6">
@@ -172,7 +172,7 @@ export const PostDetails = () => {
                     </div>
                   </div>
 
-                  <div className="space-y-4 border-t border-slate-200 border-t-[px] px-6 pb-6 pt-4 dark:border-slate-800">
+                  <div className="space-y-4  border-t-[1px] border-slate-200 px-6 pb-6 pt-4 dark:border-slate-800">
                     {postData && (
                       <PostFooter
                         post={postData}

@@ -16,7 +16,6 @@ const useSearchUser = () => {
   const [users, setUsers] = useState<Array<UserDocument | DocumentData>>([]);
 
   const getUserProfile = async (searchQuery: string) => {
-    console.log(searchQuery);
     setIsLoadingUsers(true);
     setUsers([]);
     try {

@@ -19,7 +19,7 @@ const Home = () => {
 
         <section className="hidden w-full max-w-xs flex-col items-center lg:flex ">
           {authUser && (
-            <div className="sticky flex w-full flex-col">
+            <div className="flex w-full flex-col">
               <User
                 fullName={authUser.fullName}
                 username={authUser.username}
