@@ -12,40 +12,45 @@ import { firestore } from "@/lib/firebase";
 import { UserDocument } from "@/types";
 
 const useSearchUser = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [user, setUser] = useState<UserDocument | DocumentData | null>(null);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(false);
+  const [users, setUsers] = useState<Array<UserDocument | DocumentData>>([]);
 
   const getUserProfile = async (searchQuery: string) => {
-    setIsLoading(true);
-    setUser(null);
+    console.log(searchQuery);
+    setIsLoadingUsers(true);
+    setUsers([]);
     try {
+      // const q = query(
+      //   collection(firestore, "users"),
+      //   where("username", ">=", searchQuery),
+      //   where("fullName", "<=", searchQuery + "\uf8ff"),
+      // );
       const q = query(
         collection(firestore, "users"),
-        or(
-          where("username", "==", searchQuery),
-          where("fullName", "==", searchQuery),
-        ),
+        where("username", "==", searchQuery),
       );
 
       const querySnapshot = await getDocs(q);
       if (querySnapshot.empty) {
-        setUser(null);
-        setIsLoading(false);
+        setUsers([]);
+        setIsLoadingUsers(false);
         return;
       }
 
+      const fetchedUsers: DocumentData[] = [];
       querySnapshot.forEach((doc: DocumentData) => {
-        setUser({ ...doc.data(), id: doc.id });
+        fetchedUsers.push({ ...doc.data(), id: doc.id });
       });
-      setIsLoading(false);
+      setUsers(fetchedUsers);
+      setIsLoadingUsers(false);
     } catch (error) {
       toast.error("Error", { description: `${error}` });
-      setUser(null);
-      setIsLoading(false);
+      setUsers([]);
+      setIsLoadingUsers(false);
     }
   };
 
-  return { isLoading, getUserProfile, user, setUser };
+  return { isLoadingUsers, getUserProfile, users, setUsers };
 };
 
 export default useSearchUser;

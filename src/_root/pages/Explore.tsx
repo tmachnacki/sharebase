@@ -22,30 +22,23 @@ const Explore = () => {
   >([]);
   const authUser = useAuthStore((state) => state.user);
 
-  const PAGE_SIZE = 15;
+  const PAGE_SIZE = 12;
   useEffect(() => {
     const getExplorePosts = async () => {
-      if (!authUser || isLoading) return;
-
       setIsLoading(true);
       try {
-        const q =
-          authUser?.following && authUser.following.length > 0
-            ? query(
-                collection(firestore, "posts"),
-                where("createdBy", "not-in", authUser?.following),
-                limit(PAGE_SIZE),
-              )
-            : query(
-                collection(firestore, "posts"),
-                where("createdBy", "!=", authUser?.uid),
-                limit(PAGE_SIZE),
-              );
+        const q = query(collection(firestore, "posts"), limit(PAGE_SIZE));
         const querySnapshot = await getDocs(q);
-        const fetchedPosts: DocumentData[] = [];
+        console.log(querySnapshot);
 
+        if (querySnapshot.empty) return toast.warning("No posts found");
+
+        const fetchedPosts: DocumentData[] = [];
         querySnapshot.forEach((postDoc) => {
-          if (postDoc.data().createdBy !== authUser?.uid)
+          if (
+            postDoc.data().createdBy !== authUser?.uid &&
+            !authUser?.following.includes(postDoc.data().createdBy)
+          )
             fetchedPosts.push({ ...postDoc.data(), id: postDoc.id });
         });
 
@@ -54,13 +47,19 @@ const Explore = () => {
 
         setIsLoading(false);
       } catch (error) {
+        console.error(error);
         toast.error("Error getting posts", { description: `${error}` });
+
         setIsLoading(false);
       }
     };
 
-    getExplorePosts();
+    if (authUser) getExplorePosts();
   }, [authUser]);
+
+  useEffect(() => {
+    console.log(explorePosts);
+  }, [explorePosts]);
 
   return (
     <ScrollArea className="h-full w-full">

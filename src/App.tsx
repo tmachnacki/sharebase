@@ -11,19 +11,18 @@ import { useAuthStore } from "./store/authStore";
 
 import { Loader2 } from "lucide-react";
 import { PostDetails } from "./_root/pages/PostDetails";
+import { ChatsPage } from "./_root/pages/ChatsPage";
 
 const App = () => {
   const authUser = useAuthStore((state) => state.user);
 
   return (
-    <main
-      className={`flex h-screen max-h-screen bg-slate-50 dark:bg-slate-950`}
-    >
+    <main className={`flex h-screen bg-white dark:bg-gray-950`}>
       {/* toaster */}
       <Toaster
         richColors
         closeButton
-        loadingIcon={<Loader2 className="h-4 w-4" />}
+        icons={{ loading: <Loader2 className="h-4 w-4" /> }}
         position="top-right"
       />
 
@@ -37,6 +36,7 @@ const App = () => {
           <Route path="/saved" element={<Saves />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/posts/:postid" element={<PostDetails />} />
+          <Route path="/chats/" element={<ChatsPage />} />
         </Route>
 
         {/* public */}

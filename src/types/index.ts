@@ -63,26 +63,23 @@ export type AuthorProfile = Omit<
 
 export type MessageDocument = {
   id: string;
+  chatId: string;
   createdBy: string;
   text: string;
-  createdAt: FieldValue;
+  createdAt: Date;
 };
 
 export type ChatDocument = {
   id: string;
-  userOne: {
-    uid: string;
-    username: string;
-    fullName: string;
-    profilePicUrl: string;
-  };
-  userTwo: {
-    uid: string;
-    username: string;
-    fullName: string;
-    profilePicUrl: string;
-  };
-  messages: MessageDocument[];
-  createdAt: FieldValue;
-  lastUpdatedAt: FieldValue;
+  userOneUid: string;
+  userOneUsername: string;
+  userOneFullName: string;
+  userOneProfilePicUrl: string;
+  userTwoUid: string;
+  userTwoUsername: string;
+  userTwoFullName: string;
+  userTwoProfilePicUrl: string;
+  createdAt: Date;
+  lastUpdatedAt: Date;
+  lastMessageText: string;
 };

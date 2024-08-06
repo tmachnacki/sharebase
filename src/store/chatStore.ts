@@ -1,29 +1,45 @@
 import { ChatDocument, MessageDocument } from "@/types";
-import { DocumentData, serverTimestamp } from "firebase/firestore";
+import { DocumentData } from "firebase/firestore";
 import { create } from "zustand";
 
+// type IChatStore = {
+//   chats: Array<ChatDocument | DocumentData>;
+//   setChats: (chats: Array<ChatDocument | DocumentData>) => void;
+//   createChat: (chat: ChatDocument | DocumentData) => void;
+//   addMessage: (
+//     chatId: string,
+//     messageText: string,
+//     lastUpdatedAt: Date,
+//   ) => void;
+// };
+
+// const useChatStore = create<IChatStore>((set) => ({
+//   chats: [],
+//   setChats: (chats) => set({ chats }),
+//   createChat: (chat) => set((state) => ({ chats: [chat, ...state.chats] })),
+//   addMessage: (chatId, messageText, lastUpdatedAt) =>
+//     set((state) => ({
+//       chats: state.chats.map((chat) => {
+//         if (chat.id === chatId) {
+//           return {
+//             ...chat,
+//             lastMessageText: messageText,
+//             lastUpdatedAt: lastUpdatedAt,
+//           };
+//         }
+//         return chat;
+//       }),
+//     })),
+// }));
+
 type IChatStore = {
-  chats: Array<ChatDocument | DocumentData>;
-  setChats: (chats: Array<ChatDocument | DocumentData>) => void;
-  createChat: (chat: ChatDocument | DocumentData) => void;
-  addMessage: (chatId: string, message: MessageDocument | DocumentData) => void;
+  currentChatId: string | null;
+  setCurrentChatId: (currentChatId: string | null) => void;
 };
 
 const useChatStore = create<IChatStore>((set) => ({
-  chats: [],
-  setChats: (chats) => set({ chats }),
-  createChat: (chat) => set((state) => ({ chats: [chat, ...state.chats] })),
-  addMessage: (chatId, message) =>
-    set((state) => ({
-      chats: state.chats.map((chat) => {
-        if (chat.id === chatId) {
-          return {
-            ...chat,
-            messages: [message, ...chat.messages],
-            lastUpdatedAt: message.createdAt,
-          };
-        }
-        return chat;
-      }),
-    })),
+  currentChatId: null,
+  setCurrentChatId: (chatId: string | null) => set({ currentChatId: chatId }),
 }));
+
+export { useChatStore, type IChatStore };

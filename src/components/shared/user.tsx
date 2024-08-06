@@ -10,6 +10,8 @@ type UserProps = {
   profilePicUrl: string;
   children?: React.ReactNode;
   className?: string;
+  avatarClassName?: string;
+  displayUsername?: boolean;
 };
 
 const User = ({
@@ -18,6 +20,8 @@ const User = ({
   profilePicUrl,
   children,
   className,
+  avatarClassName,
+  displayUsername = true,
 }: UserProps) => {
   return (
     <div
@@ -28,7 +32,7 @@ const User = ({
     >
       <div className="flex flex-row items-center gap-4">
         <Link to={`/users/${username}`}>
-          <Avatar className="h-10 w-10">
+          <Avatar className={cn("h-10 w-10", avatarClassName)}>
             <AvatarImage
               src={profilePicUrl}
               alt={`${fullName} profile picture`}
@@ -47,12 +51,14 @@ const User = ({
           >
             {fullName}
           </Link>
-          <Link
-            to={`/users/${username}`}
-            className="block truncate text-sm leading-none text-slate-500 hover:underline dark:text-slate-400"
-          >
-            @{username}
-          </Link>
+          {displayUsername && (
+            <Link
+              to={`/users/${username}`}
+              className="block truncate text-sm leading-none text-slate-500 hover:underline dark:text-slate-400"
+            >
+              @{username}
+            </Link>
+          )}
         </div>
       </div>
 

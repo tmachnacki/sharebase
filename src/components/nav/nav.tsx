@@ -9,6 +9,7 @@ import {
   MoreHorizontal,
   UserSearch,
   PlusSquare,
+  Send,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -47,6 +48,11 @@ const Nav = () => {
       label: "Explore",
     },
     {
+      icon: <Send className={iconClassNames} />,
+      link: "/chats",
+      label: "Messages",
+    },
+    {
       icon: <Bookmark className={iconClassNames} />,
       link: `/saved`,
       label: "Saved",
@@ -63,12 +69,12 @@ const Nav = () => {
         // {/* desktop */}
         <nav
           className={cn(
-            "relative hidden h-full  w-full max-w-[16rem] flex-col gap-8 rounded-e-3xl px-4 py-6 text-slate-500 dark:text-slate-400 md:flex",
+            "relative hidden h-screen w-full max-w-[14rem] flex-col gap-8 overflow-y-auto rounded-e-3xl px-4 py-6 text-slate-500 dark:text-slate-400 md:flex",
             // "shadow-[10px_0px_60px_-15px] shadow-black dark:shadow-white",
             "border-r border-r-purple-4/40 dark:border-r-purple-5/40 ",
           )}
         >
-          <Link to={"/"} className="flex items-baseline  gap-2 ">
+          <Link to={"/"} className="flex flex-shrink-0  items-baseline gap-2 ">
             <Logo className="h-8 w-8 translate-y-0.5" />
             <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-50">
               ShareBase
@@ -122,7 +128,7 @@ const Nav = () => {
             </li>
           </ul>
 
-          <ul className="flex flex-col gap-2">
+          <ul className="mt-12 flex flex-col gap-2">
             <ModeToggle className={navItemClassName} />
             <li
               role="button"
@@ -166,8 +172,17 @@ const Nav = () => {
               {navItems[1].icon}
             </Link>
 
+            <Button
+              className="rounded-full shadow-lg md:hidden"
+              variant={"primary"}
+              size={"icon"}
+              onClick={() => setOpenCreatePost(true)}
+            >
+              <Plus className="h-5 w-5" />
+            </Button>
+
             {/* dummy element for spacing */}
-            <div className="" aria-hidden="true"></div>
+            {/* <div className="" aria-hidden="true"></div> */}
 
             <Link
               to={navItems[2].link}
@@ -191,14 +206,6 @@ const Nav = () => {
 
             {/* <ModeToggle  className={cn(" text-slate-950 dark:text-slate-50 ",)}  /> */}
           </nav>
-          <Button
-            className="absolute bottom-0 left-1/2 z-[50] h-12 w-12 -translate-x-[50%] -translate-y-1/2 rounded-full shadow-lg md:hidden"
-            variant={"primary"}
-            size={"icon"}
-            onClick={() => setOpenCreatePost(true)}
-          >
-            <Plus className="h-5 w-5" />
-          </Button>
         </>
       )}
 
