@@ -1,6 +1,6 @@
 import { PostDocument } from "@/types";
 import { DocumentData } from "firebase/firestore";
-import { Heart, MapPin, MessageCircle } from "lucide-react";
+import { Heart, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const ProfilePost = ({ post }: { post: PostDocument | DocumentData }) => (

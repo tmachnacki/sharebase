@@ -68,7 +68,7 @@ const Saves = () => {
   if (!!savedPosts && savedPosts.length === 0) {
     return (
       <div className="p-content container space-y-8 px-4 md:px-6">
-        <div className="flex h-full w-full items-center justify-center">
+        <div className="flex  w-full items-center justify-center">
           <span className="text-slate-500 dark:text-slate-400">
             You haven't saved any posts yet.
           </span>

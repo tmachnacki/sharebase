@@ -1,19 +1,11 @@
 import useLikePost from "@/hooks/useLikePost";
-import usePostComment from "@/hooks/usePostComment";
-import { useAuthStore } from "@/store/authStore";
-import { CommentDocument, PostDocument, UserDocument } from "@/types";
+import { PostDocument } from "@/types";
 import { DocumentData, type Timestamp } from "firebase/firestore";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Button } from "../ui/button";
 import { Heart, MessageCircle, Bookmark } from "lucide-react";
 import { cn, toTimeAgo } from "@/lib/utils";
-import { Input } from "../ui/input";
 import { ButtonLoader } from "../shared/button-loader";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { CommentsModal } from "./comments-modal";
 import { useSavePost } from "@/hooks/useSavePost";
 
@@ -30,7 +22,6 @@ const PostFooter = ({
   focusCommentInput,
 }: PostFooterProps) => {
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
-  const authUser = useAuthStore((state) => state.user);
   const { handleLikePost, isLiked, likes, isLiking } = useLikePost(post);
   const { isSaved, isSaving, handleSavePost } = useSavePost(post.id);
 

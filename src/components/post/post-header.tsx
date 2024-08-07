@@ -1,5 +1,4 @@
 import { Link, useLocation } from "react-router-dom";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,14 +8,12 @@ import {
 import { Skeleton } from "../ui/skeleton";
 import {
   MoreHorizontal,
-  UserRoundMinus,
   Link as LinkIcon,
   ExternalLink,
-  UserRoundPlus,
   Pencil,
 } from "lucide-react";
 import { Button } from "../ui/button";
-import { AuthorProfile, PostDocument, UserDocument } from "@/types";
+import { PostDocument, UserDocument } from "@/types";
 import { DocumentData } from "firebase/firestore";
 import { useFollowUser } from "@/hooks/useFollowUser";
 import { ButtonLoader } from "../shared/button-loader";
@@ -24,7 +21,6 @@ import { User } from "../shared/user";
 import { useAuthStore } from "@/store/authStore";
 import { CreatePost } from "../shared/createPost";
 import { useState } from "react";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { toast } from "sonner";
 
 type PostHeaderProps = {
@@ -39,7 +35,6 @@ const PostHeader = ({ post, authorProfile }: PostHeaderProps) => {
   );
   const authUser = useAuthStore((state) => state.user);
   const isOwnPost = authUser?.uid === post.createdBy;
-  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   const { pathname } = useLocation();
   const isPostDetailsPage = pathname.includes("/posts/");

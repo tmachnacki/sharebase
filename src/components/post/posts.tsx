@@ -18,7 +18,6 @@ import {
 } from "firebase/firestore";
 import { firestore } from "@/lib/firebase";
 import { toast } from "sonner";
-import InfiniteScroll from "react-infinite-scroll-component";
 
 const Posts = ({ scrollableTargetId }: { scrollableTargetId?: string }) => {
   // const { isLoadingPosts, posts } = useGetFeedPosts();
@@ -129,21 +128,12 @@ const Posts = ({ scrollableTargetId }: { scrollableTargetId?: string }) => {
   }
 
   return (
-    // <InfiniteScroll
-    // 	dataLength={posts.length}
-    // 	next={onLoadMoreFeedPosts}
-    // 	hasMore={true}
-    // 	loader={<Loader2 className="h-6 w-6 animate-spin" />}
-    // 	scrollableTarget={scrollableTargetId}
-
-    // >
-    <div className="flex max-w-lg grow flex-col items-center gap-8 md:gap-12 ">
+    <div className="flex max-w-lg flex-shrink flex-grow flex-col items-center gap-8 md:gap-12 ">
       {!!posts &&
         posts.map((post, index) => (
           <Post post={post} key={`${post.id}-${index}`} />
         ))}
     </div>
-    // </InfiniteScroll>
   );
 };
 

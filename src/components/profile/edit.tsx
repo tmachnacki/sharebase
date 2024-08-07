@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useRef } from "react";
 import { useAuthStore } from "@/store/authStore";
 import { useUserProfileStore } from "@/store/userProfileStore";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
@@ -62,7 +62,7 @@ function getImageData(event: React.ChangeEvent<HTMLInputElement>) {
 
   // Add newly uploaded images
   Array.from(event.target.files!).forEach((image) =>
-    dataTransfer.items.add(image)
+    dataTransfer.items.add(image),
   );
 
   const files = dataTransfer.files;
@@ -148,17 +148,20 @@ const EditProfile = ({ isOpen, onOpenChange, onClose }: EditProfileProps) => {
     >
       {/* form */}
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className={`px-4 space-y-6 md:px-0`}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className={`space-y-6 px-4 md:px-0`}
+        >
           <div className="space-y-2">
-            <div className="grid grid-cols-2 gap-6 place-items-center">
-              <Avatar className="w-full h-full">
+            <div className="grid grid-cols-2 place-items-center gap-6">
+              <Avatar className="h-full w-full">
                 <AvatarImage
                   src={selectedFile || authUser?.profilePicUrl}
-                  className="object-cover w-full h-full"
+                  className="h-full w-full object-cover"
                 />
                 <AvatarFallback>
                   {selectedFile || authUser?.profilePicUrl ? (
-                    <Skeleton className="w-full h-full rounded-full aspect-square" />
+                    <Skeleton className="aspect-square h-full w-full rounded-full" />
                   ) : (
                     authUser?.fullName
                   )}
@@ -171,7 +174,7 @@ const EditProfile = ({ isOpen, onOpenChange, onClose }: EditProfileProps) => {
                 onClick={(
                   e:
                     | React.MouseEvent<HTMLButtonElement>
-                    | React.TouchEvent<HTMLButtonElement>
+                    | React.TouchEvent<HTMLButtonElement>,
                 ) => {
                   e.preventDefault();
                   fileRef?.current ? fileRef?.current.click() : null;

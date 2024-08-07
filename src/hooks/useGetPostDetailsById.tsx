@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { DocumentData, doc, getDoc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { firestore } from "@/lib/firebase";
 import { toast } from "sonner";
-import { PostDocument } from "@/types";
 import { usePostStore } from "@/store/postStore";
 
 const useGetPostDetailsById = (postId: string | undefined) => {

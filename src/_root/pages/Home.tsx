@@ -13,11 +13,11 @@ const Home = () => {
 
   return (
     <ScrollArea className="h-full w-full" id={scrollableTargetId}>
-      <div className="relative mx-auto flex h-full w-full max-w-4xl flex-1 justify-center gap-12 px-6 pb-20 pt-8 md:py-8 ">
+      <div className="relative mx-auto flex h-full w-full max-w-4xl flex-1 justify-center gap-8 px-6 pb-20 pt-8 md:py-8 xl:gap-12 ">
         {/* posts */}
         <Posts scrollableTargetId={scrollableTargetId} />
 
-        <section className="hidden w-full max-w-xs flex-col items-center lg:flex ">
+        <section className="hidden w-full max-w-[18rem] flex-shrink-0 flex-grow-0 flex-col items-center lg:flex ">
           {authUser && (
             <div className="flex w-full flex-col">
               <User

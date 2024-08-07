@@ -1,4 +1,4 @@
-import { Check, ChevronsUpDown, Loader2, X } from "lucide-react";
+import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
 
 import {
   Command,
@@ -24,10 +24,9 @@ import {
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
-// import useSearchUser from "@/hooks/useSearchUser";
 import { ChatUser } from "./ChatUser";
 import { ButtonLoader } from "../shared/button-loader";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { toast } from "sonner";
 import { useChatStore } from "@/store/chatStore";
 import { useGetChatByUserIds } from "@/hooks/useGetChatByUserIds";
@@ -38,14 +37,10 @@ import {
   collection,
   doc,
   DocumentData,
-  serverTimestamp,
   updateDoc,
 } from "firebase/firestore";
 import { firestore } from "@/lib/firebase";
-import { useDebounce } from "@/hooks/useDebounce";
 
-import { ScrollArea, ScrollBar } from "../ui/scroll-area";
-import { useGetOtherUsers } from "@/hooks/useGetOtherUsers";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
 
@@ -63,10 +58,9 @@ export const CreateNewMessage = ({
   isLoadingUsers,
 }: NewMessageProps) => {
   const [openPopover, setOpenPopover] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+
   const [message, setMessage] = useState("");
-  // const { isLoadingUsers, getUserProfile, users, setUsers } = useSearchUser();
-  // const { isLoadingUsers, getOtherUsers, users, setUsers } = useGetOtherUsers();
+
   const [isCreatingNewMessage, setIsCreatingNewMessage] = useState(false);
   const { currentChatId, setCurrentChatId } = useChatStore();
   const { getChatByUserIds } = useGetChatByUserIds();
@@ -79,16 +73,6 @@ export const CreateNewMessage = ({
     fullName: string;
     profilePicUrl: string;
   } | null>(null);
-
-  const handleSelectUser = (value: string) => {
-    const selectedUser = users.find((user) => user.fullName === value);
-    setRecipientUser({
-      uid: selectedUser?.uid,
-      username: selectedUser?.username,
-      fullName: selectedUser?.fullName,
-      profilePicUrl: selectedUser?.profilePicUrl,
-    });
-  };
 
   const handleCreateNewMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -190,23 +174,27 @@ export const CreateNewMessage = ({
         </AlertDialogHeader>
 
         <form onSubmit={handleCreateNewMessage} className="space-y-6">
-          <div className="flex flex-col space-y-2">
-            <p className="text-sm font-semibold">To:</p>
+          <div className="flex flex-row items-center ">
+            <p className="w-24 flex-shrink-0 text-sm font-semibold">To:</p>
             <Popover open={openPopover} onOpenChange={setOpenPopover}>
               <PopoverTrigger asChild>
-                <Button variant="outline" className="w-fit min-w-36 ">
+                <Button
+                  variant="ghost"
+                  className="relative w-full min-w-36 items-center justify-start rounded-b-none rounded-t-sm border-b-[1px] border-slate-200 bg-transparent pb-2 pr-8 pt-0 hover:border-slate-300 hover:bg-transparent dark:border-slate-800 dark:hover:border-slate-700 dark:hover:bg-transparent"
+                >
                   {recipientUser ? (
                     <ChatUser
                       fullName={recipientUser?.fullName}
                       profilePicUrl={recipientUser?.profilePicUrl}
-                      avatarClassName="h-6 w-6"
+                      avatarClassName="h-8 w-8 text-xs"
                     />
                   ) : (
-                    <>Select Recipient</>
+                    <span>Select Recipient</span>
                   )}
+                  <ChevronsUpDown className="absolute right-3 top-1/2 h-4 w-4 -translate-y-[50%]  opacity-70" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="p-0" side="right" align="start">
+              <PopoverContent className="p-0" side="bottom" align="center">
                 <Command>
                   <CommandInput placeholder="" />
                   <CommandList>
@@ -236,12 +224,18 @@ export const CreateNewMessage = ({
                                 : setRecipientUser(null);
                               setOpenPopover(false);
                             }}
+                            className={cn("relative pr-8")}
                           >
                             <ChatUser
                               fullName={user.fullName}
                               profilePicUrl={user.profilePicUrl}
                               username={user.username}
+                              avatarClassName="h-8 w-8 text-xs"
                             />
+
+                            {recipientUser?.uid === user.uid && (
+                              <Check className="absolute right-2 top-1/2 h-4 w-4 -translate-y-[50%]  " />
+                            )}
                           </CommandItem>
                         ))
                       )}
@@ -252,8 +246,10 @@ export const CreateNewMessage = ({
             </Popover>
           </div>
 
-          <div className="flex flex-col space-y-2">
-            <Label htmlFor="message">Message</Label>
+          <div className="flex flex-row items-center">
+            <Label htmlFor="message" className="w-24 flex-shrink-0">
+              Message
+            </Label>
             <Input
               id="message"
               placeholder="Slide in a DM..."

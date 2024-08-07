@@ -9,7 +9,6 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from "@/components/ui/command";
-import useSearchUser from "@/hooks/useSearchUser";
 import { User } from "./user";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";

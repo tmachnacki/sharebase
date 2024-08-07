@@ -46,11 +46,6 @@ const useCreatePost = () => {
     selectedFile?: string | ArrayBuffer | null;
     post?: PostDocument | DocumentData | null;
   }) => {
-    console.log({
-      action,
-      post,
-    });
-
     if (isPending) return;
     if (!selectedFile && action === "create") return;
     if (!post && action === "edit") return;

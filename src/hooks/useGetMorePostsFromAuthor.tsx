@@ -1,7 +1,6 @@
 import { firestore } from "@/lib/firebase";
 import { PostDocument } from "@/types";
 import {
-  and,
   collection,
   DocumentData,
   getDocs,

@@ -1,5 +1,3 @@
-import { FieldValue } from "firebase/firestore";
-
 export type UserDocument = {
   uid: string;
   username: string;

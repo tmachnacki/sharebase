@@ -35,7 +35,6 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 
-import { PlusSquare } from "lucide-react";
 import { Input } from "../ui/input";
 import { ButtonLoader } from "./button-loader";
 
@@ -43,7 +42,6 @@ import { CreatePostValidationSchema } from "@/lib/validation";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { usePreviewImage } from "@/hooks/usePreviewImage";
-import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { PostDocument } from "@/types";
 import { DocumentData } from "firebase/firestore";
 import { useMediaQuery } from "@/hooks/useMediaQuery";

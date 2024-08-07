@@ -3,8 +3,10 @@ import { toast } from "sonner";
 import { ACCEPTED_IMAGE_TYPES, MAX_IMAGE_FILE_SIZE } from "@/lib/validation";
 
 const usePreviewImage = () => {
-  const [selectedFile, setSelectedFile] = useState<string | ArrayBuffer | null>(null);
-  const [selectedFileError,setSelectedFileError] = useState("");
+  const [selectedFile, setSelectedFile] = useState<string | ArrayBuffer | null>(
+    null,
+  );
+  const [selectedFileError, setSelectedFileError] = useState("");
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : null;
@@ -30,13 +32,20 @@ const usePreviewImage = () => {
       setSelectedFile(reader.result);
       setSelectedFileError("");
     };
-    reader.onerror = () => {
+    reader.onerror = (event: ProgressEvent<FileReader>) => {
       setSelectedFileError("Unable to load image file");
       setSelectedFile(null);
+      toast.error("Error loading image file", { description: `${event}` });
     };
   };
 
-  return { selectedFile, setSelectedFile, selectedFileError, setSelectedFileError, handleImageChange };
+  return {
+    selectedFile,
+    setSelectedFile,
+    selectedFileError,
+    setSelectedFileError,
+    handleImageChange,
+  };
 };
 
 export { usePreviewImage };

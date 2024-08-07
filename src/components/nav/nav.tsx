@@ -5,7 +5,6 @@ import {
   Compass,
   Bookmark,
   LogOut,
-  Plus,
   PlusSquare,
   Send,
   UserRound,
@@ -14,7 +13,7 @@ import {
   Monitor,
   SunMoon,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, getInitials } from "@/lib/utils";
 
 import { useLogout } from "@/hooks/useLogout";
 import { CreatePost } from "../shared/createPost";
@@ -179,15 +178,6 @@ const Nav = () => {
               {navItems[1].icon}
             </Link>
 
-            {/* <Button
-              className="rounded-full shadow-lg md:hidden"
-              variant={"primary"}
-              size={"icon"}
-              onClick={() => setOpenCreatePost(true)}
-            >
-              <Plus className="h-5 w-5" />
-            </Button> */}
-
             <span
               className={cn("relative cursor-pointer")}
               onClick={() => setOpenCreatePost(true)}
@@ -227,7 +217,9 @@ const Nav = () => {
               <DropdownMenuTrigger>
                 <Avatar className="h-7 w-7">
                   <AvatarImage src={authUser?.profilePicUrl} />
-                  <AvatarFallback />
+                  <AvatarFallback className="text-xs">
+                    {getInitials(authUser?.fullName)}{" "}
+                  </AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
