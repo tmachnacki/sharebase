@@ -72,13 +72,8 @@ const EditProfile = ({ isOpen, onOpenChange, onClose }: EditProfileProps) => {
 
   const { isDesktop } = useIsDesktop();
 
-  const {
-    selectedFile,
-    setSelectedFile,
-    selectedFileError,
-    setSelectedFileError,
-    handleImageChange,
-  } = usePreviewImage();
+  const { selectedFile, selectedFileError, handleImageChange } =
+    usePreviewImage();
 
   const fileRef = useRef<HTMLInputElement | null>(null);
 

@@ -12,12 +12,7 @@ import {
   where,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { Button } from "../ui/button";
 import { Loader2, UsersRound } from "lucide-react";
 import { firestore } from "@/lib/firebase";

@@ -6,11 +6,9 @@ import {
   or,
   and,
   where,
-  getDoc,
   getDocs,
   DocumentData,
 } from "firebase/firestore";
-import { useState } from "react";
 import { toast } from "sonner";
 
 type ChatData = {

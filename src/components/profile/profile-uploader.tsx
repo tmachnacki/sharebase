@@ -11,7 +11,7 @@ type ProfileUploaderProps = {
 };
 
 const ProfileUploader = ({
-  file,
+  // file,
   setFile,
   imageUrl,
   setImageUrl,
