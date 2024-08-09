@@ -9,13 +9,12 @@ import { SuggestedUsers } from "@/components/home/suggested-users";
 const Home = () => {
   const authUser = useAuthStore((state) => state.user);
   const { handleLogout, isLoggingOut } = useLogout();
-  const scrollableTargetId = "feed";
 
   return (
-    <ScrollArea className="h-full w-full" id={scrollableTargetId}>
+    <ScrollArea className="h-full w-full">
       <div className="relative mx-auto flex h-full w-full max-w-4xl flex-1 justify-center gap-8 px-6 pb-20 pt-8 md:py-8 xl:gap-12 ">
         {/* posts */}
-        <Posts scrollableTargetId={scrollableTargetId} />
+        <Posts />
 
         <section className="hidden w-full max-w-[18rem] flex-shrink-0 flex-grow-0 flex-col items-center lg:flex ">
           {authUser && (

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Logo } from "@/components/shared/logo";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -6,12 +5,10 @@ import { useForm } from "react-hook-form";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  useFormField,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -19,7 +16,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -32,12 +28,11 @@ import { toast } from "sonner";
 import { auth, firestore } from "@/lib/firebase";
 import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { useAuthStore, IAuthStore } from "@/store/authStore";
-import { AuthError } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { GoogleAuth } from "./GoogleAuth";
 
 const SigninForm = () => {
-  const [signInWithEmailAndPassword, user, loading, error] =
+  const [signInWithEmailAndPassword, , loading] =
     useSignInWithEmailAndPassword(auth);
   const navigate = useNavigate();
 
@@ -56,7 +51,7 @@ const SigninForm = () => {
     try {
       const userCredential = await signInWithEmailAndPassword(
         userData.email,
-        userData.password
+        userData.password,
       );
       if (userCredential) {
         const userDocRef = doc(firestore, "users", userCredential.user.uid);
@@ -66,7 +61,7 @@ const SigninForm = () => {
           // console.log(userSnapShot.data());
           localStorage.setItem(
             "user-info",
-            JSON.stringify(userSnapShot.data())
+            JSON.stringify(userSnapShot.data()),
           );
           logInUser(userSnapShot.data());
           toast.success(
@@ -74,14 +69,14 @@ const SigninForm = () => {
               userSnapShot.data()?.username
                 ? userSnapShot.data().username
                 : "succesfully"
-            }`
+            }`,
           );
           navigate("/");
         }
       }
     } catch (error) {
       console.log(error);
-      toast.error("Unable to log in", {description: `${error}` });
+      toast.error("Unable to log in", { description: `${error}` });
     }
   }
 
@@ -89,7 +84,7 @@ const SigninForm = () => {
     <div className="w-full max-w-md space-y-4">
       <Card className="w-full ">
         <CardHeader className="">
-          <div className="flex items-baseline justify-center gap-2 mb-8">
+          <div className="mb-8 flex items-baseline justify-center gap-2">
             <Logo />
             <h1 className="text-h1-semibold ">ShareBase</h1>
           </div>
@@ -141,28 +136,28 @@ const SigninForm = () => {
                 className="w-full transition"
                 disabled={loading}
               >
-                {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {loading ? `Please wait` : `Submit`}
               </Button>
             </form>
           </Form>
 
-          <div className="gap-2 flex-center">
-            <div className="flex-1 h-[1px] bg-slate-400 dark:bg-slate-600"></div>
+          <div className="flex-center gap-2">
+            <div className="h-[1px] flex-1 bg-slate-400 dark:bg-slate-600"></div>
             OR
-            <div className="flex-1 h-[1px] bg-slate-400 dark:bg-slate-600"></div>
+            <div className="h-[1px] flex-1 bg-slate-400 dark:bg-slate-600"></div>
           </div>
 
           {/* GoogleAuth  */}
           <GoogleAuth isSignIn={true} />
         </CardContent>
       </Card>
-      <Card className="w-full h-12">
-        <p className="w-full h-full gap-1 text-sm text-slate-400 flex-center">
+      <Card className="h-12 w-full">
+        <p className="flex-center h-full w-full gap-1 text-sm text-slate-400">
           Don't have an account?{" "}
           <Link
             to={"/sign-up"}
-            className="text-purple-6 dark:text-purple-4 hover:underline"
+            className="text-purple-6 hover:underline dark:text-purple-4"
           >
             Sign up
           </Link>

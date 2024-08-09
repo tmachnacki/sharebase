@@ -1,7 +1,6 @@
 // src/components/multi-select.tsx
 
 import * as React from "react";
-import { cva, type VariantProps } from "class-variance-authority";
 import { CheckIcon, XCircle, ChevronDown, XIcon, Loader2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -24,35 +23,10 @@ import {
 } from "@/components/ui/command";
 
 /**
- * Variants for the multi-select component to handle different styles.
- * Uses class-variance-authority (cva) to define different styles based on "variant" prop.
- */
-const multiSelectVariants = cva(
-  "m-1 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300",
-  {
-    variants: {
-      variant: {
-        default:
-          "border-foreground/10 text-foreground bg-card hover:bg-card/80",
-        secondary:
-          "border-foreground/10 bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        destructive:
-          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-        inverted: "inverted",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  },
-);
-
-/**
  * Props for MultiSelect component
  */
 interface MultiSelectProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof multiSelectVariants> {
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /**
    * An array of option objects to be displayed in the multi-select component.
    * Each option object has a label, value, and an optional icon.
@@ -86,12 +60,6 @@ interface MultiSelectProps
   placeholder?: string;
 
   /**
-   * Animation duration in seconds for the visual effects (e.g., bouncing badges).
-   * Optional, defaults to 0 (no animation).
-   */
-  animation?: number;
-
-  /**
    * Maximum number of items to display. Extra selected items will be summarized.
    * Optional, defaults to 3.
    */
@@ -103,12 +71,6 @@ interface MultiSelectProps
    * Optional, defaults to false.
    */
   modalPopover?: boolean;
-
-  /**
-   * If true, renders the multi-select component as a child of another component.
-   * Optional, defaults to false.
-   */
-  asChild?: boolean;
 
   /**
    * Additional class names to apply custom styles to the multi-select component.
@@ -127,13 +89,10 @@ export const MultiSelect = React.forwardRef<
       optionsLoading = false,
       selectAll = false,
       onValueChange,
-      variant,
       defaultValue = [],
       placeholder = "Select options",
-      animation = 0,
       maxCount = 2,
       modalPopover = false,
-      asChild = false,
       className,
       ...props
     },
@@ -142,7 +101,6 @@ export const MultiSelect = React.forwardRef<
     const [selectedValues, setSelectedValues] =
       React.useState<string[]>(defaultValue);
     const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
-    const [isAnimating, setIsAnimating] = React.useState(false);
 
     React.useEffect(() => {
       if (JSON.stringify(selectedValues) !== JSON.stringify(defaultValue)) {
@@ -223,12 +181,7 @@ export const MultiSelect = React.forwardRef<
                       <Badge
                         key={value}
                         variant={"secondary"}
-                        className={cn(
-                          "m-1",
-                          isAnimating ? "animate-bounce" : "",
-                          // multiSelectVariants({ variant }),
-                        )}
-                        style={{ animationDuration: `${animation}s` }}
+                        className={cn("m-1")}
                       >
                         {IconComponent && IconComponent}
                         {option?.label}
@@ -243,15 +196,7 @@ export const MultiSelect = React.forwardRef<
                     );
                   })}
                   {selectedValues.length > maxCount && (
-                    <Badge
-                      className={cn(
-                        "m-1 h-8",
-                        isAnimating ? "animate-bounce" : "",
-                        // multiSelectVariants({ variant }),
-                      )}
-                      variant={"outline"}
-                      style={{ animationDuration: `${animation}s` }}
-                    >
+                    <Badge className={cn("m-1 h-8")} variant={"outline"}>
                       {`+ ${selectedValues.length - maxCount} more`}
                       <XCircle
                         className="ml-2 h-4 w-4 cursor-pointer"

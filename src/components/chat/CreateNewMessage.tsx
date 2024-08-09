@@ -2,14 +2,11 @@ import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
 
 import {
   Command,
-  CommandDialog,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator,
-  CommandShortcut,
 } from "@/components/ui/command";
 import {
   AlertDialog,
@@ -17,7 +14,6 @@ import {
   AlertDialogDescription,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
   AlertDialogFooter,
 } from "@/components/ui/alert-dialog";
 
@@ -31,7 +27,7 @@ import { toast } from "sonner";
 import { useChatStore } from "@/store/chatStore";
 import { useGetChatByUserIds } from "@/hooks/useGetChatByUserIds";
 import { useAuthStore } from "@/store/authStore";
-import { MessageDocument, UserDocument } from "@/types";
+import { UserDocument } from "@/types";
 import {
   addDoc,
   collection,
@@ -62,7 +58,7 @@ export const CreateNewMessage = ({
   const [message, setMessage] = useState("");
 
   const [isCreatingNewMessage, setIsCreatingNewMessage] = useState(false);
-  const { currentChatId, setCurrentChatId } = useChatStore();
+  const { setCurrentChatId } = useChatStore();
   const { getChatByUserIds } = useGetChatByUserIds();
   const [isLoadingChat, setIsLoadingChat] = useState(false);
   const authUser = useAuthStore((state) => state.user);
@@ -97,15 +93,12 @@ export const CreateNewMessage = ({
     if (chatData.status === "success" && chatData.chat) {
       // add message to chat and update current chat
       try {
-        const newMessageDocRef = await addDoc(
-          collection(firestore, "messages"),
-          {
-            text: message,
-            createdAt: timeStamp,
-            createdBy: authUser?.uid,
-            chatId: chatData.chat.id,
-          },
-        );
+        await addDoc(collection(firestore, "messages"), {
+          text: message,
+          createdAt: timeStamp,
+          createdBy: authUser?.uid,
+          chatId: chatData.chat.id,
+        });
 
         await updateDoc(doc(firestore, "chats", chatData.chat.id), {
           lastMessageText: message,
@@ -139,15 +132,12 @@ export const CreateNewMessage = ({
           lastMessageText: message,
         });
 
-        const newMessageDocRef = await addDoc(
-          collection(firestore, "messages"),
-          {
-            text: message,
-            createdAt: timeStamp,
-            createdBy: authUser?.uid,
-            chatId: newChatDocRef.id,
-          },
-        );
+        await addDoc(collection(firestore, "messages"), {
+          text: message,
+          createdAt: timeStamp,
+          createdBy: authUser?.uid,
+          chatId: newChatDocRef.id,
+        });
 
         setCurrentChatId(newChatDocRef.id);
         setOpen(false);
@@ -274,7 +264,12 @@ export const CreateNewMessage = ({
             <Button
               type="submit"
               className="mb-2 flex-shrink-0 sm:mb-0"
-              disabled={isCreatingNewMessage || !recipientUser || !message}
+              disabled={
+                isCreatingNewMessage ||
+                !recipientUser ||
+                !message ||
+                isLoadingChat
+              }
               variant={"primary"}
             >
               {isCreatingNewMessage && <ButtonLoader />}

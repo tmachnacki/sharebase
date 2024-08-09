@@ -1,13 +1,9 @@
 import {
-  Command,
   CommandDialog,
   CommandEmpty,
-  CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator,
-  CommandShortcut,
 } from "@/components/ui/command";
 import { User } from "./user";
 import { useState } from "react";
@@ -22,7 +18,7 @@ type SearchProps = {
 const Search = ({ open, setOpen }: SearchProps) => {
   // const { isLoading, getUserProfile, user, setUser } = useSearchUser();
   const [userInput, setUserInput] = useState("");
-  const { isLoadingUsers, getOtherUsers, users } = useGetOtherUsers();
+  const { isLoadingUsers, users } = useGetOtherUsers();
 
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>

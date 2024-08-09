@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import {
   DocumentData,
   collection,
-  doc,
-  getDoc,
   getDocs,
   limit,
   query,

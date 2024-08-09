@@ -11,29 +11,23 @@ import { useForm } from "react-hook-form";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  useFormField,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { EditProfileValidationSchema } from "@/lib/validation";
 import { Textarea } from "../ui/textarea";
-import { Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { UserDocument } from "@/types";
 import { toast } from "sonner";
@@ -56,22 +50,20 @@ type EditProfileProps = {
   onClose: () => void;
 };
 
-function getImageData(event: React.ChangeEvent<HTMLInputElement>) {
-  // FileList is immutable, so we need to create a new one
-  const dataTransfer = new DataTransfer();
+// function getImageData(event: React.ChangeEvent<HTMLInputElement>) {
+//   const dataTransfer = new DataTransfer();
 
-  // Add newly uploaded images
-  Array.from(event.target.files!).forEach((image) =>
-    dataTransfer.items.add(image),
-  );
+//   Array.from(event.target.files!).forEach((image) =>
+//     dataTransfer.items.add(image),
+//   );
 
-  const files = dataTransfer.files;
-  const displayUrl = event.target.files
-    ? URL.createObjectURL(event.target.files![0])
-    : "";
+//   const files = dataTransfer.files;
+//   const displayUrl = event.target.files
+//     ? URL.createObjectURL(event.target.files![0])
+//     : "";
 
-  return { files, displayUrl };
-}
+//   return { files, displayUrl };
+// }
 
 const EditProfile = ({ isOpen, onOpenChange, onClose }: EditProfileProps) => {
   const authUser = useAuthStore((state) => state.user);

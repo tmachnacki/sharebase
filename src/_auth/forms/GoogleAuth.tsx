@@ -8,7 +8,7 @@ import { useSignInWithGoogle } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
 
 const GoogleAuth = ({ isSignIn }: { isSignIn: boolean }) => {
-  const [signInWithGoogle, user, loading, error] = useSignInWithGoogle(auth);
+  const [signInWithGoogle, , loading, error] = useSignInWithGoogle(auth);
   const navigate = useNavigate();
   const loginUser = useAuthStore((state) => state.login);
 
@@ -20,7 +20,7 @@ const GoogleAuth = ({ isSignIn }: { isSignIn: boolean }) => {
         if (error) {
           toast({
             title: "Unable to log in with Google",
-            description: `${error.message}`,
+            description: `${error}`,
           });
         }
         return;
@@ -66,7 +66,7 @@ const GoogleAuth = ({ isSignIn }: { isSignIn: boolean }) => {
       disabled={loading}
       onClick={handleSignInWithGoogle}
     >
-      <img src="/google.png" alt="Google icon" className="w-4 h-4 mr-2" />
+      <img src="/google.png" alt="Google icon" className="mr-2 h-4 w-4" />
       {isSignIn ? "Log in" : "Sign up"} with Google
     </Button>
   );

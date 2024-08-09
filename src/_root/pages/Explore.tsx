@@ -5,7 +5,6 @@ import { PostDocument } from "@/types";
 import {
   collection,
   query,
-  where,
   limit,
   DocumentData,
   getDocs,

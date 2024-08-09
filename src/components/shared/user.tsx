@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Skeleton } from "../ui/skeleton";
 import { getInitials } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 

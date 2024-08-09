@@ -18,7 +18,6 @@ import { cn, toTimeAgo } from "@/lib/utils";
 import { ChatUser } from "./ChatUser";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { ButtonLoader } from "../shared/button-loader";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import { SendHorizonal } from "lucide-react";
 import {
@@ -42,7 +41,7 @@ const Messages = ({ authUserId, chat }: MessagesProps) => {
     Array<MessageDocument | DocumentData>
   >([]);
 
-  const { currentChatId, setCurrentChatId } = useChatStore();
+  const { currentChatId } = useChatStore();
   const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
   const endOfMessagesRef = useRef<HTMLDivElement>(null);
@@ -58,7 +57,7 @@ const Messages = ({ authUserId, chat }: MessagesProps) => {
     setIsSending(true);
     const timeStamp = new Date(Date.now());
     try {
-      const newMessageDocRef = await addDoc(collection(firestore, "messages"), {
+      await addDoc(collection(firestore, "messages"), {
         text: message,
         createdAt: timeStamp,
         createdBy: authUserId,

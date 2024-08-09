@@ -3,7 +3,7 @@ import { PostDocument } from "@/types";
 import { DocumentData, type Timestamp } from "firebase/firestore";
 import { useState } from "react";
 import { Button } from "../ui/button";
-import { Heart, MessageCircle, Bookmark, Tag } from "lucide-react";
+import { Heart, MessageCircle, Bookmark } from "lucide-react";
 import { cn, toTimeAgo } from "@/lib/utils";
 import { ButtonLoader } from "../shared/button-loader";
 import { CommentsModal } from "./comments-modal";

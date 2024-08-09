@@ -1,19 +1,22 @@
-import { useCallback, useState } from "react";
 import { FileWithPath, useDropzone } from "react-dropzone";
-import { Input } from "../ui/input"; 
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"; 
 
 import { convertFileToUrl } from "@/lib/utils";
 
 type ProfileUploaderProps = {
-  file: File[],
-  setFile: React.Dispatch<React.SetStateAction<File[]>>
+  file: File[];
+  setFile: React.Dispatch<React.SetStateAction<File[]>>;
   imageUrl: string;
-  setImageUrl: React.Dispatch<React.SetStateAction<string>>
+  setImageUrl: React.Dispatch<React.SetStateAction<string>>;
   fieldChange: (files: File[]) => void;
 };
 
-const ProfileUploader = ({ file, setFile, imageUrl, setImageUrl, fieldChange }: ProfileUploaderProps) => {
+const ProfileUploader = ({
+  file,
+  setFile,
+  imageUrl,
+  setImageUrl,
+  fieldChange,
+}: ProfileUploaderProps) => {
   const onDrop = (acceptedFiles: FileWithPath[]) => {
     setFile(acceptedFiles);
     fieldChange(acceptedFiles);
@@ -31,7 +34,7 @@ const ProfileUploader = ({ file, setFile, imageUrl, setImageUrl, fieldChange }: 
     <div {...getRootProps()}>
       <input {...getInputProps()} className="cursor-pointer" />
 
-      <div className="cursor-pointer flex items-center justify-center gap-4">
+      <div className="flex cursor-pointer items-center justify-center gap-4">
         <img
           src={imageUrl}
           alt="image"

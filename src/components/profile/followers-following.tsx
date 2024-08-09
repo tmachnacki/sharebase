@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { UserDocument, FollowerFollowing } from "@/types";
+import { FollowerFollowing } from "@/types";
 import { useUserProfileStore } from "@/store/userProfileStore";
 import { firestore } from "@/lib/firebase";
 
@@ -8,11 +8,9 @@ import {
   Sheet,
   SheetClose,
   SheetContent,
-  SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "../ui/button";
@@ -165,4 +163,4 @@ const UsersSkeleton = () => (
   </li>
 );
 
-export { FollowersFollowing };
+export { FollowersFollowing, UserProfile, UsersSkeleton };

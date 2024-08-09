@@ -6,12 +6,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useGetMorePostsFromAuthor } from "@/hooks/useGetMorePostsFromAuthor";
 import { useGetPostDetailsById } from "@/hooks/useGetPostDetailsById";
 import { useGetUserProfileById } from "@/hooks/useGetProfileById";
-import { DocumentData } from "firebase/firestore";
-import { Loader2, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { useParams } from "react-router-dom";
-import { Post } from "@/components/post/post";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { User } from "@/components/shared/user";
 import { PostHeader, PostHeaderSkeleton } from "@/components/post/post-header";
 import { PostFooter } from "@/components/post/post-footer";
 import { useEffect, useRef, useState } from "react";
@@ -21,7 +18,6 @@ import { Button } from "@/components/ui/button";
 import { ButtonLoader } from "@/components/shared/button-loader";
 import { CommentDocument } from "@/types";
 import { Comment } from "@/components/post/comment";
-import { usePostStore } from "@/store/postStore";
 
 export const PostDetails = () => {
   const { postid } = useParams();

@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
 import { usePostStore } from "@/store/postStore";
 import { useAuthStore } from "@/store/authStore";
-import { useUserProfileStore } from "@/store/userProfileStore";
 import {
   DocumentData,
   collection,
-  doc,
-  getDoc,
   getDocs,
   limit,
   or,

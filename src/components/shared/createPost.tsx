@@ -1,37 +1,31 @@
-import { SetStateAction, useEffect, useRef, useState } from "react";
+import { SetStateAction, useEffect, useRef } from "react";
 import { useCreatePost } from "@/hooks/useCreatePost";
 import {
   AlertDialog,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
-  AlertDialogAction,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-  DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
-import { cn, getInitials } from "@/lib/utils";
+import { getInitials } from "@/lib/utils";
 
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  useFormField,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 
@@ -72,7 +66,7 @@ const CreatePost = ({
   } = usePreviewImage();
 
   const { isPending, handleCreatePost, createPostError } = useCreatePost();
-  const { isLoadingUsers, getOtherUsers, users, setUsers } = useGetOtherUsers();
+  const { isLoadingUsers, getOtherUsers, users } = useGetOtherUsers();
   const authUser = useAuthStore((state) => state.user);
 
   const tagUserOptions: {
