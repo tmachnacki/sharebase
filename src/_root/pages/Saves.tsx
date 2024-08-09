@@ -65,7 +65,7 @@ const Saves = () => {
     );
   }
 
-  if (!!savedPosts && savedPosts.length === 0) {
+  if (!loadingSaves && savedPosts.length === 0) {
     return (
       <div className="p-content container space-y-8 px-4 md:px-6">
         <div className="flex  w-full items-center justify-center">
@@ -80,11 +80,9 @@ const Saves = () => {
   return (
     <div className="p-content container space-y-8 px-4 md:px-6">
       <PostsGrid loading={loadingSaves}>
-        {
-          !!savedPosts.map((post: DocumentData) => (
-            <ProfilePost post={post} key={post.id} />
-          ))
-        }
+        {savedPosts.map((post: DocumentData) => (
+          <ProfilePost post={post} key={post.id} />
+        ))}
       </PostsGrid>
     </div>
   );

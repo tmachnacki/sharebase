@@ -1,4 +1,4 @@
-import { SetStateAction, useRef, useState } from "react";
+import { SetStateAction, useEffect, useRef, useState } from "react";
 import { useCreatePost } from "@/hooks/useCreatePost";
 import {
   AlertDialog,
@@ -21,7 +21,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, getInitials } from "@/lib/utils";
 
 import {
   Form,
@@ -45,6 +45,10 @@ import { usePreviewImage } from "@/hooks/usePreviewImage";
 import { PostDocument } from "@/types";
 import { DocumentData } from "firebase/firestore";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useGetOtherUsers } from "@/hooks/useGetOtherUsers";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { MultiSelect } from "../ui/multi-select";
+import { useAuthStore } from "@/store/authStore";
 
 type CreatePostProps = {
   open: boolean;
@@ -68,6 +72,31 @@ const CreatePost = ({
   } = usePreviewImage();
 
   const { isPending, handleCreatePost, createPostError } = useCreatePost();
+  const { isLoadingUsers, getOtherUsers, users, setUsers } = useGetOtherUsers();
+  const authUser = useAuthStore((state) => state.user);
+
+  const tagUserOptions: {
+    label: string;
+    value: string;
+    icon?: React.ReactNode;
+  }[] = users.map((user) => {
+    return {
+      label: user.fullName,
+      value: user.fullName,
+      icon: (
+        <Avatar className="mr-2 h-6 w-6">
+          <AvatarImage
+            src={user.profilePicUrl}
+            alt={`${user.fullName} profile picture`}
+          ></AvatarImage>
+          <AvatarFallback className=" text-xs">
+            {getInitials(user.fullName)}
+          </AvatarFallback>
+        </Avatar>
+      ),
+    };
+  });
+
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   const initialFormFields =
@@ -111,6 +140,10 @@ const CreatePost = ({
       setSelectedFile(null);
     }, 0);
   };
+
+  useEffect(() => {
+    if (authUser) getOtherUsers(authUser.uid);
+  }, [authUser]);
 
   return (
     <CreatePostPanel
@@ -181,7 +214,11 @@ const CreatePost = ({
               <FormItem>
                 <FormLabel>Caption</FormLabel>
                 <FormControl>
-                  <Input type="text" {...field} />
+                  <Input
+                    type="text"
+                    placeholder="Tell us about your post"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -195,7 +232,7 @@ const CreatePost = ({
               <FormItem>
                 <FormLabel>Location</FormLabel>
                 <FormControl>
-                  <Input type="text" {...field} />
+                  <Input type="text" placeholder="" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -209,7 +246,16 @@ const CreatePost = ({
               <FormItem>
                 <FormLabel>Tags</FormLabel>
                 <FormControl>
-                  <Input type="text" {...field} />
+                  <MultiSelect
+                    defaultValue={action === "edit" ? post?.tags : []}
+                    onValueChange={(value: string[]) =>
+                      form.setValue("tags", value)
+                    }
+                    options={tagUserOptions}
+                    optionsLoading={isLoadingUsers}
+                    placeholder="Tag people"
+                    {...field}
+                  ></MultiSelect>
                 </FormControl>
                 <FormMessage />
               </FormItem>

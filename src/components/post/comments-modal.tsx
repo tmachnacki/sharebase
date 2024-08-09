@@ -39,14 +39,16 @@ const CommentsModal = ({ isOpen, setIsOpen, post }: CommentsModalProps) => {
       if (!endOfCommentsRef.current || !endOfCommentsRef) return;
       endOfCommentsRef.current.scrollIntoView({
         behavior: "smooth",
-        block: "end",
-        inline: "start",
       });
     };
     if (isOpen) {
-      setTimeout(() => {
+      const timeout = setTimeout(() => {
         scrollToBottom();
       }, 100);
+
+      return () => {
+        clearTimeout(timeout);
+      };
     }
   }, [isOpen, post.comments.length]);
 

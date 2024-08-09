@@ -7,7 +7,7 @@ import { useGetMorePostsFromAuthor } from "@/hooks/useGetMorePostsFromAuthor";
 import { useGetPostDetailsById } from "@/hooks/useGetPostDetailsById";
 import { useGetUserProfileById } from "@/hooks/useGetProfileById";
 import { DocumentData } from "firebase/firestore";
-import { Loader2 } from "lucide-react";
+import { Loader2, MapPin } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { Post } from "@/components/post/post";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
@@ -41,7 +41,7 @@ export const PostDetails = () => {
   const noPostsFound =
     !isLoadingAuthorPosts && authorId && moreAuthorPosts.length === 0;
   const authorNotFound = !isLoadingUser && !userProfile;
-  const postNotFound = !postData;
+  const postNotFound = !postData && !isLoadingPost;
 
   const [comment, setComment] = useState("");
   const { isCommenting, handlePostComment } = usePostComment();
@@ -67,7 +67,7 @@ export const PostDetails = () => {
       endOfCommentsRef.current.scrollIntoView({
         behavior: "smooth",
         block: "end",
-        inline: "start",
+        // inline: "start",
       });
     };
 
@@ -110,7 +110,7 @@ export const PostDetails = () => {
           ) : (
             postData && (
               <Card
-                className="grid grid-cols-1 overflow-hidden lg:grid-cols-2"
+                className="grid grid-cols-1 bg-transparent dark:bg-transparent lg:grid-cols-2"
                 variant={"border"}
               >
                 {/* image */}
@@ -124,27 +124,32 @@ export const PostDetails = () => {
 
                 {/* comments and info */}
                 <div className="flex w-full flex-col overflow-hidden lg:justify-between">
-                  <div className="space-y-6 border-b-[1px] border-slate-200 p-6 dark:border-slate-800">
+                  <div className=" border-b-[1px] border-slate-200 p-6 dark:border-slate-800">
                     <PostHeader authorProfile={userProfile!} post={postData} />
-                    <p className="text-sm">{postData?.caption}</p>
+                    <p className="py-6 text-sm">{postData?.caption}</p>
+                    {postData?.location && (
+                      <div className="flex items-center text-sm text-slate-500 dark:text-slate-400">
+                        <MapPin className="mr-2 h-4 w-4" />
+                        {postData?.location}
+                      </div>
+                    )}
                   </div>
 
                   {/* image */}
-                  <div className="block h-auto w-full lg:hidden">
-                    <img
-                      className="block h-auto w-full  rounded-b-lg lg:hidden"
-                      src={postData?.imgUrl}
-                      alt={postData?.caption}
-                    />
-                  </div>
 
-                  <div className="relative h-56 w-full overflow-auto lg:h-full lg:min-h-24">
-                    <div className="absolute h-full w-full ">
-                      {/* <ScrollArea className="absolute h-auto min-h-48 w-full"> */}
-                      {postData.comments.length === 0 ? (
-                        <div className=" flex h-full w-full flex-col items-center justify-center space-y-2 px-6  text-sm text-slate-500 dark:text-slate-400  ">
-                          <span>It's quiet here...</span>
-                          {/* <Button
+                  <img
+                    className="block h-auto w-full  lg:hidden"
+                    src={postData?.imgUrl}
+                    alt={postData?.caption}
+                  />
+
+                  {/* <div className="relative w-full"> */}
+                  {/* <div className="absolute h-full w-full "> */}
+                  <ScrollArea className="h-72 w-full flex-grow lg:h-48">
+                    {postData.comments.length === 0 ? (
+                      <div className=" flex h-full w-full flex-col items-center justify-center space-y-2 p-6  text-sm text-slate-500 dark:text-slate-400  ">
+                        <span>It's quiet here...</span>
+                        {/* <Button
                             variant={"ghost"}
                             size={"sm"}
                             className="text-purple-5"
@@ -152,25 +157,26 @@ export const PostDetails = () => {
                           >
                             Add a comment
                           </Button> */}
-                        </div>
-                      ) : (
-                        <div className="flex flex-col gap-4 p-6">
-                          {postData.comments.map((comment: CommentDocument) => (
-                            <Comment
-                              comment={comment}
-                              key={`${comment.createdAt}-${comment.createdBy}`}
-                            />
-                          ))}
-                          <div
-                            className="-mt-4 h-0"
-                            ref={endOfCommentsRef}
-                            aria-hidden="true"
-                          ></div>
-                        </div>
-                      )}
-                      {/* </ScrollArea> */}
-                    </div>
-                  </div>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col gap-4 p-6">
+                        {postData.comments.map((comment: CommentDocument) => (
+                          <Comment
+                            comment={comment}
+                            key={`${comment.createdAt}-${comment.createdBy}`}
+                          />
+                        ))}
+                        <div
+                          className="-mt-4 h-0"
+                          ref={endOfCommentsRef}
+                          aria-hidden="true"
+                        ></div>
+                      </div>
+                    )}
+                    <ScrollBar />
+                  </ScrollArea>
+                  {/* </div> */}
+                  {/* </div> */}
 
                   <div className="space-y-4  border-t-[1px] border-slate-200 px-6 pb-6 pt-4 dark:border-slate-800">
                     {postData && (

@@ -1,66 +1,30 @@
-import { useState, useEffect } from "react";
-import {
-  DocumentData,
-  collection,
-  getDocs,
-  query,
-  where,
-} from "firebase/firestore";
-import { firestore } from "@/lib/firebase";
-
-import { usePostStore } from "@/store/postStore";
-import { toast } from "sonner";
+import { useEffect } from "react";
 import { ProfilePost } from "./profile-post";
 import { PostsGrid } from "../shared/posts-grid";
+import { useGetProfilePosts } from "@/hooks/useGetProfilePosts";
 
 const ProfilePosts = ({ userId }: { userId?: string }) => {
-  const [loadingPosts, setLoadingPosts] = useState(false);
-  const { posts, setPosts } = usePostStore();
+  const { getProfilePosts, isLoadingProfilePosts, profilePosts } =
+    useGetProfilePosts();
 
-  const noPostsFound = !loadingPosts && userId && posts.length === 0;
+  const noPostsFound =
+    !isLoadingProfilePosts && userId && profilePosts.length === 0;
 
   useEffect(() => {
-    const getPosts = async () => {
-      if (!userId) return;
-      setLoadingPosts(true);
-      setPosts([]);
-
-      try {
-        const q = query(
-          collection(firestore, "posts"),
-          where("createdBy", "==", userId),
-        );
-        const querySnapshot = await getDocs(q);
-
-        const posts: DocumentData[] = [];
-        querySnapshot.forEach((doc) => {
-          posts.push({ ...doc.data(), id: doc.id });
-        });
-
-        posts.sort((a, b) => b.createdAt - a.createdAt);
-        setPosts(posts);
-        setLoadingPosts(false);
-      } catch (error) {
-        toast.error("Error loading posts", { description: `${error}` });
-        setPosts([]);
-        setLoadingPosts(false);
-      }
-    };
-
-    getPosts();
-  }, [userId, setPosts]);
+    if (userId) getProfilePosts(userId);
+  }, [userId]);
 
   if (noPostsFound) {
     return (
       <div className="flex h-full w-full items-center justify-center">
-        <span className="text-slate-500 dark:text-slate-400">No posts</span>
+        <span className="text-slate-500 dark:text-slate-400">No posts yet</span>
       </div>
     );
   }
 
   return (
-    <PostsGrid loading={loadingPosts}>
-      {posts.map((post: DocumentData) => (
+    <PostsGrid loading={isLoadingProfilePosts}>
+      {profilePosts.map((post) => (
         <ProfilePost post={post} key={post.id} />
       ))}
     </PostsGrid>

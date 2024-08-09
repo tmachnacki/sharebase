@@ -10,6 +10,7 @@ import { ProfileHeader } from "@/components/profile/header";
 import { Grid3X3, UserSquare } from "lucide-react";
 import { ProfilePosts } from "@/components/profile/profile-posts";
 import { useAuthStore } from "@/store/authStore";
+import { TaggedPosts } from "@/components/profile/tagged-posts";
 
 const Profile = () => {
   const { username } = useParams();
@@ -48,7 +49,9 @@ const Profile = () => {
               <ProfilePosts userId={userProfile?.uid} />
             </TabsContent>
 
-            <TabsContent value="tagged">Tagged In</TabsContent>
+            <TabsContent value="tagged">
+              <TaggedPosts userId={userProfile?.uid} />
+            </TabsContent>
           </Tabs>
         </div>
         {/* end tabs */}

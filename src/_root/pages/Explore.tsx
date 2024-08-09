@@ -57,9 +57,17 @@ const Explore = () => {
     if (authUser) getExplorePosts();
   }, [authUser]);
 
-  useEffect(() => {
-    console.log(explorePosts);
-  }, [explorePosts]);
+  const noPostsFound = !isLoading && explorePosts.length === 0;
+
+  if (noPostsFound) {
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <span className="text-slate-500 dark:text-slate-400">
+          I guess you've seen it all...
+        </span>
+      </div>
+    );
+  }
 
   return (
     <ScrollArea className="h-full w-full">

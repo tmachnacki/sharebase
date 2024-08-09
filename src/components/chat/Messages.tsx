@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   addDoc,
   collection,
@@ -7,14 +7,12 @@ import {
   onSnapshot,
   orderBy,
   query,
-  serverTimestamp,
   updateDoc,
   where,
 } from "firebase/firestore";
 import { firestore } from "@/lib/firebase";
 import { ChatDocument, MessageDocument } from "@/types";
 import { toast } from "sonner";
-import { Message } from "./Message";
 import { useChatStore } from "@/store/chatStore";
 import { cn, toTimeAgo } from "@/lib/utils";
 import { ChatUser } from "./ChatUser";
@@ -22,7 +20,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { ButtonLoader } from "../shared/button-loader";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
-import { ArrowUp, Send, SendHorizonal } from "lucide-react";
+import { SendHorizonal } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -47,6 +45,7 @@ const Messages = ({ authUserId, chat }: MessagesProps) => {
   const { currentChatId, setCurrentChatId } = useChatStore();
   const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const endOfMessagesRef = useRef<HTMLDivElement>(null);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -105,6 +104,22 @@ const Messages = ({ authUserId, chat }: MessagesProps) => {
     };
   }, [currentChatId]);
 
+  useEffect(() => {
+    const scrollToBottom = () => {
+      if (
+        !endOfMessagesRef.current ||
+        !endOfMessagesRef ||
+        messages.length === 0
+      )
+        return;
+      endOfMessagesRef.current.scrollIntoView({
+        behavior: "smooth",
+      });
+    };
+
+    scrollToBottom();
+  }, [messages.length]);
+
   if (!chat || !authUserId) return null;
 
   return (
@@ -134,8 +149,8 @@ const Messages = ({ authUserId, chat }: MessagesProps) => {
       </header>
 
       <div className="relative h-auto w-full flex-grow overflow-hidden">
-        <ScrollArea className="h-full w-full">
-          <ul className="flex min-h-48 flex-shrink flex-grow flex-col gap-4 overflow-y-auto p-6">
+        <ScrollArea className="h-full w-full ">
+          <ul className="flex min-h-48 flex-shrink flex-grow flex-col p-6">
             {messages.map((message) => {
               const isAuthUserMessage = message.createdBy === authUserId;
 
@@ -143,7 +158,7 @@ const Messages = ({ authUserId, chat }: MessagesProps) => {
               return (
                 <li
                   className={cn(
-                    "flex items-center text-sm",
+                    "mb-4 flex items-center text-sm",
                     isAuthUserMessage
                       ? "ml-6 justify-end"
                       : "mr-6 justify-start",
@@ -174,8 +189,13 @@ const Messages = ({ authUserId, chat }: MessagesProps) => {
                 </li>
               );
             })}
+            {/* dummyRef */}
+            <div
+              aria-hidden="true"
+              ref={endOfMessagesRef}
+              className="m-0 -mt-4 h-0 w-full p-0"
+            ></div>
           </ul>
-          {/* dummyRef */}
           <ScrollBar />
         </ScrollArea>
       </div>

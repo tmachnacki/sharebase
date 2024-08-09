@@ -45,7 +45,7 @@ const Comment = ({
                   className="font-semibold leading-none"
                   to={`/users/${userProfile?.username}`}
                 >
-                  {`@${userProfile?.username}`}
+                  {`${userProfile?.fullName}`}
                 </Link>
               </HoverCardTrigger>
               <HoverCardContent className="w-fit">
