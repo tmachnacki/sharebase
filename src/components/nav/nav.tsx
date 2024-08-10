@@ -152,7 +152,7 @@ const Nav = () => {
       ) : (
         <>
           {/* mobile */}
-          <nav className="absolute bottom-0 z-50 flex h-14 w-full items-center justify-evenly overflow-hidden rounded-t-2xl border-t border-t-purple-4/40 bg-slate-50/70 p-2 text-slate-700 shadow backdrop-blur-md dark:border-t-purple-5/40 dark:bg-slate-950/70 dark:text-slate-400 md:hidden">
+          <nav className="fixed bottom-0 z-50 flex h-14 w-full items-center justify-evenly overflow-hidden rounded-t-2xl border-t border-t-purple-4/40 bg-slate-50/70 p-2 text-slate-700 shadow backdrop-blur-md dark:border-t-purple-5/40 dark:bg-slate-950/70 dark:text-slate-400 md:hidden">
             <Link
               to={navItems[0].link}
               className={cn(

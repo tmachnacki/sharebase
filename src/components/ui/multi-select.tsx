@@ -196,7 +196,7 @@ export const MultiSelect = React.forwardRef<
                     );
                   })}
                   {selectedValues.length > maxCount && (
-                    <Badge className={cn("m-1 h-6")} variant={"outline"}>
+                    <Badge className={cn("m-1 h-8")} variant={"outline"}>
                       {`+ ${selectedValues.length - maxCount} more`}
                       <XCircle
                         className="ml-2 h-4 w-4 cursor-pointer"

@@ -17,7 +17,7 @@ const App = () => {
   const authUser = useAuthStore((state) => state.user);
 
   return (
-    <main className={`flex h-screen bg-white dark:bg-gray-950`}>
+    <main className={`flex`}>
       {/* toaster */}
       <Toaster
         richColors

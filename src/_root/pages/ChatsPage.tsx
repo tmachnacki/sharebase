@@ -79,7 +79,7 @@ export const ChatsPage = () => {
   };
 
   return (
-    <div className=" flex w-full flex-row ">
+    <div className=" flex h-full w-full flex-row ">
       <section className="flex h-full w-24 flex-shrink-0 flex-grow-0 flex-col border-r-[1px] border-slate-200 dark:border-slate-800 lg:w-80 2xl:w-96">
         <header className="mb-8 flex items-center justify-between p-6">
           <ChatUser

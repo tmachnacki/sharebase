@@ -4,7 +4,7 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
+main {
   height: 100dvh;
   height: 100vh;
 }
@@ -15,7 +15,7 @@ body {
   }
 
   body {
-    @apply bg-slate-50 font-sans text-slate-950 dark:bg-slate-950 dark:text-slate-50;
+    @apply bg-white font-sans text-slate-950 dark:bg-slate-950 dark:text-slate-50;
   }
 }
 
