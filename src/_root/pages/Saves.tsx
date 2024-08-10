@@ -15,6 +15,7 @@ import { PostDocument } from "@/types";
 import { useAuthStore } from "@/store/authStore";
 import { PostsGrid } from "@/components/shared/posts-grid";
 import { Loader2 } from "lucide-react";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 const Saves = () => {
   const [loadingSaves, setLoadingSaves] = useState(false);
@@ -58,7 +59,7 @@ const Saves = () => {
   if (loadingSaves) {
     return (
       <div className="p-content container space-y-8 px-4 md:px-6">
-        <div className="flex h-full w-full items-center justify-center">
+        <div className="flex w-full items-center justify-center">
           <Loader2 className="h-6 w-6 animate-spin" />
         </div>
       </div>
@@ -78,13 +79,16 @@ const Saves = () => {
   }
 
   return (
-    <div className="p-content container space-y-8 px-4 md:px-6">
-      <PostsGrid loading={loadingSaves}>
-        {savedPosts.map((post: DocumentData) => (
-          <ProfilePost post={post} key={post.id} />
-        ))}
-      </PostsGrid>
-    </div>
+    <ScrollArea className="h-full w-full">
+      <div className="p-content container space-y-8 px-4 md:px-6">
+        <PostsGrid loading={loadingSaves}>
+          {savedPosts.map((post: DocumentData) => (
+            <ProfilePost post={post} key={post.id} />
+          ))}
+        </PostsGrid>
+      </div>
+      <ScrollBar />
+    </ScrollArea>
   );
 };
 

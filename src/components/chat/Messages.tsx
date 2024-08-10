@@ -28,9 +28,6 @@ import {
 } from "../ui/tooltip";
 
 type MessagesProps = {
-  // otherUser name,
-  // otherUser profilePicUrl,
-  // otherUser username,
   authUserId: string;
   chat: ChatDocument | DocumentData | null | undefined;
   // className?: string;
@@ -201,7 +198,7 @@ const Messages = ({ authUserId, chat }: MessagesProps) => {
 
       {/* send */}
       <form
-        className="flex items-center justify-center gap-2 border-t-[1px] border-slate-200 px-4 pb-14 pt-2 dark:border-slate-800 md:px-6 md:py-4"
+        className="flex items-center justify-center gap-2 border-t-[1px] border-slate-200 px-4 pb-16 pt-2 dark:border-slate-800 md:px-6 md:py-4"
         onSubmit={handleSendMessage}
       >
         <Input
@@ -209,7 +206,6 @@ const Messages = ({ authUserId, chat }: MessagesProps) => {
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Say something..."
           max={1000}
-          autoFocus
         />
         <TooltipProvider delayDuration={400}>
           <Tooltip>

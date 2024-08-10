@@ -43,7 +43,7 @@ const PostFooter = ({
     <TooltipProvider delayDuration={400}>
       <div className={cn("space-y-6 pt-2", className)}>
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1">
+          <div className="mr-2 flex flex-wrap items-center gap-1">
             {/* like */}
             <Tooltip>
               <TooltipTrigger asChild>
@@ -137,7 +137,9 @@ const PostFooter = ({
           </div>
 
           {/* timestamp */}
-          <span className=" text-sm text-slate-500">{timeAgo}</span>
+          <span className=" flex-shrink-0 text-sm text-slate-400 dark:text-slate-500">
+            {timeAgo}
+          </span>
         </div>
       </div>
     </TooltipProvider>

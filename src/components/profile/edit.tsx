@@ -137,7 +137,7 @@ const EditProfile = ({ isOpen, onOpenChange, onClose }: EditProfileProps) => {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className={`space-y-6 px-4 md:px-0`}
+          className="space-y-6 overflow-y-auto px-4 md:overflow-visible md:px-0 "
         >
           <div className="space-y-2">
             <div className="grid grid-cols-2 place-items-center gap-6">
@@ -289,7 +289,7 @@ const EditProfilePanel = ({
       </AlertDialogContent>
     </AlertDialog>
   ) : (
-    <Drawer open={open} onOpenChange={setOpen}>
+    <Drawer open={open} onOpenChange={setOpen} dismissible={false}>
       <DrawerContent>
         <DrawerHeader className="text-left">
           <DrawerTitle>{title}</DrawerTitle>

@@ -76,7 +76,7 @@ const CreatePost = ({
   }[] = users.map((user) => {
     return {
       label: user.fullName,
-      value: user.fullName,
+      value: user.uid,
       icon: (
         <Avatar className="mr-2 h-6 w-6">
           <AvatarImage
@@ -129,10 +129,8 @@ const CreatePost = ({
 
   const handleCloseDialog = () => {
     setOpen(false);
-    setTimeout(() => {
-      form.reset();
-      setSelectedFile(null);
-    }, 0);
+    form.reset();
+    setSelectedFile(null);
   };
 
   useEffect(() => {

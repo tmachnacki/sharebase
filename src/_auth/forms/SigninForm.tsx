@@ -81,12 +81,12 @@ const SigninForm = () => {
   }
 
   return (
-    <div className="w-full max-w-md space-y-4">
-      <Card className="w-full ">
+    <div className="xs:max-w-md w-full space-y-4">
+      <Card className="xs:rounded-2xl w-full rounded-none bg-white/60 backdrop-blur dark:bg-slate-950/60">
         <CardHeader className="">
           <div className="mb-8 flex items-baseline justify-center gap-2">
             <Logo />
-            <h1 className="text-h1-semibold ">ShareBase</h1>
+            <h1 className="text-3xl font-semibold ">ShareBase</h1>
           </div>
 
           <CardTitle className="">Log In</CardTitle>
@@ -142,17 +142,17 @@ const SigninForm = () => {
             </form>
           </Form>
 
-          <div className="flex-center gap-2">
-            <div className="h-[1px] flex-1 bg-slate-400 dark:bg-slate-600"></div>
-            OR
-            <div className="h-[1px] flex-1 bg-slate-400 dark:bg-slate-600"></div>
+          <div className="flex-center gap-2 text-slate-400 dark:text-slate-500">
+            <div className="h-[1px] flex-1 bg-slate-200 dark:bg-slate-800"></div>
+            or
+            <div className="h-[1px] flex-1 bg-slate-200 dark:bg-slate-800"></div>
           </div>
 
           {/* GoogleAuth  */}
           <GoogleAuth isSignIn={true} />
         </CardContent>
       </Card>
-      <Card className="h-12 w-full">
+      <Card className="xs:rounded-2xl h-12 w-full rounded-none bg-white/60 backdrop-blur dark:bg-slate-950/60">
         <p className="flex-center h-full w-full gap-1 text-sm text-slate-400">
           Don't have an account?{" "}
           <Link

@@ -36,10 +36,7 @@ export const TaggedPopover = ({ tags }: TaggedPopoverProps) => {
     const getTaggedUsers = async () => {
       console.log("getting tagged users");
       setIsLoadingUsers(true);
-      const q = query(
-        collection(firestore, "users"),
-        where("fullName", "in", tags),
-      );
+      const q = query(collection(firestore, "users"), where("uid", "in", tags));
 
       try {
         const querySnapshot = await getDocs(q);

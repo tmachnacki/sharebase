@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { ButtonLoader } from "@/components/shared/button-loader";
 import { CommentDocument } from "@/types";
 import { Comment } from "@/components/post/comment";
+import { useProgressiveImage } from "@/hooks/useProgressiveImage";
 
 export const PostDetails = () => {
   const { postid } = useParams();
@@ -27,6 +28,8 @@ export const PostDetails = () => {
   const postData = posts[0];
 
   const authorId: string | undefined = postData?.createdBy;
+
+  const { sourceLoaded } = useProgressiveImage(postData?.imgUrl);
 
   const { isLoadingAuthorPosts, moreAuthorPosts } = useGetMorePostsFromAuthor(
     authorId,
@@ -67,9 +70,13 @@ export const PostDetails = () => {
       });
     };
 
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
       scrollToBottom();
     }, 100);
+
+    return () => {
+      clearTimeout(timeout);
+    };
   }, [postData?.comments.length]);
 
   if (postNotFound) {
@@ -111,11 +118,15 @@ export const PostDetails = () => {
               >
                 {/* image */}
                 <div className="hidden h-full w-full flex-col items-center justify-center border-r-[1px] border-slate-200 dark:border-slate-800 lg:flex">
-                  <img
-                    className="hidden h-auto w-full object-center lg:block"
-                    src={postData?.imgUrl}
-                    alt={postData?.caption}
-                  />
+                  {sourceLoaded ? (
+                    <img
+                      className="hidden h-auto w-full object-center lg:block"
+                      src={postData?.imgUrl}
+                      alt={postData?.caption}
+                    />
+                  ) : (
+                    <Skeleton className="hidden aspect-square h-auto w-full rounded-none lg:block" />
+                  )}
                 </div>
 
                 {/* comments and info */}
@@ -132,12 +143,15 @@ export const PostDetails = () => {
                   </div>
 
                   {/* image */}
-
-                  <img
-                    className="block h-auto w-full  lg:hidden"
-                    src={postData?.imgUrl}
-                    alt={postData?.caption}
-                  />
+                  {sourceLoaded ? (
+                    <img
+                      className="block h-auto w-full  lg:hidden"
+                      src={postData?.imgUrl}
+                      alt={postData?.caption}
+                    />
+                  ) : (
+                    <Skeleton className="block aspect-square h-auto w-full rounded-none lg:hidden" />
+                  )}
 
                   {/* <div className="relative w-full"> */}
                   {/* <div className="absolute h-full w-full "> */}

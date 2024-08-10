@@ -28,7 +28,6 @@ const Explore = () => {
       try {
         const q = query(collection(firestore, "posts"), limit(PAGE_SIZE));
         const querySnapshot = await getDocs(q);
-        console.log(querySnapshot);
 
         if (querySnapshot.empty) return toast.warning("No posts found");
 

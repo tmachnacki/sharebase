@@ -26,8 +26,8 @@ const ProfileHeader = () => {
 
   return (
     <>
-      <div className="flex flex-col gap-8 md:flex-row">
-        <div className="grid w-fit flex-shrink-0 place-items-center self-center sm:self-auto">
+      <div className="flex flex-col gap-8 sm:flex-row">
+        <div className="grid w-fit flex-shrink-0 place-items-center self-center md:self-auto">
           <Avatar className="aspect-square h-48 w-48 rounded-xl md:h-36 md:w-36 lg:h-48 lg:w-48">
             <AvatarImage
               src={userProfile?.profilePicUrl}

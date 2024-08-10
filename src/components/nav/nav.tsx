@@ -35,7 +35,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { useTheme } from "next-themes";
+import { useTheme } from "@/components/shared/theme-provider";
 
 const navItemClassName =
   "p-2 rounded-md relative hover:bg-slate-200 dark:hover:bg-slate-900 gap-4 flex-start transition-colors hover:text-slate-950 hover:dark:text-slate-50";
@@ -84,7 +84,7 @@ const Nav = () => {
         // {/* desktop */}
         <nav
           className={cn(
-            "relative hidden h-screen w-full max-w-[14rem] flex-col gap-8 overflow-y-auto rounded-e-3xl px-4 py-6 text-slate-500 dark:text-slate-400 md:flex",
+            "relative hidden h-screen w-full max-w-[14rem] flex-col gap-8 overflow-y-auto rounded-e-3xl px-4 py-6 text-slate-600 dark:text-slate-400 md:flex",
             // "shadow-[10px_0px_60px_-15px] shadow-black dark:shadow-white",
             "border-r border-r-purple-4/40 dark:border-r-purple-5/40 ",
           )}
@@ -152,7 +152,7 @@ const Nav = () => {
       ) : (
         <>
           {/* mobile */}
-          <nav className="absolute bottom-0 z-50 flex h-12 w-full items-center justify-evenly overflow-hidden rounded-t-2xl border-t border-t-purple-4/40 bg-slate-50/50 p-2 text-slate-500 shadow backdrop-blur dark:border-t-purple-5/40 dark:bg-slate-950/50 dark:text-slate-400 md:hidden">
+          <nav className="absolute bottom-0 z-50 flex h-14 w-full items-center justify-evenly overflow-hidden rounded-t-2xl border-t border-t-purple-4/40 bg-slate-50/70 p-2 text-slate-700 shadow backdrop-blur-md dark:border-t-purple-5/40 dark:bg-slate-950/70 dark:text-slate-400 md:hidden">
             <Link
               to={navItems[0].link}
               className={cn(
@@ -280,7 +280,7 @@ const NavIndicator = ({ className }: { className?: string }) => (
   <span
     aria-hidden="true"
     className={cn(
-      "absolute -left-[9px] -top-3.5 h-1.5 w-10 rounded-b bg-purple-5 md:-left-7 md:top-1/2 md:h-6 md:w-4 md:-translate-y-[50%] md:rounded ",
+      "absolute -left-[9px] -top-[18px] h-1.5 w-10 rounded-b bg-purple-5 md:-left-7 md:top-1/2 md:h-6 md:w-4 md:-translate-y-[50%] md:rounded ",
       className,
     )}
   />
