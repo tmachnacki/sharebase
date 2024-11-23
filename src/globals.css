@@ -4,9 +4,14 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  height: 100%;
+  max-height: 100dvh;
+}
+
 main {
-  height: 100dvh;
-  height: 100vh;
+  height: 100%;
+  max-height: 100dvh;
 }
 
 @layer base {
